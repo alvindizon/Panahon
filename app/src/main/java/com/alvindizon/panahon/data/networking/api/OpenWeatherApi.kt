@@ -2,6 +2,7 @@ package com.alvindizon.panahon.data.networking.api
 
 import com.alvindizon.panahon.data.networking.api.model.DirectGeocodeResponse
 import com.alvindizon.panahon.data.networking.api.model.OneCallResponse
+import com.alvindizon.panahon.data.networking.api.model.ReverseGeocodeResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -22,4 +23,11 @@ interface OpenWeatherApi {
         @Query("limit") limit: String = "5",
         @Query("appId") appId: String
     ): DirectGeocodeResponse
+
+    @GET("geo/1.0/reverse")
+    suspend fun getLocationName(
+        @Query("lat") latitude: String,
+        @Query("lon") longitude: String,
+        @Query("appId") appId: String
+    ): ReverseGeocodeResponse
 }
