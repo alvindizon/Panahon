@@ -1,13 +1,13 @@
-package com.alvindizon.panahon.data.networking.api.model
+package com.alvindizon.panahon.data.api.model
+
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-
-class DirectGeocodeResponse : ArrayList<DirectGeocodeResponseItem>()
+class ReverseGeocodeResponse : ArrayList<ReverseGeocodeResponseItem>()
 
 @JsonClass(generateAdapter = true)
-data class DirectGeocodeResponseItem(
+data class ReverseGeocodeResponseItem(
     @Json(name = "country")
     val country: String,
     @Json(name = "lat")

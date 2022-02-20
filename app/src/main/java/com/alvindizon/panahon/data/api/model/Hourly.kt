@@ -1,11 +1,11 @@
-package com.alvindizon.panahon.data.networking.api.model
+package com.alvindizon.panahon.data.api.model
 
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class Daily(
+data class Hourly(
     @Json(name = "clouds")
     val clouds: Int,
     @Json(name = "dew_point")
@@ -13,29 +13,21 @@ data class Daily(
     @Json(name = "dt")
     val dt: Int,
     @Json(name = "feels_like")
-    val feelsLike: FeelsLike,
+    val feelsLike: Double,
     @Json(name = "humidity")
     val humidity: Int,
-    @Json(name = "moon_phase")
-    val moonPhase: Double,
-    @Json(name = "moonrise")
-    val moonrise: Int,
-    @Json(name = "moonset")
-    val moonset: Int,
     @Json(name = "pop")
     val pop: Double,
     @Json(name = "pressure")
     val pressure: Int,
     @Json(name = "rain")
-    val rain: Double,
-    @Json(name = "sunrise")
-    val sunrise: Int,
-    @Json(name = "sunset")
-    val sunset: Int,
+    val rain: Rain,
     @Json(name = "temp")
-    val temp: Temp,
+    val temp: Double,
     @Json(name = "uvi")
     val uvi: Double,
+    @Json(name = "visibility")
+    val visibility: Int,
     @Json(name = "weather")
     val weather: List<Weather>,
     @Json(name = "wind_deg")

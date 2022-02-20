@@ -1,8 +1,8 @@
-package com.alvindizon.panahon.data.networking.api
+package com.alvindizon.panahon.data.api
 
-import com.alvindizon.panahon.data.networking.api.model.DirectGeocodeResponse
-import com.alvindizon.panahon.data.networking.api.model.OneCallResponse
-import com.alvindizon.panahon.data.networking.api.model.ReverseGeocodeResponse
+import com.alvindizon.panahon.data.api.model.DirectGeocodeResponse
+import com.alvindizon.panahon.data.api.model.OneCallResponse
+import com.alvindizon.panahon.data.api.model.ReverseGeocodeResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
