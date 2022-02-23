@@ -1,15 +1,14 @@
 package com.alvindizon.panahon
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.alvindizon.panahon.ui.locations.LocationsList
 import com.alvindizon.panahon.ui.theme.PanahonTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,27 +16,27 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PanahonTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+                LocationsScreen()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
+fun LocationsScreen() {
+    val viewModel: MainViewModel = viewModel()
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    PanahonTheme {
-        Greeting("Android")
-    }
+    val list = viewModel.getLocations().collectAsState(initial = emptyList())
+
+    val context = LocalContext.current
+
+    LocationsList(
+        locationForecasts = list.value,
+        onLocationClick = {
+            Toast.makeText(
+                context,
+                "Item clicked, location: ${it.name}",
+                Toast.LENGTH_SHORT
+            ).show()
+        })
 }
