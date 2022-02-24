@@ -20,7 +20,7 @@ interface OpenWeatherApi {
     @GET("geo/1.0/direct?appId=${BuildConfig.OPENWEATHER_KEY}")
     suspend fun getCities(
         @Query("q") query: String,
-        @Query("limit") limit: String = "5"
+        @Query("limit") limit: String
     ): DirectGeocodeResponse
 
     @GET("geo/1.0/reverse?appId=${BuildConfig.OPENWEATHER_KEY}")
