@@ -1,13 +1,24 @@
 package com.alvindizon.panahon
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.ui.locations.LocationForecast
 import com.alvindizon.panahon.usecase.GetCoordinatesFromNameUseCase
 import com.alvindizon.panahon.usecase.GetForecastForLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+sealed class UiState {
+    object Empty : UiState()
+    object Loading : UiState()
+    class Success(val list: List<LocationForecast>) : UiState()
+    class Error(val message: String) : UiState()
+}
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -15,12 +26,22 @@ class MainViewModel @Inject constructor(
     private val getCoordinatesFromNameUseCase: GetCoordinatesFromNameUseCase
 ) : ViewModel() {
 
-    val itemsFlow = flow {
-        // TODO change this to call from DB
-        val locations = LOCATIONS.map {
-            updateForecast(it)
+    private val _uiState = MutableStateFlow<UiState>(UiState.Empty)
+    val uiState: StateFlow<UiState> = _uiState
+
+    fun fetchForecasts() {
+        _uiState.value = UiState.Loading
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // TODO change this to call from DB
+                val locations = LOCATIONS.map {
+                    updateForecast(it)
+                }
+                _uiState.value = UiState.Success(locations)
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error(e.message ?: e.javaClass.name)
+            }
         }
-        emit(locations)
     }
 
     private suspend fun updateForecast(locationForecast: LocationForecast): LocationForecast {
