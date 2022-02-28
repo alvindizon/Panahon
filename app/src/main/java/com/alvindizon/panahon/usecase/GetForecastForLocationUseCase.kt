@@ -7,6 +7,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.roundToInt
 
 @Singleton
 class GetForecastForLocationUseCase @Inject constructor(private val openWeatherRepo: OpenWeatherRepo) {
@@ -22,7 +23,7 @@ class GetForecastForLocationUseCase @Inject constructor(private val openWeatherR
             LocationForecast(
                 reverseGeocodeResponse[0].name,
                 oneCallResponse.current.weather[0].main,
-                oneCallResponse.current.temp.toString()
+                oneCallResponse.current.temp.roundToInt().toString()
             )
         }
 }
