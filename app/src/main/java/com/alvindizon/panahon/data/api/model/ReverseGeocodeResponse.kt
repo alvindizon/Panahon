@@ -4,7 +4,6 @@ package com.alvindizon.panahon.data.api.model
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-class ReverseGeocodeResponse : ArrayList<ReverseGeocodeResponseItem>()
 
 @JsonClass(generateAdapter = true)
 data class ReverseGeocodeResponseItem(
@@ -12,12 +11,10 @@ data class ReverseGeocodeResponseItem(
     val country: String,
     @Json(name = "lat")
     val lat: Double,
-    @Json(name = "local_names")
-    val localNames: LocalNames,
     @Json(name = "lon")
     val lon: Double,
     @Json(name = "name")
     val name: String,
     @Json(name = "state")
-    val state: String
+    val state: String?
 )

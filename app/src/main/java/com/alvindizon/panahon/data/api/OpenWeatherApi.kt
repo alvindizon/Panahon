@@ -1,9 +1,9 @@
 package com.alvindizon.panahon.data.api
 
 import com.alvindizon.panahon.BuildConfig
-import com.alvindizon.panahon.data.api.model.DirectGeocodeResponse
+import com.alvindizon.panahon.data.api.model.DirectGeocodeResponseItem
 import com.alvindizon.panahon.data.api.model.OneCallResponse
-import com.alvindizon.panahon.data.api.model.ReverseGeocodeResponse
+import com.alvindizon.panahon.data.api.model.ReverseGeocodeResponseItem
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -21,11 +21,11 @@ interface OpenWeatherApi {
     suspend fun getCities(
         @Query("q") query: String,
         @Query("limit") limit: String
-    ): DirectGeocodeResponse
+    ): List<DirectGeocodeResponseItem>
 
     @GET("geo/1.0/reverse?appId=${BuildConfig.OPENWEATHER_KEY}")
     suspend fun getLocationName(
         @Query("lat") latitude: String,
         @Query("lon") longitude: String
-    ): ReverseGeocodeResponse
+    ): List<ReverseGeocodeResponseItem>
 }
