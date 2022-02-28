@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.alvindizon.panahon.ui.locations.LocationsList
@@ -28,12 +29,12 @@ class MainActivity : ComponentActivity() {
 fun LocationsScreen() {
     val viewModel: MainViewModel = viewModel()
 
-    val list = viewModel.getLocations().collectAsState(initial = emptyList())
-
     val context = LocalContext.current
 
+    val items by viewModel.itemsFlow.collectAsState(initial = emptyList())
+
     LocationsList(
-        locationForecasts = list.value,
+        locationForecasts = items,
         onLocationClick = {
             Toast.makeText(
                 context,

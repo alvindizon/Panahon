@@ -2,17 +2,30 @@ package com.alvindizon.panahon
 
 import androidx.lifecycle.ViewModel
 import com.alvindizon.panahon.ui.locations.LocationForecast
+import com.alvindizon.panahon.usecase.GetCoordinatesFromNameUseCase
+import com.alvindizon.panahon.usecase.GetForecastForLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-@HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
 
-    fun getLocations(): Flow<List<LocationForecast>> = flow {
-        // TODO replace this with call to DB
-        emit(LOCATIONS)
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val getForecastForLocationUseCase: GetForecastForLocationUseCase,
+    private val getCoordinatesFromNameUseCase: GetCoordinatesFromNameUseCase
+) : ViewModel() {
+
+    val itemsFlow = flow {
+        // TODO change this to call from DB
+        val locations = LOCATIONS.map {
+            updateForecast(it)
+        }
+        emit(locations)
+    }
+
+    private suspend fun updateForecast(locationForecast: LocationForecast): LocationForecast {
+        val (lat, lon) = getCoordinatesFromNameUseCase.execute(locationForecast.name)
+        return getForecastForLocationUseCase.execute(lat, lon)
     }
 
     companion object {
