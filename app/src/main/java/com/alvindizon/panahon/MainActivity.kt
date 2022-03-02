@@ -5,12 +5,19 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.alvindizon.panahon.ui.locations.LoadingScreen
@@ -42,31 +49,44 @@ fun LocationsScreen() {
         viewModel.fetchForecasts()
     }
 
-    when (val state = viewModel.uiState.collectAsState().value) {
-        UiState.Loading -> LoadingScreen()
-        is UiState.Success -> {
-            LocationsList(
-                locationForecasts = state.list,
-                onLocationClick = {
-                    Toast.makeText(
-                        context,
-                        "Item clicked, location: ${it.name}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                })
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = stringResource(id = R.string.app_name)) },
+                actions = {
+                    IconButton(onClick = {
+                        Toast.makeText(context, "Search clicked", Toast.LENGTH_SHORT).show()
+                    }) {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                    }
+                }
+            )
         }
-        is UiState.Error -> {
-            Toast.makeText(
-                context,
-                "Error: ${state.message}",
-                Toast.LENGTH_SHORT
-            ).show()
+    ) {
+        when (val state = viewModel.uiState.collectAsState().value) {
+            UiState.Loading -> LoadingScreen()
+            is UiState.Success -> {
+                LocationsList(
+                    locationForecasts = state.list,
+                    onLocationClick = {
+                        Toast.makeText(
+                            context,
+                            "Item clicked, location: ${it.name}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    })
+            }
+            is UiState.Error -> {
+                Toast.makeText(
+                    context,
+                    "Error: ${state.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else -> Text(
+                text = "No data available",
+                modifier = Modifier.padding(16.dp)
+            )
         }
-        else -> Text(
-            text = "No data available",
-            modifier = Modifier.padding(16.dp)
-        )
     }
-
-
 }
