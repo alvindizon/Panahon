@@ -35,7 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.alvindizon.panahon.MainViewModel
 import com.alvindizon.panahon.R
 import com.alvindizon.panahon.UiState
@@ -46,7 +46,7 @@ data class LocationForecast(val name: String, val condition: String, val tempera
 
 @Composable
 fun LocationsScreen() {
-    val viewModel: MainViewModel = viewModel()
+    val viewModel: MainViewModel = hiltViewModel()
     val context = LocalContext.current
 
     // need this to prevent infinite loop that happens when using functions
