@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.alvindizon.panahon.ui.locations.LoadingScreen
 import com.alvindizon.panahon.ui.locations.LocationsList
+import com.alvindizon.panahon.ui.locations.LocationsScreen
 import com.alvindizon.panahon.ui.theme.PanahonTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,60 +34,6 @@ class MainActivity : ComponentActivity() {
             PanahonTheme {
                 LocationsScreen()
             }
-        }
-    }
-}
-
-@Composable
-fun LocationsScreen() {
-    val viewModel: MainViewModel = viewModel()
-
-    val context = LocalContext.current
-
-    // need this to prevent infinite loop that happens when using functions
-    // ref: https://code.luasoftware.com/tutorials/android/jetpack-compose-load-data-collectasstate-common-mistakes/
-    LaunchedEffect(true) {
-        viewModel.fetchForecasts()
-    }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(id = R.string.app_name)) },
-                actions = {
-                    IconButton(onClick = {
-                        Toast.makeText(context, "Search clicked", Toast.LENGTH_SHORT).show()
-                    }) {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
-                    }
-                }
-            )
-        }
-    ) {
-        when (val state = viewModel.uiState.collectAsState().value) {
-            UiState.Loading -> LoadingScreen()
-            is UiState.Success -> {
-                LocationsList(
-                    locationForecasts = state.list,
-                    onLocationClick = {
-                        Toast.makeText(
-                            context,
-                            "Item clicked, location: ${it.name}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    })
-            }
-            is UiState.Error -> {
-                Toast.makeText(
-                    context,
-                    "Error: ${state.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            else -> Text(
-                text = "No data available",
-                modifier = Modifier.padding(16.dp)
-            )
         }
     }
 }

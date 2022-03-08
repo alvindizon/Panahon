@@ -1,5 +1,6 @@
 package com.alvindizon.panahon.ui.locations
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,18 +17,85 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.alvindizon.panahon.MainViewModel
+import com.alvindizon.panahon.R
+import com.alvindizon.panahon.UiState
 import com.alvindizon.panahon.ui.theme.PanahonTheme
 
 
 data class LocationForecast(val name: String, val condition: String, val temperature: String)
+
+@Composable
+fun LocationsScreen() {
+    val viewModel: MainViewModel = viewModel()
+    val context = LocalContext.current
+
+    // need this to prevent infinite loop that happens when using functions
+    // ref: https://code.luasoftware.com/tutorials/android/jetpack-compose-load-data-collectasstate-common-mistakes/
+    LaunchedEffect(true) {
+        viewModel.fetchForecasts()
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = stringResource(id = R.string.app_name)) },
+                actions = {
+                    IconButton(onClick = {
+                        Toast.makeText(context, "Search clicked", Toast.LENGTH_SHORT).show()
+                    }) {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                    }
+                }
+            )
+        }
+    ) {
+        when (val state = viewModel.uiState.collectAsState().value) {
+            UiState.Loading -> LoadingScreen()
+            is UiState.Success -> {
+                LocationsList(
+                    locationForecasts = state.list,
+                    onLocationClick = {
+                        Toast.makeText(
+                            context,
+                            "Item clicked, location: ${it.name}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    })
+            }
+            is UiState.Error -> {
+                Toast.makeText(
+                    context,
+                    "Error: ${state.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else -> Text(
+                text = "No data available",
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+}
 
 @Composable
 fun LocationsList(
