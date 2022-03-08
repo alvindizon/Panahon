@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.alvindizon.panahon.ui.locations.LocationsScreen
+import com.alvindizon.panahon.ui.search.SearchScreen
 import com.alvindizon.panahon.ui.theme.PanahonTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,7 +35,12 @@ class MainActivity : ComponentActivity() {
 fun PanahonNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screens.Locations.name) {
         composable(Screens.Locations.name) {
-            LocationsScreen()
+            LocationsScreen {
+                navController.navigate(Screens.Search.name)
+            }
+        }
+        composable(Screens.Search.name) {
+            SearchScreen()
         }
     }
 }

@@ -45,7 +45,9 @@ import com.alvindizon.panahon.ui.theme.PanahonTheme
 data class LocationForecast(val name: String, val condition: String, val temperature: String)
 
 @Composable
-fun LocationsScreen() {
+fun LocationsScreen(
+    onSearchIconClicked: (Unit) -> Unit
+) {
     val viewModel: MainViewModel = hiltViewModel()
     val context = LocalContext.current
 
@@ -60,9 +62,7 @@ fun LocationsScreen() {
             TopAppBar(
                 title = { Text(text = stringResource(id = R.string.app_name)) },
                 actions = {
-                    IconButton(onClick = {
-                        Toast.makeText(context, "Search clicked", Toast.LENGTH_SHORT).show()
-                    }) {
+                    IconButton(onClick = { onSearchIconClicked(Unit) }) {
                         Icon(imageVector = Icons.Default.Search, contentDescription = null)
                     }
                 }
