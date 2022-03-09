@@ -1,4 +1,4 @@
-package com.alvindizon.panahon
+package com.alvindizon.panahon.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,33 +13,33 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-sealed class UiState {
-    object Empty : UiState()
-    object Loading : UiState()
-    class Success(val list: List<LocationForecast>) : UiState()
-    class Error(val message: String) : UiState()
+sealed class LocationScreenUiState {
+    object Empty : LocationScreenUiState()
+    object Loading : LocationScreenUiState()
+    class Success(val list: List<LocationForecast>) : LocationScreenUiState()
+    class Error(val message: String) : LocationScreenUiState()
 }
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class LocationScreenViewModel @Inject constructor(
     private val getForecastForLocationUseCase: GetForecastForLocationUseCase,
     private val getCoordinatesFromNameUseCase: GetCoordinatesFromNameUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState>(UiState.Empty)
-    val uiState: StateFlow<UiState> = _uiState
+    private val _uiState = MutableStateFlow<LocationScreenUiState>(LocationScreenUiState.Empty)
+    val locationScreenUiState: StateFlow<LocationScreenUiState> = _uiState
 
     fun fetchForecasts() {
-        _uiState.value = UiState.Loading
+        _uiState.value = LocationScreenUiState.Loading
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 // TODO change this to call from DB
                 val locations = LOCATIONS.map {
                     updateForecast(it)
                 }
-                _uiState.value = UiState.Success(locations)
+                _uiState.value = LocationScreenUiState.Success(locations)
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.message ?: e.javaClass.name)
+                _uiState.value = LocationScreenUiState.Error(e.message ?: e.javaClass.name)
             }
         }
     }

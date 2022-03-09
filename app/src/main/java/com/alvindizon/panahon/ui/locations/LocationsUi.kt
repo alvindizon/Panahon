@@ -35,20 +35,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.alvindizon.panahon.MainViewModel
 import com.alvindizon.panahon.R
-import com.alvindizon.panahon.UiState
 import com.alvindizon.panahon.ui.theme.PanahonTheme
+import com.alvindizon.panahon.viewmodel.LocationScreenViewModel
+import com.alvindizon.panahon.viewmodel.LocationScreenUiState
 
 
 data class LocationForecast(val name: String, val condition: String, val temperature: String)
 
 @Composable
-fun LocationsScreen(
-    onSearchIconClicked: (Unit) -> Unit
-) {
-    val viewModel: MainViewModel = hiltViewModel()
+fun LocationsScreen(viewModel: LocationScreenViewModel, onSearchIconClicked: () -> Unit) {
     val context = LocalContext.current
 
     // need this to prevent infinite loop that happens when using functions
@@ -62,16 +58,16 @@ fun LocationsScreen(
             TopAppBar(
                 title = { Text(text = stringResource(id = R.string.app_name)) },
                 actions = {
-                    IconButton(onClick = { onSearchIconClicked(Unit) }) {
+                    IconButton(onClick = { onSearchIconClicked.invoke() }) {
                         Icon(imageVector = Icons.Default.Search, contentDescription = null)
                     }
                 }
             )
         }
     ) {
-        when (val state = viewModel.uiState.collectAsState().value) {
-            UiState.Loading -> LoadingScreen()
-            is UiState.Success -> {
+        when (val state = viewModel.locationScreenUiState.collectAsState().value) {
+            LocationScreenUiState.Loading -> LoadingScreen()
+            is LocationScreenUiState.Success -> {
                 LocationsList(
                     locationForecasts = state.list,
                     onLocationClick = {
@@ -82,7 +78,7 @@ fun LocationsScreen(
                         ).show()
                     })
             }
-            is UiState.Error -> {
+            is LocationScreenUiState.Error -> {
                 Toast.makeText(
                     context,
                     "Error: ${state.message}",
