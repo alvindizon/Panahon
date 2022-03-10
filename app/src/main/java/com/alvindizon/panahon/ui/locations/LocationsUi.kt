@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alvindizon.panahon.R
+import com.alvindizon.panahon.ui.components.LoadingScreen
 import com.alvindizon.panahon.ui.theme.PanahonTheme
 import com.alvindizon.panahon.viewmodel.LocationScreenViewModel
 import com.alvindizon.panahon.viewmodel.LocationScreenUiState
@@ -136,17 +137,6 @@ fun LocationsListItem(
             Spacer(modifier = Modifier.width(10.dp))
             Text("${locationForecast.temperature}°C", style = MaterialTheme.typography.h3)
         }
-    }
-}
-
-@Composable
-fun LoadingScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator()
     }
 }
 
