@@ -7,7 +7,7 @@ import com.alvindizon.panahon.data.api.model.ReverseGeocodeResponseItem
 import javax.inject.Inject
 import javax.inject.Singleton
 
-interface OpenWeatherRepo {
+interface PanahonRepo {
 
     suspend fun getWeatherForLocation(latitude: String, longitude: String): OneCallResponse
 
@@ -23,7 +23,7 @@ interface OpenWeatherRepo {
 }
 
 @Singleton
-class OpenWeatherRepoImpl @Inject constructor(private val api: OpenWeatherApi) : OpenWeatherRepo {
+class PanahonRepoImpl @Inject constructor(private val api: OpenWeatherApi) : PanahonRepo {
     override suspend fun getWeatherForLocation(
         latitude: String,
         longitude: String

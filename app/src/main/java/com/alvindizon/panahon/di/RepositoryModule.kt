@@ -1,7 +1,7 @@
 package com.alvindizon.panahon.di
 
-import com.alvindizon.panahon.data.OpenWeatherRepo
-import com.alvindizon.panahon.data.OpenWeatherRepoImpl
+import com.alvindizon.panahon.data.PanahonRepo
+import com.alvindizon.panahon.data.PanahonRepoImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,5 +12,5 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun bindOpenWeatherRepo(repo: OpenWeatherRepoImpl): OpenWeatherRepo
+    abstract fun bindPanahonRepo(repo: PanahonRepoImpl): PanahonRepo
 }
