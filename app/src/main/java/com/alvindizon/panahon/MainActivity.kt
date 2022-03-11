@@ -1,11 +1,9 @@
 package com.alvindizon.panahon
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -38,7 +36,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PanahonNavHost(navController: NavHostController) {
-    val context = LocalContext.current
     NavHost(navController = navController, startDestination = Screens.Locations.name) {
         composable(Screens.Locations.name) {
             val viewModel = hiltViewModel<LocationScreenViewModel>()
@@ -50,13 +47,6 @@ fun PanahonNavHost(navController: NavHostController) {
             val viewModel = hiltViewModel<SearchLocationViewModel>()
             SearchScreen(
                 viewModel,
-                onSearchResultClicked = {
-                    Toast.makeText(
-                        context,
-                        "Search result clicked: ${it.locationName}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                },
                 onUpButtonClicked = {
                     navController.popBackStack()
                 })

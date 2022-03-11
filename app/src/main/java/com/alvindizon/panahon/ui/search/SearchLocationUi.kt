@@ -66,7 +66,6 @@ data class SearchResult(
 @Composable
 fun SearchScreen(
     viewModel: SearchLocationViewModel,
-    onSearchResultClicked: (SearchResult) -> Unit,
     onUpButtonClicked: () -> Unit
 ) {
 
@@ -101,7 +100,14 @@ fun SearchScreen(
             is SearchLocationUiState.Success -> {
                 SearchResultList(
                     searchResults = state.searchResults,
-                    onSearchResultClicked = { onSearchResultClicked(it) }
+                    onSearchResultClicked = {
+                        viewModel.saveResultToDb(it)
+                        Toast.makeText(
+                            context,
+                            "Location saved",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 )
             }
         }

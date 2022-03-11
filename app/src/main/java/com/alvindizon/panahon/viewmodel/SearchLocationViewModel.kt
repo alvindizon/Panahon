@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.ui.search.SearchResult
+import com.alvindizon.panahon.usecase.SaveLocationToDbUseCase
 import com.alvindizon.panahon.usecase.SearchForLocationsUseCase
 import com.alvindizon.panahon.utils.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,7 @@ sealed class SearchLocationUiState {
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
     private val searchForLocationsUseCase: SearchForLocationsUseCase,
+    private val saveLocationToDbUseCase: SaveLocationToDbUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -62,5 +64,9 @@ class SearchLocationViewModel @Inject constructor(
     fun clearQuery() {
         _searchLocationUiState.value = SearchLocationUiState.Empty
         searchQuery.value = ""
+    }
+
+    fun saveResultToDb(result: SearchResult) = viewModelScope.launch {
+        saveLocationToDbUseCase.execute(result)
     }
 }
