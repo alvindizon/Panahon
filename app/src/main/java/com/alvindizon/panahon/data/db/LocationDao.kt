@@ -14,7 +14,7 @@ interface LocationDao {
     suspend fun insert(location: Location)
 
     @Query("SELECT * FROM savedLocations")
-    fun getAllArticles() : Flow<List<Location>>
+    fun fetchLocations() : Flow<List<Location>>
 
     @Query("DELETE FROM savedLocations WHERE name = :name")
     suspend fun delete(name: String)
