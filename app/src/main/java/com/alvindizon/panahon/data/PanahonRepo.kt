@@ -4,6 +4,8 @@ import com.alvindizon.panahon.data.api.OpenWeatherApi
 import com.alvindizon.panahon.data.api.model.DirectGeocodeResponseItem
 import com.alvindizon.panahon.data.api.model.OneCallResponse
 import com.alvindizon.panahon.data.api.model.ReverseGeocodeResponseItem
+import com.alvindizon.panahon.data.db.LocationDao
+import com.alvindizon.panahon.data.db.model.Location
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,10 +22,12 @@ interface PanahonRepo {
         location: String,
         limit: String
     ): List<DirectGeocodeResponseItem>
+
+    suspend fun saveLocationToDatabase(location: Location)
 }
 
 @Singleton
-class PanahonRepoImpl @Inject constructor(private val api: OpenWeatherApi) : PanahonRepo {
+class PanahonRepoImpl @Inject constructor(private val api: OpenWeatherApi, private val dao: LocationDao) : PanahonRepo {
     override suspend fun getWeatherForLocation(
         latitude: String,
         longitude: String
@@ -38,6 +42,8 @@ class PanahonRepoImpl @Inject constructor(private val api: OpenWeatherApi) : Pan
         location: String,
         limit: String
     ): List<DirectGeocodeResponseItem> = api.getCities(location, limit)
+
+    override suspend fun saveLocationToDatabase(location: Location) = dao.insert(location)
 
     companion object {
         private const val OPENWEATHER_UNIT = "metric"
