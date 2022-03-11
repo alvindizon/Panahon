@@ -1,7 +1,9 @@
 package com.alvindizon.panahon.di
 
 import android.content.Context
+import android.location.Location
 import androidx.room.Room
+import com.alvindizon.panahon.data.db.LocationDao
 import com.alvindizon.panahon.data.db.LocationDatabase
 import dagger.Module
 import dagger.Provides
@@ -19,4 +21,8 @@ object DatabaseModule {
     fun provideDatabase(@ApplicationContext context: Context): LocationDatabase {
         return Room.databaseBuilder(context, LocationDatabase::class.java, "locations.db").build()
     }
+
+    @Provides
+    @Singleton
+    fun provideDao(database: LocationDatabase): LocationDao = database.locationDao()
 }
