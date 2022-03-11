@@ -3,8 +3,7 @@ package com.alvindizon.panahon.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.ui.locations.LocationForecast
-import com.alvindizon.panahon.usecase.GetCoordinatesFromNameUseCase
-import com.alvindizon.panahon.usecase.GetForecastForLocationUseCase
+import com.alvindizon.panahon.usecase.FetchForecastsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +21,7 @@ sealed class LocationScreenUiState {
 
 @HiltViewModel
 class LocationScreenViewModel @Inject constructor(
-    private val getForecastForLocationUseCase: GetForecastForLocationUseCase,
-    private val getCoordinatesFromNameUseCase: GetCoordinatesFromNameUseCase
+    private val fetchForecastsUseCase: FetchForecastsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LocationScreenUiState>(LocationScreenUiState.Empty)
@@ -32,31 +30,15 @@ class LocationScreenViewModel @Inject constructor(
     fun fetchForecasts() {
         _uiState.value = LocationScreenUiState.Loading
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                // TODO change this to call from DB
-                val locations = LOCATIONS.map {
-                    updateForecast(it)
+            runCatching {
+                fetchForecastsUseCase.execute()
+            }.onSuccess { forecasts ->
+                forecasts.collect {
+                    _uiState.value = LocationScreenUiState.Success(it)
                 }
-                _uiState.value = LocationScreenUiState.Success(locations)
-            } catch (e: Exception) {
-                _uiState.value = LocationScreenUiState.Error(e.message ?: e.javaClass.name)
+            }.onFailure {
+                _uiState.value = LocationScreenUiState.Error(it.message ?: it.javaClass.name)
             }
         }
-    }
-
-    private suspend fun updateForecast(locationForecast: LocationForecast): LocationForecast {
-        val (lat, lon) = getCoordinatesFromNameUseCase.execute(locationForecast.name)
-        return getForecastForLocationUseCase.execute(lat, lon)
-    }
-
-    companion object {
-        private val LOCATIONS = listOf(
-            LocationForecast("Singapore", "Clouds", "25"),
-            LocationForecast("Jakarta", "Clouds", "28"),
-            LocationForecast("Nizhny Novgorod", "Clouds", "28"),
-            LocationForecast("Newcastle", "Sunny", "-1"),
-            LocationForecast("Manila", "Clouds", "28"),
-            LocationForecast("Kyiv", "Clouds", "28"),
-        )
     }
 }
