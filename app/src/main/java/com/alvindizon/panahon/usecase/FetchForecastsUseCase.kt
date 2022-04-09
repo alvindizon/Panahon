@@ -12,11 +12,16 @@ import kotlin.math.roundToInt
 class FetchForecastsUseCase @Inject constructor(private val panahonRepo: PanahonRepo) {
 
     fun execute(): Flow<List<LocationForecast>> {
-       return panahonRepo.fetchSavedLocations().map { locations ->
-           locations.map {
-               val resp = panahonRepo.getWeatherForLocation(it.latitude, it.longitude)
-               LocationForecast(it.name, resp.current.weather[0].main, resp.current.temp.roundToInt().toString())
-           }
-       }
+        return panahonRepo.fetchSavedLocations().map { locations ->
+            locations.map {
+                val resp = panahonRepo.getWeatherForLocation(it.latitude, it.longitude)
+                LocationForecast(
+                    it.name,
+                    resp.current.weather[0].main,
+                    resp.current.temp.roundToInt().toString(),
+                    resp.current.weather[0].icon
+                )
+            }
+        }
     }
 }

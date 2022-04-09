@@ -43,7 +43,12 @@ import com.alvindizon.panahon.viewmodel.LocationScreenViewModel
 import com.alvindizon.panahon.viewmodel.LocationScreenUiState
 
 
-data class LocationForecast(val name: String, val condition: String, val temperature: String)
+data class LocationForecast(
+    val name: String,
+    val condition: String,
+    val temperature: String,
+    val icon: String
+)
 
 @Composable
 fun LocationsScreen(viewModel: LocationScreenViewModel, onSearchIconClicked: () -> Unit) {
