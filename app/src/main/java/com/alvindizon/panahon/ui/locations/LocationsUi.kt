@@ -1,22 +1,20 @@
 package com.alvindizon.panahon.ui.locations
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -25,7 +23,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,14 +30,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import com.alvindizon.panahon.R
 import com.alvindizon.panahon.ui.components.LoadingScreen
 import com.alvindizon.panahon.ui.theme.PanahonTheme
-import com.alvindizon.panahon.viewmodel.LocationScreenViewModel
 import com.alvindizon.panahon.viewmodel.LocationScreenUiState
+import com.alvindizon.panahon.viewmodel.LocationScreenViewModel
 
 
 data class LocationForecast(
@@ -127,22 +126,54 @@ fun LocationsListItem(
             .wrapContentHeight()
             .padding(8.dp)
     ) {
-        Row(modifier = Modifier.padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(
+            modifier = Modifier.padding(4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Column(
                 horizontalAlignment = Alignment.Start,
-                modifier = Modifier.weight(1f, fill = false)
+                modifier = Modifier.weight(2f)
             ) {
                 Text(
                     text = locationForecast.name,
-                    style = MaterialTheme.typography.h3,
+                    style = MaterialTheme.typography.h5,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(text = locationForecast.condition, style = MaterialTheme.typography.h4)
+                Text(text = locationForecast.condition, style = MaterialTheme.typography.h5)
             }
-            Spacer(modifier = Modifier.width(10.dp))
-            Text("${locationForecast.temperature}°C", style = MaterialTheme.typography.h3)
+            WeatherIconAndTemperature(
+                icon = locationForecast.icon,
+                temperature = locationForecast.temperature,
+                modifier = Modifier.weight(1f)
+            )
         }
+    }
+}
+
+@Composable
+fun WeatherIconAndTemperature(
+    icon: String,
+    temperature: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = rememberImagePainter(data = "https://openweathermap.org/img/wn/$icon@2x.png"),
+            contentDescription = "weather icon",
+            modifier = Modifier.size(72.dp).weight(1f)
+        )
+        Text(
+            "$temperature°C",
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center
+        )
     }
 }
 
@@ -150,7 +181,7 @@ fun LocationsListItem(
 @Composable
 private fun LocationsListItemPreview() {
     PanahonTheme {
-        LocationsListItem(LocationForecast("San Pedro", "Clouds", "25")) {
+        LocationsListItem(LocationForecast("San Pedro", "Clouds", "25", "01d")) {
 
         }
     }
@@ -160,12 +191,20 @@ private fun LocationsListItemPreview() {
 @Composable
 private fun LocationsListPreview() {
     val locationForecasts = listOf(
-        LocationForecast("Singapore", "Clouds", "25"),
-        LocationForecast("Jakarta", "Clouds", "28"),
-        LocationForecast("Nizhny Novgorod", "Clouds", "28"),
-        LocationForecast("aaaaaaaaaaaaaaaabbbbbbbb", "Sunny", "-1")
+        LocationForecast("Singapore", "Clouds", "25", "01d"),
+        LocationForecast("Jakarta", "Clouds", "28", "01d"),
+        LocationForecast("Nizhny Novgorod", "Clouds", "28", "01d"),
+        LocationForecast("aaaaaaaaaaaaaaaabbbbbbbb", "Sunny", "-1", "01d")
     )
     PanahonTheme {
         LocationsList(locationForecasts = locationForecasts, onLocationClick = {})
+    }
+}
+
+@Preview
+@Composable
+private fun WeatherIconAndTemperaturePreview() {
+    PanahonTheme {
+        WeatherIconAndTemperature(icon = "01d", temperature = "25")
     }
 }
