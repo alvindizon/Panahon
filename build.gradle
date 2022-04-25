@@ -13,7 +13,7 @@ buildscript {
         gradleVersion = "7.1.0"
         hiltAndroidXVersion = "1.0.0"
         hiltVersion = "2.41"
-        kotlinVersion = "1.6.20"
+        kotlinVersion = "1.6.21"
         ktxVersion = "1.7.0"
         lifecycleVersion = "2.4.1"
         materialVersion = "1.4.0"
