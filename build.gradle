@@ -28,7 +28,7 @@ buildscript {
         mockkVersion = "1.12.3"
         testExtJunitVersion = "1.1.3"
         hiltNavComposeVersion = "1.0.0"
-        coilVersion = "1.4.0"
+        coilVersion = "2.0.0"
     }
     dependencies {
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hiltVersion"
