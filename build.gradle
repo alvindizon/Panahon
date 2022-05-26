@@ -7,6 +7,7 @@ buildscript {
 
         // App dependencies
         composeVersion = "1.1.1"
+        composeCompilerVersion = "1.2.0-dev-k1.6.21-56a408a3809"
         appCompatVersion = "1.4.0"
         coroutinesVersion = "1.6.1"
         espressoVersion = "3.4.0"
