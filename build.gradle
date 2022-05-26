@@ -13,7 +13,7 @@ buildscript {
         espressoVersion = "3.4.0"
         gradleVersion = "7.1.0"
         hiltAndroidXVersion = "1.0.0"
-        hiltVersion = "2.41"
+        hiltVersion = "2.42"
         kotlinVersion = "1.6.21"
         ktxVersion = "1.7.0"
         lifecycleVersion = "2.4.1"
