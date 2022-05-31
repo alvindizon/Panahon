@@ -1,10 +1,10 @@
-package com.alvindizon.panahon.data.db
+package com.alvindizon.panahon.db
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.alvindizon.panahon.data.db.model.Location
+import com.alvindizon.panahon.db.model.Location
 import kotlinx.coroutines.flow.Flow
 
 @Dao

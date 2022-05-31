@@ -5,8 +5,8 @@ import com.alvindizon.panahon.api.OpenWeatherApi
 import com.alvindizon.panahon.api.model.DirectGeocodeResponseItem
 import com.alvindizon.panahon.api.model.OneCallResponse
 import com.alvindizon.panahon.api.model.ReverseGeocodeResponseItem
-import com.alvindizon.panahon.data.db.LocationDao
-import com.alvindizon.panahon.data.db.model.Location
+import com.alvindizon.panahon.db.LocationDao
+import com.alvindizon.panahon.db.model.Location
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,7 +25,7 @@ interface PanahonRepo {
         limit: String
     ): List<DirectGeocodeResponseItem>
 
-    suspend fun saveLocationToDatabase(location: Location)
+    suspend fun saveLocationToDatabase(name: String, latitude: String, longitude: String)
 
     fun fetchSavedLocations(): Flow<List<Location>>
 }
@@ -52,7 +52,8 @@ class PanahonRepoImpl @Inject constructor(
         limit: String
     ): List<DirectGeocodeResponseItem> = api.getCities(location, limit, BuildConfig.OPENWEATHER_KEY)
 
-    override suspend fun saveLocationToDatabase(location: Location) = dao.insert(location)
+    override suspend fun saveLocationToDatabase(name: String, latitude: String, longitude: String) =
+        dao.insert(Location(name, latitude, longitude))
 
     override fun fetchSavedLocations(): Flow<List<Location>> = dao.fetchLocations()
 

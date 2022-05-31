@@ -19,3 +19,4 @@ rootProject.name = "Panahon"
 include ':app'
 include ':data:networking'
 include ':data:api'
+include ':data:db'

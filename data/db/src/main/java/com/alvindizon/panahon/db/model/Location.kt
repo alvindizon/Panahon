@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.data.db.model
+package com.alvindizon.panahon.db.model
 
 import androidx.room.Entity
 
