@@ -1,6 +1,6 @@
 package com.alvindizon.panahon.usecase
 
-import com.alvindizon.panahon.data.PanahonRepo
+import com.alvindizon.panahon.repo.PanahonRepo
 import com.alvindizon.panahon.ui.search.SearchResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

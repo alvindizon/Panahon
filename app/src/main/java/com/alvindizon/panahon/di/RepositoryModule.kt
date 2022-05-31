@@ -1,7 +1,7 @@
 package com.alvindizon.panahon.di
 
-import com.alvindizon.panahon.data.PanahonRepo
-import com.alvindizon.panahon.data.PanahonRepoImpl
+import com.alvindizon.panahon.repo.PanahonRepo
+import com.alvindizon.panahon.repo.PanahonRepoImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

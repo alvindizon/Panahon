@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.data
+package com.alvindizon.panahon.repo
 
 import com.alvindizon.panahon.BuildConfig
 import com.alvindizon.panahon.api.OpenWeatherApi
