@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.data.networking.exception
+package com.alvindizon.panahon.networking.exception
 
 import java.io.IOException
 

@@ -5,7 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import com.alvindizon.panahon.BuildConfig
 import com.alvindizon.panahon.data.api.OpenWeatherApi
-import com.alvindizon.panahon.data.networking.interceptor.ConnectivityInterceptor
+import com.alvindizon.panahon.networking.interceptor.ConnectivityInterceptor
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
