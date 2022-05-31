@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.data.api.model
+package com.alvindizon.panahon.api.model
 
 
 import com.squareup.moshi.Json

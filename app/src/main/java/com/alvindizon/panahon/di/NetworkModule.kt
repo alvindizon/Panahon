@@ -4,7 +4,7 @@ package com.alvindizon.panahon.di
 import android.content.Context
 import android.net.ConnectivityManager
 import com.alvindizon.panahon.BuildConfig
-import com.alvindizon.panahon.data.api.OpenWeatherApi
+import com.alvindizon.panahon.api.OpenWeatherApi
 import com.alvindizon.panahon.networking.interceptor.ConnectivityInterceptor
 import com.squareup.moshi.Moshi
 import dagger.Module
@@ -63,6 +63,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOpenWeatherApi(retrofit: Retrofit): OpenWeatherApi =
-        retrofit.create(OpenWeatherApi::class.java)
+    fun provideOpenWeatherApi(retrofit: Retrofit): com.alvindizon.panahon.api.OpenWeatherApi =
+        retrofit.create(com.alvindizon.panahon.api.OpenWeatherApi::class.java)
 }

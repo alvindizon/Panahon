@@ -1,9 +1,10 @@
 package com.alvindizon.panahon.data
 
-import com.alvindizon.panahon.data.api.OpenWeatherApi
-import com.alvindizon.panahon.data.api.model.DirectGeocodeResponseItem
-import com.alvindizon.panahon.data.api.model.OneCallResponse
-import com.alvindizon.panahon.data.api.model.ReverseGeocodeResponseItem
+import com.alvindizon.panahon.BuildConfig
+import com.alvindizon.panahon.api.OpenWeatherApi
+import com.alvindizon.panahon.api.model.DirectGeocodeResponseItem
+import com.alvindizon.panahon.api.model.OneCallResponse
+import com.alvindizon.panahon.api.model.ReverseGeocodeResponseItem
 import com.alvindizon.panahon.data.db.LocationDao
 import com.alvindizon.panahon.data.db.model.Location
 import kotlinx.coroutines.flow.Flow
@@ -30,21 +31,26 @@ interface PanahonRepo {
 }
 
 @Singleton
-class PanahonRepoImpl @Inject constructor(private val api: OpenWeatherApi, private val dao: LocationDao) : PanahonRepo {
+class PanahonRepoImpl @Inject constructor(
+    private val api: OpenWeatherApi,
+    private val dao: LocationDao
+) : PanahonRepo {
     override suspend fun getWeatherForLocation(
         latitude: String,
         longitude: String
-    ): OneCallResponse = api.getWeather(latitude, longitude, null, OPENWEATHER_UNIT)
+    ): OneCallResponse =
+        api.getWeather(latitude, longitude, null, OPENWEATHER_UNIT, BuildConfig.OPENWEATHER_KEY)
 
     override suspend fun getLocationNameFromCoordinates(
         latitude: String,
         longitude: String
-    ): List<ReverseGeocodeResponseItem> = api.getLocationName(latitude, longitude)
+    ): List<ReverseGeocodeResponseItem> =
+        api.getLocationName(latitude, longitude, BuildConfig.OPENWEATHER_KEY)
 
     override suspend fun getCoordinatesFromLocationName(
         location: String,
         limit: String
-    ): List<DirectGeocodeResponseItem> = api.getCities(location, limit)
+    ): List<DirectGeocodeResponseItem> = api.getCities(location, limit, BuildConfig.OPENWEATHER_KEY)
 
     override suspend fun saveLocationToDatabase(location: Location) = dao.insert(location)
 

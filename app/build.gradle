@@ -59,6 +59,7 @@ android {
 
 dependencies {
     implementation project(":data:networking")
+    implementation project(":data:api")
     // Compose
     implementation deps.androidX.compose.runtime
     implementation deps.androidX.compose.ui
