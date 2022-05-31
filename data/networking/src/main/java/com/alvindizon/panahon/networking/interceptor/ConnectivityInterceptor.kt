@@ -1,6 +1,5 @@
-package com.alvindizon.panahon.data.networking.interceptor
+package com.alvindizon.panahon.networking.interceptor
 
-import com.alvindizon.panahon.data.networking.exception.NoInternetException
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -16,7 +15,7 @@ class ConnectivityInterceptor @Inject constructor(private val monitor: LiveNetwo
         return if (monitor.isConnected()) {
             chain.proceed(request)
         } else {
-            throw NoInternetException()
+            throw com.alvindizon.panahon.networking.exception.NoInternetException()
         }
     }
 }
