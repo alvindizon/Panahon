@@ -1,8 +1,8 @@
-package com.alvindizon.panahon.data.db
+package com.alvindizon.panahon.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.alvindizon.panahon.data.db.model.Location
+import com.alvindizon.panahon.db.model.Location
 
 @Database(entities = [Location::class], version = 1)
 abstract class LocationDatabase : RoomDatabase() {

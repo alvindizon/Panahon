@@ -1,10 +1,9 @@
 package com.alvindizon.panahon.di
 
 import android.content.Context
-import android.location.Location
 import androidx.room.Room
-import com.alvindizon.panahon.data.db.LocationDao
-import com.alvindizon.panahon.data.db.LocationDatabase
+import com.alvindizon.panahon.db.LocationDao
+import com.alvindizon.panahon.db.LocationDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
