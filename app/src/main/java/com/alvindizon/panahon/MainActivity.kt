@@ -9,9 +9,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.ui.locations.LocationsScreen
 import com.alvindizon.panahon.ui.search.SearchScreen
-import com.alvindizon.panahon.ui.theme.PanahonTheme
 import com.alvindizon.panahon.viewmodel.LocationScreenViewModel
 import com.alvindizon.panahon.viewmodel.SearchLocationViewModel
 import dagger.hilt.android.AndroidEntryPoint

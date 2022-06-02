@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.ui.theme
+package com.alvindizon.panahon.design.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
