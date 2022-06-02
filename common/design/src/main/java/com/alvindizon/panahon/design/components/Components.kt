@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.ui.components
+package com.alvindizon.panahon.design.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

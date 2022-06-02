@@ -36,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.alvindizon.panahon.R
-import com.alvindizon.panahon.ui.components.LoadingScreen
-import com.alvindizon.panahon.ui.theme.PanahonTheme
+import com.alvindizon.panahon.design.components.LoadingScreen
+import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.viewmodel.LocationScreenUiState
 import com.alvindizon.panahon.viewmodel.LocationScreenViewModel
 
