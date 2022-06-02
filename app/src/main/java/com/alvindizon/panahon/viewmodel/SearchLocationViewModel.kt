@@ -3,10 +3,10 @@ package com.alvindizon.panahon.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alvindizon.panahon.core.utils.getStateFlow
 import com.alvindizon.panahon.ui.search.SearchResult
 import com.alvindizon.panahon.usecase.SaveLocationToDbUseCase
 import com.alvindizon.panahon.usecase.SearchForLocationsUseCase
-import com.alvindizon.panahon.utils.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
