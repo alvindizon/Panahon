@@ -48,20 +48,10 @@ import androidx.compose.ui.unit.dp
 import com.alvindizon.panahon.core.utils.rememberFlowWithLifecycle
 import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
-import com.alvindizon.panahon.viewmodel.SearchLocationUiState
-import com.alvindizon.panahon.viewmodel.SearchLocationViewModel
+import com.alvindizon.panahon.searchlocation.model.SearchResult
+import com.alvindizon.panahon.searchlocation.viewmodel.SearchLocationUiState
+import com.alvindizon.panahon.searchlocation.viewmodel.SearchLocationViewModel
 
-
-data class SearchResult(
-    val locationName: String,
-    val state: String?,
-    val country: String,
-    val lat: String,
-    val lon: String
-) {
-    val stateCountry
-        get() = if (state != null) "$state, $country" else country
-}
 
 @Composable
 fun SearchScreen(
