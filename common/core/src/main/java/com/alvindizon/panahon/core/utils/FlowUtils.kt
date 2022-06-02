@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.utils
+package com.alvindizon.panahon.core.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
