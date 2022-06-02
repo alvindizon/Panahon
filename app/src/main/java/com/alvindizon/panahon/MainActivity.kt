@@ -12,9 +12,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.locations.ui.LocationsScreen
-import com.alvindizon.panahon.ui.search.SearchScreen
+import com.alvindizon.panahon.searchlocation.search.SearchScreen
 import com.alvindizon.panahon.locations.viewmodel.LocationScreenViewModel
-import com.alvindizon.panahon.viewmodel.SearchLocationViewModel
+import com.alvindizon.panahon.searchlocation.viewmodel.SearchLocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 enum class Screens {
