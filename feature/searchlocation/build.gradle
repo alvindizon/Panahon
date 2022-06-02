@@ -43,6 +43,15 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion versions.composeCompilerVersion
     }
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+            // Show test results.
+            testLogging {
+                events "passed", "skipped", "failed"
+            }
+        }
+    }
 }
 
 dependencies {
