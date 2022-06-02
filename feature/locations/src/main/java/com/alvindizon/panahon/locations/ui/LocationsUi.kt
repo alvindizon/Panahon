@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.ui.locations
+package com.alvindizon.panahon.locations.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -29,28 +29,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
-import com.alvindizon.panahon.R
+import coil.compose.rememberAsyncImagePainter
 import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
-import com.alvindizon.panahon.viewmodel.LocationScreenUiState
-import com.alvindizon.panahon.viewmodel.LocationScreenViewModel
+import com.alvindizon.panahon.locations.model.LocationForecast
+import com.alvindizon.panahon.locations.viewmodel.LocationScreenUiState
+import com.alvindizon.panahon.locations.viewmodel.LocationScreenViewModel
 
-
-data class LocationForecast(
-    val name: String,
-    val condition: String,
-    val temperature: String,
-    val icon: String
-)
 
 @Composable
-fun LocationsScreen(viewModel: LocationScreenViewModel, onSearchIconClicked: () -> Unit) {
+fun LocationsScreen(
+    viewModel: LocationScreenViewModel,
+    title: String,
+    onSearchIconClicked: () -> Unit
+) {
     val context = LocalContext.current
 
     // need this to prevent infinite loop that happens when using functions
@@ -62,7 +58,7 @@ fun LocationsScreen(viewModel: LocationScreenViewModel, onSearchIconClicked: () 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(id = R.string.app_name)) },
+                title = { Text(text = title) },
                 actions = {
                     IconButton(onClick = { onSearchIconClicked.invoke() }) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = null)
@@ -164,9 +160,11 @@ fun WeatherIconAndTemperature(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = rememberImagePainter(data = "https://openweathermap.org/img/wn/$icon@2x.png"),
+            painter = rememberAsyncImagePainter(model = "https://openweathermap.org/img/wn/$icon@2x.png"),
             contentDescription = "weather icon",
-            modifier = Modifier.size(72.dp).weight(1f)
+            modifier = Modifier
+                .size(72.dp)
+                .weight(1f)
         )
         Text(
             "$temperature°C",

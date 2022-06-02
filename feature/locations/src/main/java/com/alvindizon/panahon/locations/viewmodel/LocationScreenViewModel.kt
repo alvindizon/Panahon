@@ -1,9 +1,9 @@
-package com.alvindizon.panahon.viewmodel
+package com.alvindizon.panahon.locations.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alvindizon.panahon.ui.locations.LocationForecast
-import com.alvindizon.panahon.usecase.FetchForecastsUseCase
+import com.alvindizon.panahon.locations.model.LocationForecast
+import com.alvindizon.panahon.locations.usecase.FetchForecastsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

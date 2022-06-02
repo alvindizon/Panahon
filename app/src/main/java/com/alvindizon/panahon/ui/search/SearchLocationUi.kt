@@ -45,9 +45,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alvindizon.panahon.core.utils.rememberFlowWithLifecycle
 import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
-import com.alvindizon.panahon.utils.rememberFlowWithLifecycle
 import com.alvindizon.panahon.viewmodel.SearchLocationUiState
 import com.alvindizon.panahon.viewmodel.SearchLocationViewModel
 
