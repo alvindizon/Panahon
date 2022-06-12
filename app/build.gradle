@@ -65,6 +65,7 @@ dependencies {
     implementation project(":common:core")
     implementation project(":feature:locations")
     implementation project(":feature:searchlocation")
+    implementation project(":feature:details")
     // Compose
     implementation deps.androidX.compose.runtime
     implementation deps.androidX.compose.ui

@@ -45,7 +45,8 @@ import com.alvindizon.panahon.locations.viewmodel.LocationScreenViewModel
 fun LocationsScreen(
     viewModel: LocationScreenViewModel,
     title: String,
-    onSearchIconClicked: () -> Unit
+    onSearchIconClicked: () -> Unit,
+    onLocationClick: (LocationForecast) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -72,13 +73,8 @@ fun LocationsScreen(
             is LocationScreenUiState.Success -> {
                 LocationsList(
                     locationForecasts = state.list,
-                    onLocationClick = {
-                        Toast.makeText(
-                            context,
-                            "Item clicked, location: ${it.name}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    })
+                    onLocationClick = { onLocationClick(it) }
+                )
             }
             is LocationScreenUiState.Error -> {
                 Toast.makeText(
@@ -179,7 +175,7 @@ fun WeatherIconAndTemperature(
 @Composable
 private fun LocationsListItemPreview() {
     PanahonTheme {
-        LocationsListItem(LocationForecast("San Pedro", "Clouds", "25", "01d")) {
+        LocationsListItem(LocationForecast("San Pedro", "", "","Clouds", "25", "01d")) {
 
         }
     }
@@ -189,10 +185,10 @@ private fun LocationsListItemPreview() {
 @Composable
 private fun LocationsListPreview() {
     val locationForecasts = listOf(
-        LocationForecast("Singapore", "Clouds", "25", "01d"),
-        LocationForecast("Jakarta", "Clouds", "28", "01d"),
-        LocationForecast("Nizhny Novgorod", "Clouds", "28", "01d"),
-        LocationForecast("aaaaaaaaaaaaaaaabbbbbbbb", "Sunny", "-1", "01d")
+        LocationForecast("Singapore", "", "", "Clouds", "25", "01d"),
+        LocationForecast("Jakarta", "", "","Clouds", "28", "01d"),
+        LocationForecast("Nizhny Novgorod", "", "","Clouds", "28", "01d"),
+        LocationForecast("aaaaaaaaaaaaaaaabbbbbbbb", "", "","Sunny", "-1", "01d")
     )
     PanahonTheme {
         LocationsList(locationForecasts = locationForecasts, onLocationClick = {})

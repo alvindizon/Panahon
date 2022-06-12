@@ -18,6 +18,8 @@ class LocationsViewRepositoryImpl @Inject constructor(private val panahonRepo: P
                 val resp = panahonRepo.getWeatherForLocation(it.latitude, it.longitude)
                 LocationForecast(
                     it.name,
+                    it.latitude,
+                    it.longitude,
                     resp.current.weather[0].main,
                     resp.current.temp.roundToInt().toString(),
                     resp.current.weather[0].icon
