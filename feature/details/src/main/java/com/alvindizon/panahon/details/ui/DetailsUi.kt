@@ -235,7 +235,7 @@ fun HourlyForecastCard(
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 modifier = Modifier.padding(4.dp),
-                text = "Hourly Forecast",
+                text = "Next 24 hours",
                 style = MaterialTheme.typography.h5
             )
             HourlyForecastList(hourlyForecasts = hourlyForecasts)
