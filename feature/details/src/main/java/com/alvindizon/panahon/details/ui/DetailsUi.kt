@@ -308,7 +308,7 @@ fun DailyForecastCard(
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 modifier = Modifier.padding(4.dp),
-                text = "Daily Forecast",
+                text = "1 Week Forecast",
                 style = MaterialTheme.typography.h5
             )
             DailyForecastList(dailyForecasts = dailyForecasts)
