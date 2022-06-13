@@ -173,8 +173,8 @@ fun AdditionalDetailsRow(
                 modifier = Modifier.padding(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Maximum: $maximumTemp°C", style = MaterialTheme.typography.h6)
-                Text(text = "Minimum: $minimumTemp°C", style = MaterialTheme.typography.h6)
+                Text(text = "High: $maximumTemp°C", style = MaterialTheme.typography.h6)
+                Text(text = "Low: $minimumTemp°C", style = MaterialTheme.typography.h6)
             }
         }
     }
