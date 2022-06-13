@@ -255,7 +255,7 @@ fun DailyForecastItem(time: String, maximumTemp: String, minimumTemp: String, ic
         Text(
             text = time,
             style = MaterialTheme.typography.h6,
-            modifier = Modifier.weight(2f)
+            modifier = Modifier.weight(1f)
         )
         Text(
             text = "$maximumTemp°C/$minimumTemp°C",
