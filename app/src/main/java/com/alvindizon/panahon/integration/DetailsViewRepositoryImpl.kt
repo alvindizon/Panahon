@@ -33,7 +33,7 @@ class DetailsViewRepositoryImpl @Inject constructor(
                 current.feelsLike?.roundToInt().toString(),
                 current.weather[0].description,
                 current.weather[0].icon,
-                hourly?.map { mapResponseToHourlyForecast(it, timezone) },
+                hourly?.take(HOURLY_ITEMS)?.map { mapResponseToHourlyForecast(it, timezone) },
                 daily?.map { mapResponseToDailyForecast(it, timezone) }
             )
         }
@@ -66,5 +66,6 @@ class DetailsViewRepositoryImpl @Inject constructor(
         private const val HOURLY_PATTERN = "ha" // example: 5 PM
         private const val EXACT_HOURLY_PATTERN = "h:mm a" // example: 5:55 PM
         private const val DAILY_PATTERN = "EEE d MMM" // example: Thu Jun 9
+        private const val HOURLY_ITEMS = 24
     }
 }
