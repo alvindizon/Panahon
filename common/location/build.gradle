@@ -1,0 +1,77 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileSdk buildVersions.compileSdkVersion
+
+    defaultConfig {
+        minSdk buildVersions.minSdkVersion
+        targetSdk buildVersions.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs += [
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=kotlinx.coroutines.FlowPreview"
+        ]
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion versions.composeCompilerVersion
+    }
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+            // Show test results.
+            testLogging {
+                events "passed", "skipped", "failed"
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation project(":common:design")
+    implementation project(":common:core")
+
+    // Coroutines
+    implementation deps.coroutines.core
+    implementation deps.coroutines.android
+
+    // Testing
+    testImplementation deps.junit
+    testImplementation deps.androidX.test.core
+    testImplementation deps.mockk
+    testImplementation deps.coroutines.test
+
+    // Dagger Hilt
+    implementation deps.dagger.hiltAndroid
+    kapt deps.dagger.hiltCompiler
+    kapt deps.androidX.hiltCompiler
+    implementation deps.androidX.hiltNavigationCompose
+
+
+    implementation deps.playServicesLocation
+}
