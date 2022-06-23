@@ -29,6 +29,7 @@ def versions = [:]
     versions.hiltNavComposeVersion = "1.0.0"
     versions.coilVersion = "2.1.0"
     versions.coreLibraryDesugarVersion = "1.1.5"
+    versions.playServicesLocationVersion = "20.0.0"
 ext.versions = versions
 
 def buildVersions = [:]
@@ -77,6 +78,7 @@ deps.androidX = androidX
 def coroutines = [:]
     coroutines.core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutinesVersion"
     coroutines.android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutinesVersion"
+    coroutines.test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutinesVersion"
 deps.coroutines = coroutines
 
 def network = [:]
@@ -107,6 +109,8 @@ deps.junit = "org.junit.jupiter:junit-jupiter:$versions.junitVersion"
 deps.mockk = "io.mockk:mockk:$versions.mockkVersion"
 
 deps.coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:$versions.coreLibraryDesugarVersion"
+
+deps.playServicesLocation = "com.google.android.gms:play-services-location:$versions.playServicesLocationVersion"
 
 ext.deps = deps
 
