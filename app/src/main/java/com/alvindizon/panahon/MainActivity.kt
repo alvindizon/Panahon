@@ -1,9 +1,13 @@
 package com.alvindizon.panahon
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -15,6 +19,8 @@ import androidx.navigation.navArgument
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.details.ui.DetailsScreen
 import com.alvindizon.panahon.details.viewmodel.DetailsScreenViewModel
+import com.alvindizon.panahon.home.ui.HomeScreen
+import com.alvindizon.panahon.home.viewmodel.HomeScreenViewModel
 import com.alvindizon.panahon.locations.ui.LocationsScreen
 import com.alvindizon.panahon.locations.viewmodel.LocationScreenViewModel
 import com.alvindizon.panahon.searchlocation.search.SearchScreen
@@ -24,7 +30,8 @@ import dagger.hilt.android.AndroidEntryPoint
 enum class Screens {
     Locations,
     Search,
-    Details
+    Details,
+    Home
 }
 
 @AndroidEntryPoint
@@ -42,7 +49,23 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PanahonNavHost(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screens.Locations.name) {
+    val context = LocalContext.current
+    NavHost(navController = navController, startDestination = Screens.Home.name) {
+        composable(Screens.Home.name) {
+            val viewModel = hiltViewModel<HomeScreenViewModel>()
+            HomeScreen(viewModel = viewModel, onLocationFound = {
+                navController.navigate(
+                    "${Screens.Details.name}/${it.locationName}/${it.latitude}/${it.longitude}"
+                )
+            }, onSnackbarButtonClick = {
+                context.startActivity(
+                    Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.parse("package:${context.packageName}")
+                    )
+                )
+            })
+        }
         composable(Screens.Locations.name) {
             val viewModel = hiltViewModel<LocationScreenViewModel>()
             LocationsScreen(viewModel = viewModel,
