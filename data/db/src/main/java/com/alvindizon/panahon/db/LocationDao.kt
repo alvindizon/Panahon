@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.alvindizon.panahon.db.model.Location
 import kotlinx.coroutines.flow.Flow
 
@@ -18,4 +19,10 @@ interface LocationDao {
 
     @Query("DELETE FROM savedLocations WHERE name = :name")
     suspend fun delete(name: String)
+
+    @Query("SELECT * FROM savedLocations WHERE isHomeLocation")
+    suspend fun getHomeLocation(): Location?
+
+    @Update(entity = Location::class)
+    suspend fun update(location: Location)
 }

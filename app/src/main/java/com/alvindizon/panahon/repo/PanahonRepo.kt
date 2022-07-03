@@ -53,7 +53,7 @@ class PanahonRepoImpl @Inject constructor(
     ): List<DirectGeocodeResponseItem> = api.getCities(location, limit, BuildConfig.OPENWEATHER_KEY)
 
     override suspend fun saveLocationToDatabase(name: String, latitude: String, longitude: String) =
-        dao.insert(Location(name, latitude, longitude))
+        dao.insert(Location(name, latitude, longitude, false))
 
     override fun fetchSavedLocations(): Flow<List<Location>> = dao.fetchLocations()
 
