@@ -18,10 +18,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,25 +46,36 @@ import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.model.HourlyForecast
 import com.alvindizon.panahon.details.viewmodel.DetailsScreenUiState
 import com.alvindizon.panahon.details.viewmodel.DetailsScreenViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun DetailsScreen(
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope,
     viewModel: DetailsScreenViewModel,
     location: String,
     latitude: String,
     longitude: String,
 ) {
+    val context = LocalContext.current
+    // need this to prevent infinite loop that happens when using functions
+    // ref: https://code.luasoftware.com/tutorials/android/jetpack-compose-load-data-collectasstate-common-mistakes/
+    LaunchedEffect(true) {
+        viewModel.fetchDetailedForecast(location, latitude, longitude)
+    }
     Scaffold(
-        topBar = { TopAppBar(title = { Text(text = location) }) }
-    ) {
-        val context = LocalContext.current
-
-        // need this to prevent infinite loop that happens when using functions
-        // ref: https://code.luasoftware.com/tutorials/android/jetpack-compose-load-data-collectasstate-common-mistakes/
-        LaunchedEffect(true) {
-            viewModel.fetchDetailedForecast(location, latitude, longitude)
+        topBar = {
+            TopAppBar(
+                title = { Text(text = location) },
+                navigationIcon = {
+                    IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
+                        Icon(Icons.Filled.Menu, "")
+                    }
+                }
+            )
         }
-
+    ) {
         when (val state = viewModel.uiState.collectAsState().value) {
             is DetailsScreenUiState.Success -> DetailedForecast(state.detailedForecast)
             is DetailsScreenUiState.Error -> Toast.makeText(
@@ -69,6 +85,7 @@ fun DetailsScreen(
             ).show()
             else -> LoadingScreen()
         }
+
     }
 }
 

@@ -6,10 +6,29 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Text
+import androidx.compose.material.rememberDrawerState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -26,12 +45,14 @@ import com.alvindizon.panahon.locations.viewmodel.LocationScreenViewModel
 import com.alvindizon.panahon.searchlocation.search.SearchScreen
 import com.alvindizon.panahon.searchlocation.viewmodel.SearchLocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 enum class Screens {
     Locations,
     Search,
     Details,
-    Home
+    Home;
 }
 
 @AndroidEntryPoint
@@ -40,15 +61,22 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+            val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
+            val scope = rememberCoroutineScope()
             PanahonTheme {
-                PanahonNavHost(navController = navController)
+                Scaffold(
+                    scaffoldState = scaffoldState,
+                    drawerContent = { PanahonDrawer(scaffoldState, navController, scope) }
+                ) {
+                    PanahonNavHost(navController, scaffoldState, scope)
+                }
             }
         }
     }
 }
 
 @Composable
-fun PanahonNavHost(navController: NavHostController) {
+fun PanahonNavHost(navController: NavHostController, scaffoldState: ScaffoldState, scope: CoroutineScope) {
     val context = LocalContext.current
     NavHost(navController = navController, startDestination = Screens.Home.name) {
         composable(Screens.Home.name) {
@@ -96,11 +124,57 @@ fun PanahonNavHost(navController: NavHostController) {
         )) {
             val viewModel = hiltViewModel<DetailsScreenViewModel>()
             DetailsScreen(
+                scaffoldState = scaffoldState,
+                scope = scope,
                 viewModel = viewModel,
                 location = it.arguments!!.getString("location")!!,
                 latitude = it.arguments!!.getString("latitude")!!,
                 longitude = it.arguments!!.getString("longitude")!!
             )
+        }
+    }
+}
+
+@Composable
+fun PanahonDrawer(
+    scaffoldState: ScaffoldState,
+    navController: NavController,
+    scope: CoroutineScope
+) {
+    val items = Screens.values().filter { it != Screens.Details && it != Screens.Home }
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(start = 24.dp, top = 48.dp)
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_launcher_foreground),
+            contentDescription = stringResource(R.string.open_menu)
+        )
+        for (item in items) {
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = item.name,
+                style = MaterialTheme.typography.h4,
+                modifier = Modifier.clickable {
+                    navController.navigate(item.name) {
+                        // Pop up to the start destination of the graph to
+                        // avoid building up a large stack of destinations
+                        // on the back stack as users select items
+                        navController.graph.startDestinationRoute?.let { route ->
+                            popUpTo(route) { saveState = true }
+                        }
+                        // Avoid multiple copies of the same destination when
+                        // reselecting the same item
+                        launchSingleTop = true
+                        // Restore state when reselecting a previously selected item
+                        restoreState = true
+                    }
+                    // Close drawer
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                })
         }
     }
 }
