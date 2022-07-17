@@ -97,12 +97,13 @@ fun PanahonNavHost(navController: NavHostController, scaffoldState: ScaffoldStat
         composable(Screens.Locations.name) {
             val viewModel = hiltViewModel<LocationScreenViewModel>()
             LocationsScreen(viewModel = viewModel,
-                title = stringResource(id = R.string.app_name),
+                title = stringResource(id = com.alvindizon.panahon.design.R.string.locations),
                 onLocationClick = {
                     navController.navigate(
                         "${Screens.Details.name}/${it.name}/${it.latitude}/${it.longitude}"
                     )
-                }
+                },
+                onUpButtonClicked = { navController.popBackStack() }
             )
         }
         composable(Screens.Search.name) {

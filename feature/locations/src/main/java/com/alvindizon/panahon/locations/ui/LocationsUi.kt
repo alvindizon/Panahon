@@ -15,21 +15,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.alvindizon.panahon.design.R
 import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.locations.model.LocationForecast
@@ -41,7 +47,8 @@ import com.alvindizon.panahon.locations.viewmodel.LocationScreenViewModel
 fun LocationsScreen(
     viewModel: LocationScreenViewModel,
     title: String,
-    onLocationClick: (LocationForecast) -> Unit
+    onLocationClick: (LocationForecast) -> Unit,
+    onUpButtonClicked: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -53,7 +60,17 @@ fun LocationsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(text = title) })
+            TopAppBar(
+                title = { Text(text = title) },
+                navigationIcon = {
+                    IconButton(onClick = { onUpButtonClicked() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(id = R.string.back)
+                        )
+                    }
+                }
+            )
         }
     ) {
         when (val state = viewModel.locationScreenUiState.collectAsState().value) {
@@ -163,7 +180,7 @@ fun WeatherIconAndTemperature(
 @Composable
 private fun LocationsListItemPreview() {
     PanahonTheme {
-        LocationsListItem(LocationForecast("San Pedro", "", "","Clouds", "25", "01d")) {
+        LocationsListItem(LocationForecast("San Pedro", "", "", "Clouds", "25", "01d")) {
 
         }
     }
@@ -174,9 +191,9 @@ private fun LocationsListItemPreview() {
 private fun LocationsListPreview() {
     val locationForecasts = listOf(
         LocationForecast("Singapore", "", "", "Clouds", "25", "01d"),
-        LocationForecast("Jakarta", "", "","Clouds", "28", "01d"),
-        LocationForecast("Nizhny Novgorod", "", "","Clouds", "28", "01d"),
-        LocationForecast("aaaaaaaaaaaaaaaabbbbbbbb", "", "","Sunny", "-1", "01d")
+        LocationForecast("Jakarta", "", "", "Clouds", "28", "01d"),
+        LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d"),
+        LocationForecast("aaaaaaaaaaaaaaaabbbbbbbb", "", "", "Sunny", "-1", "01d")
     )
     PanahonTheme {
         LocationsList(locationForecasts = locationForecasts, onLocationClick = {})
