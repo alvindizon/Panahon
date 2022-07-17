@@ -27,6 +27,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,6 +59,7 @@ fun DetailsScreen(
     location: String,
     latitude: String,
     longitude: String,
+    onSearchIconClick: () -> Unit
 ) {
     val context = LocalContext.current
     // need this to prevent infinite loop that happens when using functions
@@ -70,7 +73,15 @@ fun DetailsScreen(
                 title = { Text(text = location) },
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
-                        Icon(Icons.Filled.Menu, "")
+                        Icon(Icons.Filled.Menu, stringResource(id = R.string.menu))
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { onSearchIconClick() }) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = stringResource(id = R.string.search)
+                        )
                     }
                 }
             )
@@ -85,7 +96,6 @@ fun DetailsScreen(
             ).show()
             else -> LoadingScreen()
         }
-
     }
 }
 
