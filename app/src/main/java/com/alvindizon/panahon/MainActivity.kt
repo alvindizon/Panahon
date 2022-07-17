@@ -76,23 +76,32 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PanahonNavHost(navController: NavHostController, scaffoldState: ScaffoldState, scope: CoroutineScope) {
+fun PanahonNavHost(
+    navController: NavHostController,
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope
+) {
     val context = LocalContext.current
     NavHost(navController = navController, startDestination = Screens.Home.name) {
         composable(Screens.Home.name) {
             val viewModel = hiltViewModel<HomeScreenViewModel>()
-            HomeScreen(viewModel = viewModel, onLocationFound = {
-                navController.navigate(
-                    "${Screens.Details.name}/${it.locationName}/${it.latitude}/${it.longitude}"
-                )
-            }, onSnackbarButtonClick = {
-                context.startActivity(
-                    Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.parse("package:${context.packageName}")
+            HomeScreen(
+                viewModel = viewModel,
+                onLocationFound = {
+                    navController.navigate(
+                        "${Screens.Details.name}/${it.locationName}/${it.latitude}/${it.longitude}"
                     )
-                )
-            })
+                },
+                onSnackbarButtonClick = {
+                    context.startActivity(
+                        Intent(
+                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:${context.packageName}")
+                        )
+                    )
+                },
+                onSearchLinkClick = { navController.navigate(Screens.Search.name) }
+            )
         }
         composable(Screens.Locations.name) {
             val viewModel = hiltViewModel<LocationScreenViewModel>()
