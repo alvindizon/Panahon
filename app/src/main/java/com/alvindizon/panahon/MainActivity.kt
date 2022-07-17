@@ -98,9 +98,6 @@ fun PanahonNavHost(navController: NavHostController, scaffoldState: ScaffoldStat
             val viewModel = hiltViewModel<LocationScreenViewModel>()
             LocationsScreen(viewModel = viewModel,
                 title = stringResource(id = R.string.app_name),
-                onSearchIconClicked = {
-                    navController.navigate(Screens.Search.name)
-                },
                 onLocationClick = {
                     navController.navigate(
                         "${Screens.Details.name}/${it.name}/${it.latitude}/${it.longitude}"
@@ -129,7 +126,8 @@ fun PanahonNavHost(navController: NavHostController, scaffoldState: ScaffoldStat
                 viewModel = viewModel,
                 location = it.arguments!!.getString("location")!!,
                 latitude = it.arguments!!.getString("latitude")!!,
-                longitude = it.arguments!!.getString("longitude")!!
+                longitude = it.arguments!!.getString("longitude")!!,
+                onSearchIconClick = { navController.navigate(Screens.Search.name) }
             )
         }
     }
@@ -149,7 +147,7 @@ fun PanahonDrawer(
     ) {
         Image(
             painter = painterResource(R.drawable.ic_launcher_foreground),
-            contentDescription = stringResource(R.string.open_menu)
+            contentDescription = stringResource(com.alvindizon.panahon.design.R.string.open_menu)
         )
         for (item in items) {
             Spacer(Modifier.height(24.dp))

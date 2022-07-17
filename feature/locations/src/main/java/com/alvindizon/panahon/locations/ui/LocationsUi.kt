@@ -15,14 +15,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,7 +41,6 @@ import com.alvindizon.panahon.locations.viewmodel.LocationScreenViewModel
 fun LocationsScreen(
     viewModel: LocationScreenViewModel,
     title: String,
-    onSearchIconClicked: () -> Unit,
     onLocationClick: (LocationForecast) -> Unit
 ) {
     val context = LocalContext.current
@@ -58,14 +53,7 @@ fun LocationsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = title) },
-                actions = {
-                    IconButton(onClick = { onSearchIconClicked.invoke() }) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                    }
-                }
-            )
+            TopAppBar(title = { Text(text = title) })
         }
     ) {
         when (val state = viewModel.locationScreenUiState.collectAsState().value) {

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="generic_try_again_msg">Please try again.</string>
+    <string name="search">Search</string>
+    <string name="menu">Menu</string>
+    <string name="open_menu">Open menu</string>
 </resources>
