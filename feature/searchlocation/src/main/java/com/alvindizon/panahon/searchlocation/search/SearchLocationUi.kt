@@ -41,6 +41,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.alvindizon.panahon.core.utils.rememberFlowWithLifecycle
 import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
+import com.alvindizon.panahon.searchlocation.R
 import com.alvindizon.panahon.searchlocation.model.SearchResult
 import com.alvindizon.panahon.searchlocation.viewmodel.SearchLocationUiState
 import com.alvindizon.panahon.searchlocation.viewmodel.SearchLocationViewModel
@@ -119,7 +121,10 @@ fun SearchTopAppBar(
         title = { Text("") },
         navigationIcon = {
             IconButton(onClick = { onUpButtonClicked() }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = stringResource(id = com.alvindizon.panahon.design.R.string.back)
+                )
             }
         },
         actions = {
@@ -132,7 +137,11 @@ fun SearchTopAppBar(
                     .focusRequester(focusRequester),
                 value = searchQuery,
                 onValueChange = { onSearchQueryChanged(it) },
-                placeholder = { Text("Search for locations") },
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.search_bar_msg)
+                    )
+                },
                 trailingIcon = {
                     AnimatedVisibility(
                         visible = showClearButton,
@@ -211,7 +220,7 @@ fun NoSearchResults() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("No matches found")
+        Text(stringResource(id = R.string.search_no_matches_msg))
     }
 }
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_bar_msg">Search for locations</string>
+    <string name="search_no_matches_msg">No matches found</string>
+</resources>
