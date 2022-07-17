@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -27,7 +28,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alvindizon.panahon.design.components.LoadingScreen
@@ -41,7 +47,8 @@ import com.alvindizon.panahon.home.viewmodel.HomeScreenViewModel
 fun HomeScreen(
     viewModel: HomeScreenViewModel,
     onLocationFound: (CurrentLocation) -> Unit,
-    onSnackbarButtonClick: () -> Unit
+    onSnackbarButtonClick: () -> Unit,
+    onSearchLinkClick: () -> Unit,
 ) {
     val retryLocationEnableRequest =
         rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
@@ -97,7 +104,8 @@ fun HomeScreen(
                 showSnackbar = showSnackbar,
                 setShowSnackbar = setShowSnackbar,
                 onEnableLocationButtonClick = { permissionLauncher.launch(permissions) },
-                onSnackbarButtonClick = { onSnackbarButtonClick.invoke() }
+                onSnackbarButtonClick = { onSnackbarButtonClick.invoke() },
+                onSearchLinkClick = { onSearchLinkClick.invoke() }
             )
 
             is HomeScreenUiState.Error ->
@@ -118,10 +126,24 @@ fun LocationRationaleScreen(
     showSnackbar: Boolean,
     setShowSnackbar: (Boolean) -> Unit,
     onEnableLocationButtonClick: () -> Unit,
-    onSnackbarButtonClick: () -> Unit
+    onSnackbarButtonClick: () -> Unit,
+    onSearchLinkClick: () -> Unit,
 ) {
     val snackbarMsg = stringResource(R.string.home_snackbar_msg)
     val snackbarBtnMsg = stringResource(R.string.home_snackbar_btn_txt)
+    val annotatedLinkString: AnnotatedString = buildAnnotatedString {
+        val message = stringResource(R.string.home_location_rationale_msg2)
+        val withLink = stringResource(id = com.alvindizon.panahon.design.R.string.search)
+        val startIndex = message.indexOf(withLink)
+        val endIndex = startIndex + withLink.length
+        append(message)
+        addStyle(
+            style = SpanStyle(textDecoration = TextDecoration.Underline, color = MaterialTheme.colors.secondary),
+            start = startIndex,
+            end = endIndex
+        )
+        addStringAnnotation("", "", startIndex, endIndex)
+    }
     if (showSnackbar) {
         LaunchedEffect(scaffoldState.snackbarHostState) {
             val result = scaffoldState.snackbarHostState.showSnackbar(
@@ -150,10 +172,12 @@ fun LocationRationaleScreen(
             style = MaterialTheme.typography.subtitle2,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            textAlign = TextAlign.Center,
-            text = stringResource(R.string.home_location_rationale_msg2),
-            style = MaterialTheme.typography.subtitle2,
+        ClickableText(
+            text = annotatedLinkString,
+            onClick = { onSearchLinkClick() },
+            style = MaterialTheme.typography.subtitle2.merge(
+                TextStyle(textAlign = TextAlign.Center)
+            )
         )
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = { onEnableLocationButtonClick() }) {
@@ -176,7 +200,9 @@ private fun PermissionNotGrantedScreenPreview() {
             showSnackbar = showSnackbar,
             setShowSnackbar = setShowSnackbar,
             onEnableLocationButtonClick = {},
-            onSnackbarButtonClick = {})
+            onSnackbarButtonClick = {},
+            onSearchLinkClick = {}
+        )
     }
 }
 
