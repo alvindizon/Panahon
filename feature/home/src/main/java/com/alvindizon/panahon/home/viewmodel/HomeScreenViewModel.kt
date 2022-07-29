@@ -21,7 +21,7 @@ sealed interface HomeScreenUiState {
     object Loading : HomeScreenUiState
     object CheckPreciseLocationEnabled : HomeScreenUiState
     object PreciseLocationEnabled : HomeScreenUiState
-    object ShowRationale : HomeScreenUiState
+    data class ShowRationale(val isLocationUnavailable: Boolean = false) : HomeScreenUiState
     object LocationOn : HomeScreenUiState
     data class Error(val message: String?) : HomeScreenUiState
 }
@@ -64,7 +64,7 @@ class HomeScreenViewModel @Inject constructor(
                 if (it != null) {
                     _uiState.value = HomeScreenUiState.LocationFound(it)
                 } else {
-                    _uiState.value = HomeScreenUiState.Error(NULL_LOCATION_MSG)
+                    _uiState.value = HomeScreenUiState.ShowRationale(isLocationUnavailable = true)
                 }
             }.onFailure {
                 _uiState.value = HomeScreenUiState.Error(it.message)
@@ -82,10 +82,10 @@ class HomeScreenViewModel @Inject constructor(
                 if (it) {
                     _uiState.value = HomeScreenUiState.PreciseLocationEnabled
                 } else {
-                    _uiState.value = HomeScreenUiState.ShowRationale
+                    _uiState.value = HomeScreenUiState.ShowRationale()
                 }
             }.onFailure {
-                _uiState.value = HomeScreenUiState.ShowRationale
+                _uiState.value = HomeScreenUiState.ShowRationale()
             }
         }
     }
@@ -100,9 +100,5 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    companion object {
-        const val NULL_LOCATION_MSG = "Error: null location"
     }
 }
