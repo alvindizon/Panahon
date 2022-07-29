@@ -7,7 +7,6 @@ import com.alvindizon.panahon.home.usecase.CheckLocationIsOnUseCase
 import com.alvindizon.panahon.home.usecase.CheckPreciseLocationEnabledUseCase
 import com.alvindizon.panahon.home.usecase.FetchCurrentLocationUseCase
 import com.alvindizon.panahon.home.usecase.GetHomeLocationUseCase
-import com.alvindizon.panahon.home.viewmodel.HomeScreenViewModel.Companion.NULL_LOCATION_MSG
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -94,14 +93,14 @@ class HomeScreenViewModelTest {
         }
 
     @Test
-    fun `verify uiState is HomeScreenUiState-Error if fetchCurrentLocation returns null`() =
+    fun `verify uiState is HomeScreenUiState-ShowRationale if fetchCurrentLocation returns null`() =
         runTest {
             coEvery { fetchCurrentLocationUseCase.execute() } returns null
             assert(viewModel.uiState.value is HomeScreenUiState.Loading)
             viewModel.fetchCurrentLocation()
-            assert(viewModel.uiState.value is HomeScreenUiState.Error)
-            val result = viewModel.uiState.value as HomeScreenUiState.Error
-            assertEquals(result.message, NULL_LOCATION_MSG)
+            assert(viewModel.uiState.value is HomeScreenUiState.ShowRationale)
+            val result = viewModel.uiState.value as HomeScreenUiState.ShowRationale
+            assert(result.isLocationUnavailable)
         }
 
     @Test
