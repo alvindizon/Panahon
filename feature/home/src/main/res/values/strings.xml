@@ -5,4 +5,5 @@
     <string name="home_location_rationale_msg2">Alternatively, you can try searching for your location via Search.</string>
     <string name="home_snackbar_msg">Allow location access</string>
     <string name="home_snackbar_btn_txt">Open Settings</string>
+    <string name="location_not_available_msg">Sorry, we can\'t locate you. Check your location settings or restart the app.</string>
 </resources>

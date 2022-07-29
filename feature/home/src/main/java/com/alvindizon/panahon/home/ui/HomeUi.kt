@@ -100,10 +100,11 @@ fun HomeScreen(
                 }
             }
             HomeScreenUiState.Loading -> LoadingScreen()
-            HomeScreenUiState.ShowRationale -> LocationRationaleScreen(
+            is HomeScreenUiState.ShowRationale -> LocationRationaleScreen(
                 scaffoldState = scaffoldState,
                 showSnackbar = showSnackbar,
                 setShowSnackbar = setShowSnackbar,
+                showLocationUnavailableMsg = state.isLocationUnavailable,
                 onEnableLocationButtonClick = { permissionLauncher.launch(permissions) },
                 onSnackbarButtonClick = { onSnackbarButtonClick.invoke() },
                 onSearchLinkClick = { onSearchLinkClick.invoke() }
@@ -126,6 +127,7 @@ fun HomeScreen(
 fun LocationRationaleScreen(
     scaffoldState: ScaffoldState,
     showSnackbar: Boolean,
+    showLocationUnavailableMsg: Boolean,
     setShowSnackbar: (Boolean) -> Unit,
     onEnableLocationButtonClick: () -> Unit,
     onSnackbarButtonClick: () -> Unit,
@@ -140,7 +142,10 @@ fun LocationRationaleScreen(
         val endIndex = startIndex + withLink.length
         append(message)
         addStyle(
-            style = SpanStyle(textDecoration = TextDecoration.Underline, color = MaterialTheme.colors.secondary),
+            style = SpanStyle(
+                textDecoration = TextDecoration.Underline,
+                color = MaterialTheme.colors.secondary
+            ),
             start = startIndex,
             end = endIndex
         )
@@ -168,9 +173,14 @@ fun LocationRationaleScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val message = if (showLocationUnavailableMsg) {
+            stringResource(id = R.string.location_not_available_msg)
+        } else {
+            stringResource(id = R.string.home_location_rationale_msg)
+        }
         Text(
             textAlign = TextAlign.Center,
-            text = stringResource(R.string.home_location_rationale_msg),
+            text = message,
             style = MaterialTheme.typography.subtitle2,
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -201,6 +211,7 @@ private fun PermissionNotGrantedScreenPreview() {
             scaffoldState = scaffoldState,
             showSnackbar = showSnackbar,
             setShowSnackbar = setShowSnackbar,
+            showLocationUnavailableMsg = false,
             onEnableLocationButtonClick = {},
             onSnackbarButtonClick = {},
             onSearchLinkClick = {}
