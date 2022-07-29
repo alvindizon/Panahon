@@ -68,7 +68,9 @@ class MainActivity : ComponentActivity() {
                     scaffoldState = scaffoldState,
                     drawerContent = { PanahonDrawer(scaffoldState, navController, scope) }
                 ) {
-                    PanahonNavHost(navController, scaffoldState, scope)
+                    PanahonNavHost(navController, scaffoldState, scope) {
+                        finish()
+                    }
                 }
             }
         }
@@ -79,7 +81,8 @@ class MainActivity : ComponentActivity() {
 fun PanahonNavHost(
     navController: NavHostController,
     scaffoldState: ScaffoldState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    onErrorOkBtnClick: () -> Unit,
 ) {
     val context = LocalContext.current
     NavHost(navController = navController, startDestination = Screens.Home.name) {
@@ -100,7 +103,8 @@ fun PanahonNavHost(
                         )
                     )
                 },
-                onSearchLinkClick = { navController.navigate(Screens.Search.name) }
+                onSearchLinkClick = { navController.navigate(Screens.Search.name) },
+                onErrorOkBtnClick = onErrorOkBtnClick
             )
         }
         composable(Screens.Locations.name) {

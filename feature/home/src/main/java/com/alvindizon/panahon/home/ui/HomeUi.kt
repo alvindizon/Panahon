@@ -49,6 +49,7 @@ fun HomeScreen(
     onLocationFound: (CurrentLocation) -> Unit,
     onSnackbarButtonClick: () -> Unit,
     onSearchLinkClick: () -> Unit,
+    onErrorOkBtnClick: () -> Unit
 ) {
     val retryLocationEnableRequest =
         rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
@@ -107,13 +108,14 @@ fun HomeScreen(
                 onSnackbarButtonClick = { onSnackbarButtonClick.invoke() },
                 onSearchLinkClick = { onSearchLinkClick.invoke() }
             )
-
-            is HomeScreenUiState.Error ->
-                ErrorAlertDialog(
-                    errorMessage = state.message ?: stringResource(
-                        id = com.alvindizon.panahon.design.R.string.generic_try_again_msg
-                    )
+            is HomeScreenUiState.Error -> {
+                val errorMessage = state.message ?: stringResource(
+                    id = com.alvindizon.panahon.design.R.string.generic_try_again_msg
                 )
+                ErrorAlertDialog(errorMessage) {
+                    onErrorOkBtnClick.invoke()
+                }
+            }
         }
     }
 
@@ -207,16 +209,12 @@ private fun PermissionNotGrantedScreenPreview() {
 }
 
 @Composable
-fun ErrorAlertDialog(errorMessage: String) {
+fun ErrorAlertDialog(errorMessage: String, onOkClick: () -> Unit) {
     AlertDialog(
-        onDismissRequest = { },
+        onDismissRequest = onOkClick,
         confirmButton = {
-            TextButton(onClick = {})
+            TextButton(onClick = onOkClick)
             { Text(text = "OK") }
-        },
-        dismissButton = {
-            TextButton(onClick = {})
-            { Text(text = "Cancel") }
         },
         title = { Text(text = "Error") },
         text = { Text(text = errorMessage) }
