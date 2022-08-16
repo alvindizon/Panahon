@@ -34,7 +34,7 @@ class DetailsViewRepositoryImpl @Inject constructor(
                 current.weather[0].description,
                 current.weather[0].icon,
                 hourly?.take(HOURLY_ITEMS)?.map { mapResponseToHourlyForecast(it, timezone) },
-                daily?.map { mapResponseToDailyForecast(it, timezone) }
+                daily?.drop(1)?.map { mapResponseToDailyForecast(it, timezone) }
             )
         }
     }
