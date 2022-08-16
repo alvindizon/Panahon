@@ -58,4 +58,6 @@ dependencies {
     implementation deps.androidX.activityCompose
 
     coreLibraryDesugaring deps.coreLibraryDesugaring
+
+    api deps.timber
 }

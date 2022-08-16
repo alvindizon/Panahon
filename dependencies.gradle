@@ -30,6 +30,7 @@ def versions = [:]
     versions.coilVersion = "2.1.0"
     versions.coreLibraryDesugarVersion = "1.1.5"
     versions.playServicesLocationVersion = "20.0.0"
+    versions.timber = "5.0.1"
 ext.versions = versions
 
 def buildVersions = [:]
@@ -111,6 +112,8 @@ deps.mockk = "io.mockk:mockk:$versions.mockkVersion"
 deps.coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:$versions.coreLibraryDesugarVersion"
 
 deps.playServicesLocation = "com.google.android.gms:play-services-location:$versions.playServicesLocationVersion"
+
+deps.timber = "com.jakewharton.timber:timber:$versions.timber"
 
 ext.deps = deps
 
