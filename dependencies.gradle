@@ -4,15 +4,15 @@
  **/
 ext.deps = [:]
 def versions = [:]
-    versions.composeVersion = "1.1.1"
-    versions.composeCompilerVersion = "1.2.0"
+    versions.composeVersion = "1.2.1"
+    versions.composeCompilerVersion = "1.3.0"
     versions.appCompatVersion = "1.5.0"
     versions.coroutinesVersion = "1.6.4"
     versions.espressoVersion = "3.4.0"
     versions.gradleVersion = "7.2.0"
     versions.hiltAndroidXVersion = "1.0.0"
     versions.hiltVersion = "2.43.2"
-    versions.kotlinVersion = "1.7.0"
+    versions.kotlinVersion = "1.7.10"
     versions.ktxVersion = "1.7.0"
     versions.lifecycleVersion = "2.5.0"
     versions.materialVersion = "1.4.0"
