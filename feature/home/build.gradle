@@ -58,6 +58,7 @@ dependencies {
     implementation project(":common:design")
     implementation project(":common:core")
     implementation project(":common:location")
+    implementation project(":common:navigation")
     implementation deps.androidX.compose.runtime
     implementation deps.androidX.compose.ui
     implementation deps.androidX.compose.foundationLayout
