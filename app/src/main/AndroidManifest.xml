@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Panahon"
-        android:name=".PanahonApp">
+        android:name=".PanahonApplication">
         <activity
             android:name=".MainActivity"
             android:exported="true"
