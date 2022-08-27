@@ -10,7 +10,7 @@ import com.alvindizon.core.navigation.NavigationDestination
 import com.alvindizon.panahon.details.ui.DetailsScreen
 import kotlinx.coroutines.CoroutineScope
 
-object DetailsNavigation: NavigationDestination {
+object DetailsNavigation : NavigationDestination {
     const val locationArg = "location"
     const val latitudeArg = "latitude"
     const val longitudeArg = "longitude"
@@ -25,19 +25,21 @@ fun NavGraphBuilder.detailsGraph(
     scope: CoroutineScope,
     onSearchIconClick: () -> Unit
 ) {
-    composable(route = DetailsNavigation.route,
-    arguments =  listOf(
-        navArgument(DetailsNavigation.locationArg) { type = NavType.StringType },
-        navArgument(DetailsNavigation.latitudeArg) { type = NavType.StringType },
-        navArgument(DetailsNavigation.longitudeArg) { type = NavType.StringType }
-    )) {
+    composable(
+        route = DetailsNavigation.route,
+//        arguments = listOf(
+//            navArgument(DetailsNavigation.locationArg) { type = NavType.StringType },
+//            navArgument(DetailsNavigation.latitudeArg) { type = NavType.StringType },
+//            navArgument(DetailsNavigation.longitudeArg) { type = NavType.StringType }
+//        )
+    ) {
         DetailsScreen(
             scaffoldState = scaffoldState,
             scope = scope,
             viewModel = hiltViewModel(),
-            location = it.arguments?.getString(DetailsNavigation.locationArg)!!,
-            latitude = it.arguments?.getString(DetailsNavigation.latitudeArg)!!,
-            longitude = it.arguments?.getString(DetailsNavigation.longitudeArg)!!,
+//            location = it.arguments?.getString(DetailsNavigation.locationArg)!!,
+//            latitude = it.arguments?.getString(DetailsNavigation.latitudeArg)!!,
+//            longitude = it.arguments?.getString(DetailsNavigation.longitudeArg)!!,
             onSearchIconClick = onSearchIconClick
         )
     }

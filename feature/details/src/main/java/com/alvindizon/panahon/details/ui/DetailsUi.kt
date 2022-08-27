@@ -40,21 +40,18 @@ fun DetailsScreen(
     scaffoldState: ScaffoldState,
     scope: CoroutineScope,
     viewModel: DetailsScreenViewModel,
-    location: String,
-    latitude: String,
-    longitude: String,
     onSearchIconClick: () -> Unit
 ) {
     val context = LocalContext.current
     // need this to prevent infinite loop that happens when using functions
     // ref: https://code.luasoftware.com/tutorials/android/jetpack-compose-load-data-collectasstate-common-mistakes/
     LaunchedEffect(true) {
-        viewModel.fetchDetailedForecast(location, latitude, longitude)
+        viewModel.fetchDetailedForecast()
     }
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = location) },
+                title = { Text(text = viewModel.locationName!!) },
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
                         Icon(Icons.Filled.Menu, stringResource(id = R.string.menu))
