@@ -5,14 +5,18 @@ import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Details
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.alvindizon.core.navigation.NavigationDestination
 import com.alvindizon.panahon.details.navigation.DetailsNavigation
+import com.alvindizon.panahon.home.navigation.HomeNavigation
 import com.alvindizon.panahon.locations.navigation.LocationsNavigation
 import com.alvindizon.panahon.navigation.TopLevelDestination
 import com.alvindizon.panahon.searchlocation.navigation.SearchNavigation
+
 
 @Composable
 fun rememberPanahonAppState(
@@ -21,9 +25,16 @@ fun rememberPanahonAppState(
     return remember { PanahonAppState(navController) }
 }
 
-class PanahonAppState(
-    val navController: NavHostController
-) {
+@Stable
+class PanahonAppState(val navController: NavHostController) {
+
+    val currentRoute: String?
+        @Composable
+        get() = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    val shouldShowBottomBar: Boolean
+        @Composable
+        get() = currentRoute != HomeNavigation.route
 
     val topLevelDestinations: List<TopLevelDestination> = listOf(
         TopLevelDestination(
