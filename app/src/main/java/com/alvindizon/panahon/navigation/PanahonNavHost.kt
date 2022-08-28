@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,13 +14,10 @@ import com.alvindizon.panahon.home.navigation.homeGraph
 import com.alvindizon.panahon.locations.navigation.locationsGraph
 import com.alvindizon.panahon.searchlocation.navigation.SearchNavigation
 import com.alvindizon.panahon.searchlocation.navigation.searchGraph
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun PanahonNavHost(
     navController: NavHostController,
-    scaffoldState: ScaffoldState,
-    scope: CoroutineScope,
     context: Context,
     startDestination: String = HomeNavigation.route,
     finishActivity: () -> Unit,
@@ -58,11 +54,7 @@ fun PanahonNavHost(
             onUpButtonClicked = popBackStack
         )
         searchGraph(onUpButtonClicked = popBackStack)
-        detailsGraph(
-            scaffoldState = scaffoldState,
-            scope = scope,
-            onSearchIconClick = { navController.navigate(SearchNavigation.route) }
-        )
+        detailsGraph(onSearchIconClick = { navController.navigate(SearchNavigation.route) })
     }
 
 }

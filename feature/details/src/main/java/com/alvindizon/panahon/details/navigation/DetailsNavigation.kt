@@ -1,6 +1,5 @@
 package com.alvindizon.panahon.details.navigation
 
-import androidx.compose.material.ScaffoldState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -8,7 +7,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.alvindizon.core.navigation.NavigationDestination
 import com.alvindizon.panahon.details.ui.DetailsScreen
-import kotlinx.coroutines.CoroutineScope
 
 object DetailsNavigation: NavigationDestination {
     const val locationArg = "location"
@@ -21,8 +19,6 @@ object DetailsNavigation: NavigationDestination {
 }
 
 fun NavGraphBuilder.detailsGraph(
-    scaffoldState: ScaffoldState,
-    scope: CoroutineScope,
     onSearchIconClick: () -> Unit
 ) {
     composable(route = DetailsNavigation.route,
@@ -32,8 +28,6 @@ fun NavGraphBuilder.detailsGraph(
         navArgument(DetailsNavigation.longitudeArg) { type = NavType.StringType }
     )) {
         DetailsScreen(
-            scaffoldState = scaffoldState,
-            scope = scope,
             viewModel = hiltViewModel(),
             location = it.arguments?.getString(DetailsNavigation.locationArg)!!,
             latitude = it.arguments?.getString(DetailsNavigation.latitudeArg)!!,
