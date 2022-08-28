@@ -1,45 +1,46 @@
 package com.alvindizon.panahon.ui
 
-import androidx.compose.material.DrawerValue
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberDrawerState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmarks
+import androidx.compose.material.icons.filled.Details
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.alvindizon.core.navigation.NavigationDestination
+import com.alvindizon.panahon.details.navigation.DetailsNavigation
 import com.alvindizon.panahon.locations.navigation.LocationsNavigation
 import com.alvindizon.panahon.navigation.TopLevelDestination
 import com.alvindizon.panahon.searchlocation.navigation.SearchNavigation
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun rememberPanahonAppState(
-    navController: NavHostController = rememberNavController(),
-    scaffoldState: ScaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed)),
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    navController: NavHostController = rememberNavController()
 ): PanahonAppState {
-    return remember { PanahonAppState(navController, scaffoldState, coroutineScope) }
+    return remember { PanahonAppState(navController) }
 }
 
 class PanahonAppState(
-    val navController: NavHostController,
-    val scaffoldState: ScaffoldState,
-    val coroutineScope: CoroutineScope
+    val navController: NavHostController
 ) {
 
     val topLevelDestinations: List<TopLevelDestination> = listOf(
         TopLevelDestination(
             route = LocationsNavigation.route,
-            titleResId = com.alvindizon.panahon.locations.R.string.locations
+            titleResId = com.alvindizon.panahon.locations.R.string.locations,
+            icon = Icons.Filled.Bookmarks
         ),
         TopLevelDestination(
             route = SearchNavigation.route,
-            titleResId = com.alvindizon.panahon.design.R.string.search
-        )
+            titleResId = com.alvindizon.panahon.design.R.string.search,
+            icon = Icons.Filled.Search
+        ),
+        TopLevelDestination(
+            route = DetailsNavigation.route,
+            titleResId = com.alvindizon.panahon.details.R.string.details,
+            icon = Icons.Filled.Details
+        ),
     )
 
     fun navigate(destination: NavigationDestination, route: String? = null) {
@@ -59,9 +60,6 @@ class PanahonAppState(
             }
         } else {
             navController.navigate(route ?: destination.route)
-        }
-        coroutineScope.launch {
-            scaffoldState.drawerState.close()
         }
     }
 
