@@ -26,8 +26,9 @@ fun PanahonApp(
                     onNavigateToDestination = appState::navigate
                 )
             }
-        ) {
+        ) { padding ->
             PanahonNavHost(
+                modifier = Modifier.padding(padding),
                 navController = appState.navController,
                 context = activity,
                 finishActivity = { activity.finish() },
