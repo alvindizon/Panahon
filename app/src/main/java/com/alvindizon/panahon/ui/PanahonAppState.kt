@@ -38,6 +38,11 @@ class PanahonAppState(val navController: NavHostController) {
 
     val topLevelDestinations: List<TopLevelDestination> = listOf(
         TopLevelDestination(
+            route = DetailsNavigation.route,
+            titleResId = com.alvindizon.panahon.details.R.string.details,
+            icon = Icons.Filled.Details
+        ),
+        TopLevelDestination(
             route = LocationsNavigation.route,
             titleResId = com.alvindizon.panahon.locations.R.string.locations,
             icon = Icons.Filled.Bookmarks
@@ -46,11 +51,6 @@ class PanahonAppState(val navController: NavHostController) {
             route = SearchNavigation.route,
             titleResId = com.alvindizon.panahon.design.R.string.search,
             icon = Icons.Filled.Search
-        ),
-        TopLevelDestination(
-            route = DetailsNavigation.route,
-            titleResId = com.alvindizon.panahon.details.R.string.details,
-            icon = Icons.Filled.Details
         ),
     )
 
