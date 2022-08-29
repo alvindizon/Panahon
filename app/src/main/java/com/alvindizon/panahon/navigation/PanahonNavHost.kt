@@ -45,7 +45,8 @@ fun PanahonNavHost(
                     )
                 },
                 onSearchLinkClick = { navController.navigate(SearchNavigation.route) },
-                onErrorOkBtnClick = finishActivity
+                onErrorOkBtnClick = finishActivity,
+                nestedGraphs = { searchGraph(onUpButtonClicked = popBackStack) }
             )
             locationsGraph(
                 onLocationClick = {
@@ -55,7 +56,8 @@ fun PanahonNavHost(
                         )
                     )
                 },
-                onUpButtonClicked = popBackStack
+                onUpButtonClicked = popBackStack,
+                nestedGraphs = { searchGraph(onUpButtonClicked = popBackStack) }
             )
             searchGraph(onUpButtonClicked = popBackStack)
             detailsGraph(onSearchIconClick = { navController.navigate(SearchNavigation.route) })

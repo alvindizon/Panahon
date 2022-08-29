@@ -7,6 +7,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import androidx.navigation.NavDestination
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -16,6 +18,7 @@ import com.alvindizon.panahon.home.navigation.HomeNavigation
 import com.alvindizon.panahon.locations.navigation.LocationsNavigation
 import com.alvindizon.panahon.navigation.TopLevelDestination
 import com.alvindizon.panahon.searchlocation.navigation.SearchNavigation
+import timber.log.Timber
 
 
 @Composable
@@ -28,27 +31,30 @@ fun rememberPanahonAppState(
 @Stable
 class PanahonAppState(val navController: NavHostController) {
 
-    val currentRoute: String?
+    val currentNavDestination: NavDestination?
         @Composable
-        get() = navController.currentBackStackEntryAsState().value?.destination?.route
+        get() = navController.currentBackStackEntryAsState().value?.destination
 
     val shouldShowBottomBar: Boolean
         @Composable
-        get() = currentRoute != HomeNavigation.route
+        get() = currentNavDestination?.route != HomeNavigation.destination
 
     val topLevelDestinations: List<TopLevelDestination> = listOf(
         TopLevelDestination(
             route = DetailsNavigation.route,
+            destination = DetailsNavigation.destination,
             titleResId = com.alvindizon.panahon.details.R.string.details,
             icon = Icons.Filled.Details
         ),
         TopLevelDestination(
             route = LocationsNavigation.route,
+            destination = LocationsNavigation.destination,
             titleResId = com.alvindizon.panahon.locations.R.string.locations,
             icon = Icons.Filled.Bookmarks
         ),
         TopLevelDestination(
             route = SearchNavigation.route,
+            destination = SearchNavigation.destination,
             titleResId = com.alvindizon.panahon.design.R.string.search,
             icon = Icons.Filled.Search
         ),
@@ -60,14 +66,12 @@ class PanahonAppState(val navController: NavHostController) {
                 // Pop up to the start destination of the graph to
                 // avoid building up a large stack of destinations
                 // on the back stack as users select items
-                navController.graph.startDestinationRoute?.let { route ->
-                    popUpTo(route) { saveState = true }
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
                 }
                 // Avoid multiple copies of the same destination when
                 // reselecting the same item
                 launchSingleTop = true
-                // Restore state when reselecting a previously selected item
-                restoreState = true
             }
         } else {
             navController.navigate(route ?: destination.route)

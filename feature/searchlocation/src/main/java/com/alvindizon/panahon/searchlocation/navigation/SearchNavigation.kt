@@ -8,6 +8,7 @@ import com.alvindizon.panahon.searchlocation.search.SearchScreen
 
 object SearchNavigation : NavigationDestination {
     override val route: String = "search_route"
+    override val destination: String = "search_destination"
 }
 
 fun NavGraphBuilder.searchGraph(
