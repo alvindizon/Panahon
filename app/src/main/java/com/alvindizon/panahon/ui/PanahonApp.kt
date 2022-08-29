@@ -21,7 +21,7 @@ fun PanahonApp(
             ),
             bottomBar = {
                 if (appState.shouldShowBottomBar) PanahonBottomNavBar(
-                    currentRoute = appState.currentRoute,
+                    currentNavDestination = appState.currentNavDestination,
                     destinations = appState.topLevelDestinations,
                     onNavigateToDestination = appState::navigate
                 )

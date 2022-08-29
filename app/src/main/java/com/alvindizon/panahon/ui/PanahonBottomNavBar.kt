@@ -7,11 +7,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
 import com.alvindizon.panahon.navigation.TopLevelDestination
 
 @Composable
 fun PanahonBottomNavBar(
-    currentRoute: String?,
+    currentNavDestination: NavDestination?,
     destinations: List<TopLevelDestination>,
     onNavigateToDestination: (TopLevelDestination) -> Unit
 ) {
@@ -24,7 +26,9 @@ fun PanahonBottomNavBar(
                 selectedContentColor = Color.White,
                 unselectedContentColor = Color.White.copy(0.4f),
                 alwaysShowLabel = true,
-                selected = currentRoute?.contains(dest.route) ?: false,
+                selected = currentNavDestination?.hierarchy?.any {
+                    it.route?.contains(dest.route) ?: false
+                } == true,
                 onClick = { onNavigateToDestination(dest) }
             )
         }

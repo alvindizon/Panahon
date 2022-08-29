@@ -12,7 +12,9 @@ object DetailsNavigation: NavigationDestination {
     const val locationArg = "location"
     const val latitudeArg = "latitude"
     const val longitudeArg = "longitude"
+
     override val route: String = "details_route/{$locationArg}/{$latitudeArg}/{$longitudeArg}"
+    override val destination: String = "details_destination"
 
     fun createNavigationRoute(location: String, latitude: String, longitude: String): String =
         "details_route/$location/$latitude/$longitude"

@@ -6,6 +6,7 @@ import com.alvindizon.core.navigation.NavigationDestination
 
 data class TopLevelDestination(
     override val route: String,
+    override val destination: String,
     @StringRes val titleResId: Int,
     val icon: ImageVector
 ): NavigationDestination
