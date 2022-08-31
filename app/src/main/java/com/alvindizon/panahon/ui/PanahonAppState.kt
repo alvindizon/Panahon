@@ -2,8 +2,8 @@ package com.alvindizon.panahon.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmarks
-import androidx.compose.material.icons.filled.Details
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -18,7 +18,6 @@ import com.alvindizon.panahon.home.navigation.HomeNavigation
 import com.alvindizon.panahon.locations.navigation.LocationsNavigation
 import com.alvindizon.panahon.navigation.TopLevelDestination
 import com.alvindizon.panahon.searchlocation.navigation.SearchNavigation
-import timber.log.Timber
 
 
 @Composable
@@ -43,8 +42,8 @@ class PanahonAppState(val navController: NavHostController) {
         TopLevelDestination(
             route = DetailsNavigation.route,
             destination = DetailsNavigation.destination,
-            titleResId = com.alvindizon.panahon.details.R.string.details,
-            icon = Icons.Filled.Details
+            titleResId = com.alvindizon.panahon.details.R.string.weather,
+            icon = Icons.Filled.WbSunny
         ),
         TopLevelDestination(
             route = LocationsNavigation.route,
