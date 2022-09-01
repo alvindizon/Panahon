@@ -3,10 +3,7 @@ package com.alvindizon.panahon.home.viewmodel
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import com.alvindizon.panahon.home.model.CurrentLocation
-import com.alvindizon.panahon.home.usecase.CheckLocationIsOnUseCase
-import com.alvindizon.panahon.home.usecase.CheckPreciseLocationEnabledUseCase
-import com.alvindizon.panahon.home.usecase.FetchCurrentLocationUseCase
-import com.alvindizon.panahon.home.usecase.GetHomeLocationUseCase
+import com.alvindizon.panahon.home.usecase.*
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +28,8 @@ class HomeScreenViewModelTest {
 
     private val checkLocationIsOnUseCase: CheckLocationIsOnUseCase = mockk()
 
+    private val saveLocationToDbUseCase: SaveLocationToDbUseCase = mockk()
+
     private val currentLocation: CurrentLocation =
         CurrentLocation("Sydney", "-33.865143", "151.209900")
 
@@ -43,7 +42,8 @@ class HomeScreenViewModelTest {
             getHomeLocationUseCase,
             checkPreciseLocationEnabledUseCase,
             fetchCurrentLocationUseCase,
-            checkLocationIsOnUseCase
+            checkLocationIsOnUseCase,
+            saveLocationToDbUseCase
         )
     }
 
@@ -53,13 +53,13 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun `verify uiState is LocationFound if getHomeLocationUseCase returns CurrentLocation`() =
+    fun `verify uiState is HomeLocationExists if getHomeLocationUseCase returns CurrentLocation`() =
         runTest {
             coEvery { getHomeLocationUseCase.execute() } returns currentLocation
             assert(viewModel.uiState.value is HomeScreenUiState.Loading)
             viewModel.getHomeLocation()
-            assert(viewModel.uiState.value is HomeScreenUiState.LocationFound)
-            val result = viewModel.uiState.value as HomeScreenUiState.LocationFound
+            assert(viewModel.uiState.value is HomeScreenUiState.HomeLocationExists)
+            val result = viewModel.uiState.value as HomeScreenUiState.HomeLocationExists
             assertEquals(currentLocation, result.location)
         }
 
