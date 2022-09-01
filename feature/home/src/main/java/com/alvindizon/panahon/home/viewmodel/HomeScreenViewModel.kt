@@ -5,10 +5,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.home.model.CurrentLocation
-import com.alvindizon.panahon.home.usecase.CheckLocationIsOnUseCase
-import com.alvindizon.panahon.home.usecase.CheckPreciseLocationEnabledUseCase
-import com.alvindizon.panahon.home.usecase.FetchCurrentLocationUseCase
-import com.alvindizon.panahon.home.usecase.GetHomeLocationUseCase
+import com.alvindizon.panahon.home.usecase.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +21,7 @@ sealed interface HomeScreenUiState {
     data class ShowRationale(val isLocationUnavailable: Boolean = false) : HomeScreenUiState
     object LocationOn : HomeScreenUiState
     data class Error(val message: String?) : HomeScreenUiState
+    data class HomeLocationExists(val location: CurrentLocation) : HomeScreenUiState
 }
 
 @HiltViewModel
@@ -31,7 +29,8 @@ class HomeScreenViewModel @Inject constructor(
     private val getHomeLocationUseCase: GetHomeLocationUseCase,
     private val checkPreciseLocationEnabledUseCase: CheckPreciseLocationEnabledUseCase,
     private val fetchCurrentLocationUseCase: FetchCurrentLocationUseCase,
-    private val checkLocationIsOnUseCase: CheckLocationIsOnUseCase
+    private val checkLocationIsOnUseCase: CheckLocationIsOnUseCase,
+    private val saveLocationToDbUseCase: SaveLocationToDbUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState.Loading)
@@ -44,7 +43,7 @@ class HomeScreenViewModel @Inject constructor(
                 getHomeLocationUseCase.execute()
             }.onSuccess {
                 if (it != null) {
-                    _uiState.value = HomeScreenUiState.LocationFound(it)
+                    _uiState.value = HomeScreenUiState.HomeLocationExists(it)
                 } else {
                     // if no home location in DB check if precise location is enabled
                     _uiState.value = HomeScreenUiState.CheckPreciseLocationEnabled
@@ -98,6 +97,22 @@ class HomeScreenViewModel @Inject constructor(
                 if (it) {
                     _uiState.value = HomeScreenUiState.LocationOn
                 }
+            }
+        }
+    }
+
+    fun saveLocationToDb(currentLocation: CurrentLocation) {
+        viewModelScope.launch {
+            runCatching {
+                saveLocationToDbUseCase.execute(
+                    currentLocation.locationName,
+                    currentLocation.latitude,
+                    currentLocation.longitude
+                )
+            }.onSuccess {
+                _uiState.value = HomeScreenUiState.HomeLocationExists(currentLocation)
+            }.onFailure {
+                _uiState.value = HomeScreenUiState.Error(it.message)
             }
         }
     }

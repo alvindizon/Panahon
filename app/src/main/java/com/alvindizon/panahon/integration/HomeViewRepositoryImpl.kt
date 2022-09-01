@@ -11,7 +11,16 @@ class HomeViewRepositoryImpl @Inject constructor(private val panahonRepo: Panaho
     HomeViewRepository {
 
     override suspend fun getHomeLocation(): CurrentLocation? {
-        // TODO add call to select item in DB for home location
-        return null
+        return panahonRepo.getHomeLocation()?.run { CurrentLocation(name, latitude, longitude) }
     }
+
+    override suspend fun saveHomeLocationToDatabase(name: String, latitude: String, longitude: String) =
+        panahonRepo.saveLocationToDatabase(name, latitude, longitude, true)
+
+    override suspend fun updateDbLocation(
+        name: String,
+        latitude: String,
+        longitude: String,
+        isHomeLocation: Boolean
+    ) = panahonRepo.updateLocation(name, latitude, longitude, isHomeLocation)
 }

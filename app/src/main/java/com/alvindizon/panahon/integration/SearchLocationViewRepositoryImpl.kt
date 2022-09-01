@@ -12,7 +12,7 @@ import javax.inject.Singleton
 class SearchLocationViewRepositoryImpl @Inject constructor(private val panahonRepo: PanahonRepo): SearchLocationViewRepository {
 
     override suspend fun saveLocationToDatabase(name: String, latitude: String, longitude: String) =
-        panahonRepo.saveLocationToDatabase(name, latitude, longitude)
+        panahonRepo.saveLocationToDatabase(name, latitude, longitude, false)
 
     override fun searchForLocation(query: String): Flow<List<SearchResult>> =
         flow {

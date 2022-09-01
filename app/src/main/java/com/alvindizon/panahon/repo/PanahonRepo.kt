@@ -25,9 +25,13 @@ interface PanahonRepo {
         limit: String
     ): List<DirectGeocodeResponseItem>
 
-    suspend fun saveLocationToDatabase(name: String, latitude: String, longitude: String)
+    suspend fun saveLocationToDatabase(name: String, latitude: String, longitude: String, isHomeLocation: Boolean)
 
     fun fetchSavedLocations(): Flow<List<Location>>
+
+    suspend fun getHomeLocation(): Location?
+
+    suspend fun updateLocation(name: String, latitude: String, longitude: String, isHomeLocation: Boolean)
 }
 
 @Singleton
@@ -52,10 +56,19 @@ class PanahonRepoImpl @Inject constructor(
         limit: String
     ): List<DirectGeocodeResponseItem> = api.getCities(location, limit, BuildConfig.OPENWEATHER_KEY)
 
-    override suspend fun saveLocationToDatabase(name: String, latitude: String, longitude: String) =
-        dao.insert(Location(name, latitude, longitude, false))
+    override suspend fun saveLocationToDatabase(name: String, latitude: String, longitude: String, isHomeLocation: Boolean) =
+        dao.insert(Location(name, latitude, longitude, isHomeLocation))
 
     override fun fetchSavedLocations(): Flow<List<Location>> = dao.fetchLocations()
+
+    override suspend fun getHomeLocation(): Location? = dao.getHomeLocation()
+
+    override suspend fun updateLocation(
+        name: String,
+        latitude: String,
+        longitude: String,
+        isHomeLocation: Boolean
+    ) = dao.update(Location(name, latitude, longitude, isHomeLocation))
 
     companion object {
         private const val OPENWEATHER_UNIT = "metric"
