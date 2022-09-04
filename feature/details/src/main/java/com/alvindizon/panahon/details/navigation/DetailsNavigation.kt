@@ -21,7 +21,8 @@ object DetailsNavigation: NavigationDestination {
 }
 
 fun NavGraphBuilder.detailsGraph(
-    onSearchIconClick: () -> Unit
+    onSearchIconClick: () -> Unit,
+    onNavigationIconClick: () -> Unit
 ) {
     composable(route = DetailsNavigation.route,
     arguments =  listOf(
@@ -34,7 +35,8 @@ fun NavGraphBuilder.detailsGraph(
             location = it.arguments?.getString(DetailsNavigation.locationArg)!!,
             latitude = it.arguments?.getString(DetailsNavigation.latitudeArg)!!,
             longitude = it.arguments?.getString(DetailsNavigation.longitudeArg)!!,
-            onSearchIconClick = onSearchIconClick
+            onSearchIconClick = onSearchIconClick,
+            onNavigationIconClick = onNavigationIconClick
         )
     }
 }

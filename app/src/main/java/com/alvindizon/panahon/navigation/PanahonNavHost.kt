@@ -13,6 +13,7 @@ import com.alvindizon.panahon.details.navigation.DetailsNavigation
 import com.alvindizon.panahon.details.navigation.detailsGraph
 import com.alvindizon.panahon.home.navigation.HomeNavigation
 import com.alvindizon.panahon.home.navigation.homeGraph
+import com.alvindizon.panahon.locations.navigation.LocationsNavigation
 import com.alvindizon.panahon.locations.navigation.locationsGraph
 import com.alvindizon.panahon.searchlocation.navigation.SearchNavigation
 import com.alvindizon.panahon.searchlocation.navigation.searchGraph
@@ -60,7 +61,10 @@ fun PanahonNavHost(
                 nestedGraphs = { searchGraph(onUpButtonClicked = popBackStack) }
             )
             searchGraph(onUpButtonClicked = popBackStack)
-            detailsGraph(onSearchIconClick = { navController.navigate(SearchNavigation.route) })
+            detailsGraph(
+                onSearchIconClick = { navController.navigate(SearchNavigation.route) },
+                onNavigationIconClick = { navController.navigate(LocationsNavigation.route) }
+            )
         }
     }
 
