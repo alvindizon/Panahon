@@ -18,14 +18,7 @@ fun PanahonApp(
         Scaffold(
             modifier = Modifier.windowInsetsPadding(
                 WindowInsets.safeDrawing.only(WindowInsetsSides.Vertical)
-            ),
-            bottomBar = {
-                if (appState.shouldShowBottomBar) PanahonBottomNavBar(
-                    currentNavDestination = appState.currentNavDestination,
-                    destinations = appState.topLevelDestinations,
-                    onNavigateToDestination = appState::navigate
-                )
-            }
+            )
         ) { padding ->
             PanahonNavHost(
                 modifier = Modifier.padding(padding),

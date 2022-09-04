@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +32,8 @@ import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.model.HourlyForecast
 import com.alvindizon.panahon.details.viewmodel.DetailsScreenUiState
 import com.alvindizon.panahon.details.viewmodel.DetailsScreenViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun DetailsScreen(
@@ -38,7 +41,8 @@ fun DetailsScreen(
     location: String,
     latitude: String,
     longitude: String,
-    onSearchIconClick: () -> Unit
+    onSearchIconClick: () -> Unit,
+    onNavigationIconClick: () -> Unit
 ) {
     val context = LocalContext.current
     // need this to prevent infinite loop that happens when using functions
@@ -50,6 +54,11 @@ fun DetailsScreen(
         topBar = {
             TopAppBar(
                 title = { Text(text = location) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigationIconClick) {
+                        Icon(Icons.Filled.Menu, stringResource(id = R.string.menu))
+                    }
+                },
                 actions = {
                     IconButton(onClick = { onSearchIconClick() }) {
                         Icon(
