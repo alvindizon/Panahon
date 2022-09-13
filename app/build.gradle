@@ -41,7 +41,8 @@ android {
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
                 "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview"
+                "-opt-in=kotlinx.coroutines.FlowPreview",
+                "-opt-in=androidx.compose.animation.ExperimentalAnimationApi"
         ]
     }
     buildFeatures {
@@ -121,6 +122,9 @@ dependencies {
 
     // Coil
     implementation deps.coilCompose
+
+    // Accompanist
+    implementation deps.accompanist.navigationAnimation
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
