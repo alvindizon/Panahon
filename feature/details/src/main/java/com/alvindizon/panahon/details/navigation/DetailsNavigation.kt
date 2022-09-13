@@ -3,12 +3,12 @@ package com.alvindizon.panahon.details.navigation
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.alvindizon.core.navigation.NavigationDestination
 import com.alvindizon.panahon.details.ui.DetailsScreen
+import com.google.accompanist.navigation.animation.composable
 
-object DetailsNavigation: NavigationDestination {
+object DetailsNavigation : NavigationDestination {
     const val locationArg = "location"
     const val latitudeArg = "latitude"
     const val longitudeArg = "longitude"
@@ -24,12 +24,14 @@ fun NavGraphBuilder.detailsGraph(
     onSearchIconClick: () -> Unit,
     onNavigationIconClick: () -> Unit
 ) {
-    composable(route = DetailsNavigation.route,
-    arguments =  listOf(
-        navArgument(DetailsNavigation.locationArg) { type = NavType.StringType },
-        navArgument(DetailsNavigation.latitudeArg) { type = NavType.StringType },
-        navArgument(DetailsNavigation.longitudeArg) { type = NavType.StringType }
-    )) {
+    composable(
+        route = DetailsNavigation.route,
+        arguments = listOf(
+            navArgument(DetailsNavigation.locationArg) { type = NavType.StringType },
+            navArgument(DetailsNavigation.latitudeArg) { type = NavType.StringType },
+            navArgument(DetailsNavigation.longitudeArg) { type = NavType.StringType }
+        )
+    ) {
         DetailsScreen(
             viewModel = hiltViewModel(),
             location = it.arguments?.getString(DetailsNavigation.locationArg)!!,

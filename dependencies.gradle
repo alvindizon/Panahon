@@ -31,6 +31,7 @@ def versions = [:]
     versions.coreLibraryDesugarVersion = "1.1.5"
     versions.playServicesLocationVersion = "20.0.0"
     versions.timber = "5.0.1"
+    versions.accompanist = "0.25.1"
 ext.versions = versions
 
 def buildVersions = [:]
@@ -114,6 +115,10 @@ deps.coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:$versions.coreL
 deps.playServicesLocation = "com.google.android.gms:play-services-location:$versions.playServicesLocationVersion"
 
 deps.timber = "com.jakewharton.timber:timber:$versions.timber"
+
+def accompanist=[:]
+    accompanist.navigationAnimation = "com.google.accompanist:accompanist-navigation-animation:$versions.accompanist"
+deps.accompanist = accompanist
 
 ext.deps = deps
 
