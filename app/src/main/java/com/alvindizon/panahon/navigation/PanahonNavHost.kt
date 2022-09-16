@@ -58,6 +58,7 @@ fun PanahonNavHost(
                     )
                 },
                 onUpButtonClicked = popBackStack,
+                onSearchIconClick = { navController.navigate(SearchNavigation.route) },
                 nestedGraphs = { searchGraph(onUpButtonClicked = popBackStack) }
             )
             searchGraph(onUpButtonClicked = popBackStack)

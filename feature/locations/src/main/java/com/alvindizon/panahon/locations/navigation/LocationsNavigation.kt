@@ -19,6 +19,7 @@ object LocationsNavigation : NavigationDestination {
 fun NavGraphBuilder.locationsGraph(
     onLocationClick: (LocationForecast) -> Unit,
     onUpButtonClicked: () -> Unit,
+    onSearchIconClick: () -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
 ) {
     navigation(
@@ -33,7 +34,8 @@ fun NavGraphBuilder.locationsGraph(
             LocationsScreen(
                 viewModel = hiltViewModel(),
                 onLocationClick = onLocationClick,
-                onUpButtonClicked = onUpButtonClicked
+                onUpButtonClicked = onUpButtonClicked,
+                onSearchIconClick = onSearchIconClick
             )
         }
         nestedGraphs()

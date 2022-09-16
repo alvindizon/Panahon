@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,6 +36,7 @@ fun LocationsScreen(
     viewModel: LocationScreenViewModel,
     onLocationClick: (LocationForecast) -> Unit,
     onUpButtonClicked: () -> Unit,
+    onSearchIconClick: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -53,6 +55,14 @@ fun LocationsScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.back)
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { onSearchIconClick() }) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = stringResource(id = R.string.search)
                         )
                     }
                 }
