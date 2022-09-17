@@ -32,6 +32,7 @@ def versions = [:]
     versions.playServicesLocationVersion = "20.0.0"
     versions.timber = "5.0.1"
     versions.accompanist = "0.25.1"
+    versions.datastore = "1.0.0"
 ext.versions = versions
 
 def buildVersions = [:]
@@ -49,6 +50,7 @@ def androidX = [:]
     androidX.navigation = "androidx.navigation:navigation-compose:$versions.navigationVersion"
     androidX.hiltCompiler = "androidx.hilt:hilt-compiler:$versions.hiltAndroidXVersion"
     androidX.hiltNavigationCompose = "androidx.hilt:hilt-navigation-compose:$versions.hiltNavComposeVersion"
+    androidX.datastore = "androidx.datastore:datastore-preferences:$versions.datastore"
 
     def compose = [:]
         compose.runtime ="androidx.compose.runtime:runtime:$versions.composeVersion"
