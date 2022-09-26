@@ -11,7 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,8 +32,6 @@ import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.model.HourlyForecast
 import com.alvindizon.panahon.details.viewmodel.DetailsScreenUiState
 import com.alvindizon.panahon.details.viewmodel.DetailsScreenViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun DetailsScreen(
@@ -41,7 +39,7 @@ fun DetailsScreen(
     location: String,
     latitude: String,
     longitude: String,
-    onSearchIconClick: () -> Unit,
+    onSettingsIconClick: () -> Unit,
     onNavigationIconClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -60,10 +58,10 @@ fun DetailsScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onSearchIconClick() }) {
+                    IconButton(onClick = { onSettingsIconClick() }) {
                         Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = stringResource(id = R.string.search)
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = stringResource(id = R.string.settings)
                         )
                     }
                 }

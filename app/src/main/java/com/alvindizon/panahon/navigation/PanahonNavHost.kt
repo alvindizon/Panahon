@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.alvindizon.features.settings.navigation.SettingsNavigation
+import com.alvindizon.features.settings.navigation.settingsGraph
 import com.alvindizon.panahon.details.navigation.DetailsNavigation
 import com.alvindizon.panahon.details.navigation.detailsGraph
 import com.alvindizon.panahon.home.navigation.HomeNavigation
@@ -63,9 +65,10 @@ fun PanahonNavHost(
             )
             searchGraph(onUpButtonClicked = popBackStack)
             detailsGraph(
-                onSearchIconClick = { navController.navigate(SearchNavigation.route) },
+                onSettingsIconClick = { navController.navigate(SettingsNavigation.route) },
                 onNavigationIconClick = { navController.navigate(LocationsNavigation.route) }
             )
+            settingsGraph(onUpButtonClicked = popBackStack)
         }
     }
 

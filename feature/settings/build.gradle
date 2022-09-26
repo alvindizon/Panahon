@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
     id 'kotlin-parcelize'
@@ -11,18 +11,11 @@ android {
     compileSdk buildVersions.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.alvindizon.panahon"
         minSdk buildVersions.minSdkVersion
         targetSdk buildVersions.targetSdkVersion
-        versionCode 1
-        versionName "0.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
-        }
-        buildConfigField "String", "UNSPLASH_KEY", "\"" + getAccessKey('UNSPLASH_KEY') + "\""
-        buildConfigField "String", "OPENWEATHER_KEY", "\"" + getAccessKey('OPENWEATHER_KEY') + "\""
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -51,26 +44,24 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion versions.composeCompilerVersion
     }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+            // Show test results.
+            testLogging {
+                events "passed", "skipped", "failed"
+            }
         }
     }
+    // new way of declaring package name for module
+    namespace 'com.alvindizon.panahon.features.settings'
 }
 
 dependencies {
-    implementation project(":data:networking")
-    implementation project(":data:api")
-    implementation project(":data:db")
     implementation project(":common:design")
     implementation project(":common:core")
     implementation project(":common:navigation")
-    implementation project(":feature:locations")
-    implementation project(":feature:searchlocation")
-    implementation project(":feature:details")
-    implementation project(":feature:home")
-    implementation project(":feature:settings")
-    // Compose
+    implementation project(":common:preferences")
     implementation deps.androidX.compose.runtime
     implementation deps.androidX.compose.ui
     implementation deps.androidX.compose.foundationLayout
@@ -81,27 +72,12 @@ dependencies {
     implementation deps.androidX.compose.uiTooling
     implementation deps.androidX.compose.runtimeLivedata
 
-    // Compose navigation
-    implementation deps.androidX.navigation
-
-    // Room
-    implementation deps.androidX.room.runtime
-    kapt deps.androidX.room.compiler
-    implementation deps.androidX.room.roomKtx
-
     // Coroutines
     implementation deps.coroutines.core
     implementation deps.coroutines.android
 
     // Coroutine Lifecycle Scopes
     implementation deps.androidX.lifecycleRuntimeKtx
-
-    // Retrofit
-    implementation deps.network.retrofit.retrofit
-    implementation deps.network.moshi.moshi
-    implementation deps.network.retrofit.moshiConverter
-    implementation deps.network.interceptor
-    kapt deps.network.moshi.codegen
 
     implementation deps.androidX.activityCompose
     implementation deps.androidX.coreKtx
@@ -126,28 +102,4 @@ dependencies {
 
     // Accompanist
     implementation deps.accompanist.navigationAnimation
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        // Treat all Kotlin warnings as errors (disabled by default)
-        allWarningsAsErrors = project.hasProperty("warningsAsErrors") ? project.warningsAsErrors : false
-
-        freeCompilerArgs += '-Xopt-in=kotlin.RequiresOptIn'
-        // Enable experimental coroutines APIs, including Flow
-        freeCompilerArgs += '-Xopt-in=kotlin.Experimental'
-
-        // Set JVM target to 1.8
-        jvmTarget = "1.8"
-    }
-}
-
-String getAccessKey(String keyName) {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    def applicationKey = properties.getProperty(keyName)
-    if (applicationKey == null || "" == applicationKey) {
-        throw new IllegalStateException("Set your ${keyName} access key in local.properties file.")
-    }
-    return applicationKey
 }
