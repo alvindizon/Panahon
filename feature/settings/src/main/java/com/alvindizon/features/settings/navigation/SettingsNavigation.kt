@@ -2,6 +2,7 @@ package com.alvindizon.features.settings.navigation
 
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
 import com.alvindizon.core.navigation.NavigationDestination
@@ -12,7 +13,6 @@ object SettingsNavigation : NavigationDestination {
     override val route: String = "settings_route"
     override val destination: String = "settings_destination"
 }
-
 
 fun NavGraphBuilder.settingsGraph(
     onUpButtonClicked: () -> Unit
@@ -26,7 +26,7 @@ fun NavGraphBuilder.settingsGraph(
             enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) },
             exitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) }
         ) {
-            SettingsScreen(onUpButtonClicked = onUpButtonClicked)
+            SettingsScreen(viewModel = hiltViewModel(), onUpButtonClicked = onUpButtonClicked)
         }
     }
 }

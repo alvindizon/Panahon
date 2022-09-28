@@ -45,4 +45,5 @@ dependencies {
     implementation deps.androidX.compose.animation
     implementation deps.androidX.compose.uiTooling
     implementation deps.androidX.compose.runtimeLivedata
+    implementation deps.timber
 }
