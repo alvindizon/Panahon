@@ -86,6 +86,7 @@ dependencies {
     testImplementation deps.junit
     testImplementation deps.androidX.test.core
     testImplementation deps.mockk
+    testImplementation deps.coroutines.test
     androidTestImplementation deps.androidX.test.testExtJunit
     androidTestImplementation deps.androidX.test.espresso
     androidTestImplementation deps.androidX.test.composeJunit4
