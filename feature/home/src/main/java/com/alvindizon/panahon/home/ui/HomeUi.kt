@@ -64,7 +64,7 @@ fun HomeScreen(
 
     val state = viewModel.uiState.collectAsState().value
 
-    Scaffold(scaffoldState = scaffoldState) {
+    Scaffold(scaffoldState = scaffoldState) { padding ->
         when (state) {
             is HomeScreenUiState.LocationFound -> {
                 LaunchedEffect(Unit) {
@@ -87,8 +87,9 @@ fun HomeScreen(
                     viewModel.fetchCurrentLocation()
                 }
             }
-            HomeScreenUiState.Loading -> LoadingScreen()
+            HomeScreenUiState.Loading -> LoadingScreen(modifier = Modifier.padding(padding))
             is HomeScreenUiState.ShowRationale -> LocationRationaleScreen(
+                modifier = Modifier.padding(padding),
                 scaffoldState = scaffoldState,
                 showSnackbar = showSnackbar,
                 setShowSnackbar = setShowSnackbar,
@@ -113,6 +114,7 @@ fun HomeScreen(
 
 @Composable
 fun LocationRationaleScreen(
+    modifier: Modifier = Modifier,
     scaffoldState: ScaffoldState,
     showSnackbar: Boolean,
     showLocationUnavailableMsg: Boolean,
@@ -155,7 +157,7 @@ fun LocationRationaleScreen(
         }
     }
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,

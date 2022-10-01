@@ -68,11 +68,12 @@ fun LocationsScreen(
                 }
             )
         }
-    ) {
+    ) { padding ->
         when (val state = viewModel.locationScreenUiState.collectAsState().value) {
-            LocationScreenUiState.Loading -> LoadingScreen()
+            LocationScreenUiState.Loading -> LoadingScreen(Modifier.padding(padding))
             is LocationScreenUiState.Success -> {
                 LocationsList(
+                    modifier = Modifier.padding(padding),
                     locationForecasts = state.list,
                     onLocationClick = { onLocationClick(it) }
                 )
@@ -94,10 +95,11 @@ fun LocationsScreen(
 
 @Composable
 fun LocationsList(
+    modifier: Modifier = Modifier,
     locationForecasts: List<LocationForecast>,
     onLocationClick: (LocationForecast) -> Unit
 ) {
-    Column {
+    Column(modifier = modifier) {
         LazyColumn(contentPadding = PaddingValues(top = 8.dp)) {
             items(locationForecasts) { locationForecast ->
                 LocationsListItem(locationForecast) { onLocationClick(it) }

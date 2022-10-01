@@ -44,13 +44,13 @@ fun SettingsScreen(
                 },
             )
         }
-    ) {
-        Settings(state = state, viewModel = viewModel)
+    ) { padding ->
+        Settings(state = state, viewModel = viewModel, modifier = Modifier.padding(padding))
     }
 }
 
 @Composable
-internal fun Settings(state: SettingsUiState, viewModel: SettingsViewModel) {
+internal fun Settings(state: SettingsUiState, viewModel: SettingsViewModel, modifier: Modifier = Modifier) {
     val scaffoldState = rememberScaffoldState()
     var showSnackBar by remember { mutableStateOf(false) }
     val initialTempUnitIndex = state.preferredTempUnitIndex
@@ -66,9 +66,10 @@ internal fun Settings(state: SettingsUiState, viewModel: SettingsViewModel) {
         }
     }
     when {
-        state.isLoading -> LoadingScreen()
+        state.isLoading -> LoadingScreen(modifier)
         state.errorMessage != null -> showSnackBar = true
         else -> Settings(
+            modifier = modifier,
             initialTempUnitIndex = initialTempUnitIndex,
             onTempUnitClick = viewModel::setPreferredTemperatureUnit
         )
@@ -76,8 +77,8 @@ internal fun Settings(state: SettingsUiState, viewModel: SettingsViewModel) {
 }
 
 @Composable
-internal fun Settings(initialTempUnitIndex: Int, onTempUnitClick: (Int) -> Unit) {
-    Column(modifier = Modifier.fillMaxSize()) {
+internal fun Settings(modifier: Modifier = Modifier, initialTempUnitIndex: Int, onTempUnitClick: (Int) -> Unit) {
+    Column(modifier = modifier.fillMaxSize()) {
         Text(
             modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
             text = stringResource(id = R.string.unit_header)
@@ -131,8 +132,8 @@ fun SettingsUiPreview() {
                     },
                 )
             }
-        ) {
-            Settings(initialTempUnitIndex = 0, onTempUnitClick = {})
+        ) { padding ->
+            Settings(modifier = Modifier.padding(padding), initialTempUnitIndex = 0, onTempUnitClick = {})
         }
     }
 }

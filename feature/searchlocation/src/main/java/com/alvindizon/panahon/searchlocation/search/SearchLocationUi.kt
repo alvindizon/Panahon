@@ -78,10 +78,10 @@ fun SearchScreen(
                 onSearchQueryChanged = { viewModel.searchForLocations(it) }
             )
         }
-    ) {
+    ) { padding ->
         when (state) {
-            SearchLocationUiState.Empty -> NoSearchResults()
-            is SearchLocationUiState.Searching -> LoadingScreen()
+            SearchLocationUiState.Empty -> NoSearchResults(Modifier.padding(padding))
+            is SearchLocationUiState.Searching -> LoadingScreen(Modifier.padding(padding))
             is SearchLocationUiState.Error -> {
                 Toast.makeText(
                     context,
@@ -91,6 +91,7 @@ fun SearchScreen(
             }
             is SearchLocationUiState.Success -> {
                 SearchResultList(
+                    modifier = Modifier.padding(padding),
                     searchResults = state.searchResults,
                     onSearchResultClicked = {
                         viewModel.saveResultToDb(it)
@@ -201,10 +202,11 @@ fun SearchResultItem(searchResult: SearchResult, onResultClick: (SearchResult) -
 
 @Composable
 fun SearchResultList(
+    modifier: Modifier = Modifier,
     searchResults: List<SearchResult>,
     onSearchResultClicked: (SearchResult) -> Unit
 ) {
-    Column {
+    Column(modifier) {
         LazyColumn(contentPadding = PaddingValues(top = 8.dp)) {
             items(searchResults) { searchResult ->
                 SearchResultItem(searchResult) { onSearchResultClicked(it) }
@@ -214,9 +216,9 @@ fun SearchResultList(
 }
 
 @Composable
-fun NoSearchResults() {
+fun NoSearchResults(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
