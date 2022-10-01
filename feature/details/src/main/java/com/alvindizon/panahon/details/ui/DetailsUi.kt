@@ -67,23 +67,26 @@ fun DetailsScreen(
                 }
             )
         }
-    ) {
+    ) { padding ->
         when (val state = viewModel.uiState.collectAsState().value) {
-            is DetailsScreenUiState.Success -> DetailedForecast(state.detailedForecast)
+            is DetailsScreenUiState.Success -> DetailedForecastScreen(
+                Modifier.padding(padding),
+                state.detailedForecast
+            )
             is DetailsScreenUiState.Error -> Toast.makeText(
                 context,
                 "Error: ${state.message}",
                 Toast.LENGTH_SHORT
             ).show()
-            else -> LoadingScreen()
+            else -> LoadingScreen(Modifier.padding(padding))
         }
     }
 }
 
 @Composable
-fun DetailedForecast(detailedForecast: DetailedForecast) {
+fun DetailedForecastScreen(modifier: Modifier = Modifier, detailedForecast: DetailedForecast) {
     Column(
-        modifier = Modifier.verticalScroll(rememberScrollState()),
+        modifier = modifier.verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
