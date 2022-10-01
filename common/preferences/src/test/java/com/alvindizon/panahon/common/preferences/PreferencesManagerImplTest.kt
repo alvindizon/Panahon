@@ -27,24 +27,26 @@ class PreferencesManagerImplTest {
     }
 
     @Test
-    fun `verify that if datastore has no initial temp unit stored, getTemperatureUnit returns celsius`() = runTest {
-        every { dataStore.data } returns flow { emit(emptyPreferences()) }
-        assertEquals(Temperature.Celsius, preferencesManager.getTemperatureUnit().first())
-    }
+    fun `verify that if datastore has no initial temp unit stored, getTemperatureUnit returns celsius`() =
+        runTest {
+            every { dataStore.data } returns flow { emit(emptyPreferences()) }
+            assertEquals(Temperature.Celsius, preferencesManager.getTemperatureUnit().first())
+        }
 
     @Test
-    fun `verify that if datastore already has fahrenheit as temp unit stored, getTemperatureUnit returns fahrenheit`() = runTest {
-        val mockPreferences: Preferences = mockk {
-            every { get(any<Preferences.Key<String>>()) } returns Temperature.Fahrenheit.name
-        }
-        every { dataStore.data } returns flow { emit(mockPreferences) }
+    fun `verify that if datastore already has fahrenheit as temp unit stored, getTemperatureUnit returns fahrenheit`() =
+        runTest {
+            val mockPreferences: Preferences = mockk {
+                every { get(any<Preferences.Key<String>>()) } returns Temperature.Fahrenheit.name
+            }
+            every { dataStore.data } returns flow { emit(mockPreferences) }
 
-        assertEquals(Temperature.Fahrenheit, preferencesManager.getTemperatureUnit().first())
-    }
+            assertEquals(Temperature.Fahrenheit, preferencesManager.getTemperatureUnit().first())
+        }
 
     @Test
     fun `verify that updateData is called when setTemperatureUnit is called`() = runTest {
-        coEvery { dataStore.updateData(any()) }
+        coEvery { dataStore.updateData(any()) } returns mockk()
 
         preferencesManager.setTemperatureUnit(Temperature.Fahrenheit)
 
