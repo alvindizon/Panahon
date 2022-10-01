@@ -137,7 +137,7 @@ fun MainDetails(icon: String, temperature: String, condition: String, feelsLikeT
             ) {
                 Text(
                     style = MaterialTheme.typography.h2,
-                    text = "$temperature°C"
+                    text = temperature
                 )
                 Text(
                     textAlign = TextAlign.Center,
@@ -146,7 +146,7 @@ fun MainDetails(icon: String, temperature: String, condition: String, feelsLikeT
                 )
                 Text(
                     style = MaterialTheme.typography.subtitle1,
-                    text = "Feels like $feelsLikeTemp°C",
+                    text = "Feels like $feelsLikeTemp",
                 )
             }
         }
@@ -181,8 +181,8 @@ fun AdditionalDetailsRow(
                 modifier = Modifier.padding(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "High: $maximumTemp°C", style = MaterialTheme.typography.h6)
-                Text(text = "Low: $minimumTemp°C", style = MaterialTheme.typography.h6)
+                Text(text = "High: $maximumTemp", style = MaterialTheme.typography.h6)
+                Text(text = "Low: $minimumTemp", style = MaterialTheme.typography.h6)
             }
         }
     }
@@ -206,7 +206,7 @@ fun HourlyForecastItem(time: String, icon: String, temperature: String) {
             modifier = Modifier
                 .size(64.dp)
         )
-        Text(text = "$temperature°C", style = MaterialTheme.typography.h6)
+        Text(text = "$temperature", style = MaterialTheme.typography.h6)
 
     }
 }
@@ -266,7 +266,7 @@ fun DailyForecastItem(time: String, maximumTemp: String, minimumTemp: String, ic
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "$maximumTemp°C/$minimumTemp°C",
+            text = "$maximumTemp/$minimumTemp",
             style = MaterialTheme.typography.h6,
             modifier = Modifier.weight(1f),
             maxLines = 1

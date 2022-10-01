@@ -164,7 +164,7 @@ fun WeatherIconAndTemperature(
                 .weight(1f)
         )
         Text(
-            "$temperature°C",
+            temperature,
             style = MaterialTheme.typography.h6,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center

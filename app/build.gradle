@@ -65,6 +65,7 @@ dependencies {
     implementation project(":common:design")
     implementation project(":common:core")
     implementation project(":common:navigation")
+    implementation project(":common:preferences")
     implementation project(":feature:locations")
     implementation project(":feature:searchlocation")
     implementation project(":feature:details")
