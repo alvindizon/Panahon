@@ -2,19 +2,23 @@ package com.alvindizon.panahon.integration
 
 import com.alvindizon.panahon.api.model.Daily
 import com.alvindizon.panahon.api.model.Hourly
+import com.alvindizon.panahon.common.preferences.PreferencesManager
+import com.alvindizon.panahon.core.units.Temperature
+import com.alvindizon.panahon.core.utils.celsiusToOthers
 import com.alvindizon.panahon.core.utils.convertTimestampToString
 import com.alvindizon.panahon.details.integration.DetailsViewRepository
 import com.alvindizon.panahon.details.model.DailyForecast
 import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.model.HourlyForecast
 import com.alvindizon.panahon.repo.PanahonRepo
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.roundToInt
 
 @Singleton
 class DetailsViewRepositoryImpl @Inject constructor(
-    private val panahonRepo: PanahonRepo
+    private val panahonRepo: PanahonRepo,
+    private val preferencesManager: PreferencesManager
 ) : DetailsViewRepository {
 
     override suspend fun fetchDetailedForecast(
@@ -22,6 +26,7 @@ class DetailsViewRepositoryImpl @Inject constructor(
         latitude: String,
         longitude: String
     ): DetailedForecast {
+        val tempUnit = preferencesManager.getTemperatureUnit().first()
         return panahonRepo.getWeatherForLocation(latitude, longitude).run {
             DetailedForecast(
                 locationName,
@@ -29,22 +34,22 @@ class DetailsViewRepositoryImpl @Inject constructor(
                     ?.lowercase(),
                 current.sunset?.toLong()?.convertTimestampToString(EXACT_HOURLY_PATTERN, timezone)
                     ?.lowercase(),
-                current.temp.roundToInt().toString(),
-                current.feelsLike?.roundToInt().toString(),
+                current.temp.celsiusToOthers(tempUnit),
+                current.feelsLike?.celsiusToOthers(tempUnit),
                 current.weather[0].description,
                 current.weather[0].icon,
-                hourly?.take(HOURLY_ITEMS)?.map { mapResponseToHourlyForecast(it, timezone) },
-                daily?.drop(1)?.map { mapResponseToDailyForecast(it, timezone) }
+                hourly?.take(HOURLY_ITEMS)?.map { mapResponseToHourlyForecast(it, tempUnit, timezone) },
+                daily?.drop(1)?.map { mapResponseToDailyForecast(it, tempUnit, timezone) }
             )
         }
     }
 
-    private fun mapResponseToDailyForecast(dailyResponse: Daily, timezone: String?): DailyForecast =
+    private fun mapResponseToDailyForecast(dailyResponse: Daily, tempUnit: Temperature, timezone: String?): DailyForecast =
         with(dailyResponse) {
             DailyForecast(
                 dt?.toLong()?.convertTimestampToString(DAILY_PATTERN, timezone),
-                temp?.max?.roundToInt().toString(),
-                temp?.min?.roundToInt().toString(),
+                temp?.max?.celsiusToOthers(tempUnit),
+                temp?.min?.celsiusToOthers(tempUnit),
                 weather?.get(0)?.description,
                 weather?.get(0)?.icon,
             )
@@ -52,12 +57,13 @@ class DetailsViewRepositoryImpl @Inject constructor(
 
     private fun mapResponseToHourlyForecast(
         hourlyResponse: Hourly,
+        tempUnit: Temperature,
         timezone: String?
     ): HourlyForecast =
         with(hourlyResponse) {
             HourlyForecast(
                 dt?.toLong()?.convertTimestampToString(HOURLY_PATTERN, timezone)?.lowercase(),
-                temp?.roundToInt().toString(),
+                temp?.celsiusToOthers(tempUnit),
                 weather?.get(0)?.icon,
             )
         }

@@ -43,7 +43,7 @@ class PanahonRepoImpl @Inject constructor(
         latitude: String,
         longitude: String
     ): OneCallResponse =
-        api.getWeather(latitude, longitude, null, OPENWEATHER_UNIT, BuildConfig.OPENWEATHER_KEY)
+        api.getWeather(latitude, longitude, null, METRIC, BuildConfig.OPENWEATHER_KEY)
 
     override suspend fun getLocationNameFromCoordinates(
         latitude: String,
@@ -70,7 +70,8 @@ class PanahonRepoImpl @Inject constructor(
         isHomeLocation: Boolean
     ) = dao.update(Location(name, latitude, longitude, isHomeLocation))
 
+    // all API calls will return metric units, will be converted by respective consumers via ConvertUtils.kt
     companion object {
-        private const val OPENWEATHER_UNIT = "metric"
+        private const val METRIC = "metric"
     }
 }
