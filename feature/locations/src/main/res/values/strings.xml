@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="locations">Locations</string>
+    <string name="current_location">Current location</string>
+    <string name="recent_locations">Recent locations</string>
 </resources>

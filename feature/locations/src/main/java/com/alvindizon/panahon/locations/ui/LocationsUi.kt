@@ -101,7 +101,29 @@ fun LocationsList(
 ) {
     Column(modifier = modifier) {
         LazyColumn(contentPadding = PaddingValues(top = 8.dp)) {
-            items(locationForecasts) { locationForecast ->
+            if (locationForecasts.any { it.isHomeLocation }) {
+                item {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = stringResource(id = com.alvindizon.panahon.locations.R.string.current_location),
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
+            }
+            items(locationForecasts.filter { it.isHomeLocation }) { locationForecast ->
+                LocationsListItem(locationForecast) { onLocationClick(it) }
+            }
+            if (locationForecasts.any { !it.isHomeLocation }) {
+                item {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = stringResource(id = com.alvindizon.panahon.locations.R.string.recent_locations),
+                        style = MaterialTheme.typography.subtitle1
+                    )
+
+                }
+            }
+            items(locationForecasts.filter { !it.isHomeLocation }) { locationForecast ->
                 LocationsListItem(locationForecast) { onLocationClick(it) }
             }
         }
@@ -178,7 +200,17 @@ fun WeatherIconAndTemperature(
 @Composable
 private fun LocationsListItemPreview() {
     PanahonTheme {
-        LocationsListItem(LocationForecast("San Pedro", "", "", "Clouds", "25", "01d")) {
+        LocationsListItem(
+            LocationForecast(
+                "San Pedro",
+                "",
+                "",
+                "Clouds",
+                "25",
+                "01d",
+                true
+            )
+        ) {
 
         }
     }
@@ -188,10 +220,18 @@ private fun LocationsListItemPreview() {
 @Composable
 private fun LocationsListPreview() {
     val locationForecasts = listOf(
-        LocationForecast("Singapore", "", "", "Clouds", "25", "01d"),
-        LocationForecast("Jakarta", "", "", "Clouds", "28", "01d"),
-        LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d"),
-        LocationForecast("aaaaaaaaaaaaaaaabbbbbbbb", "", "", "Sunny", "-1", "01d")
+        LocationForecast("Singapore", "", "", "Clouds", "25", "01d", true),
+        LocationForecast("Jakarta", "", "", "Clouds", "28", "01d", true),
+        LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d", true),
+        LocationForecast(
+            "aaaaaaaaaaaaaaaabbbbbbbb",
+            "",
+            "",
+            "Sunny",
+            "-1",
+            "01d",
+            true
+        )
     )
     PanahonTheme {
         LocationsList(locationForecasts = locationForecasts, onLocationClick = {})

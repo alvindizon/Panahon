@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.roundToInt
 
 @Singleton
 class LocationsViewRepositoryImpl @Inject constructor(
@@ -28,7 +27,8 @@ class LocationsViewRepositoryImpl @Inject constructor(
                     it.longitude,
                     resp.current.weather[0].main,
                     resp.current.temp.celsiusToOthers(tempUnit),
-                    resp.current.weather[0].icon
+                    resp.current.weather[0].icon,
+                    it.isHomeLocation
                 )
             }
         }
