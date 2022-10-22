@@ -6,5 +6,6 @@ data class LocationForecast(
     val longitude: String,
     val condition: String,
     val temperature: String,
-    val icon: String
+    val icon: String,
+    val isHomeLocation: Boolean
 )
