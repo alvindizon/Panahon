@@ -33,4 +33,8 @@ class LocationsViewRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun deleteLocation(locationForecast: LocationForecast) {
+        return panahonRepo.deleteLocation(locationForecast.name)
+    }
 }

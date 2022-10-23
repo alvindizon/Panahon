@@ -32,6 +32,8 @@ interface PanahonRepo {
     suspend fun getHomeLocation(): Location?
 
     suspend fun updateLocation(name: String, latitude: String, longitude: String, isHomeLocation: Boolean)
+
+    suspend fun deleteLocation(locationName: String)
 }
 
 @Singleton
@@ -69,6 +71,8 @@ class PanahonRepoImpl @Inject constructor(
         longitude: String,
         isHomeLocation: Boolean
     ) = dao.update(Location(name, latitude, longitude, isHomeLocation))
+
+    override suspend fun deleteLocation(locationName: String) = dao.delete(locationName)
 
     // all API calls will return metric units, will be converted by respective consumers via ConvertUtils.kt
     companion object {

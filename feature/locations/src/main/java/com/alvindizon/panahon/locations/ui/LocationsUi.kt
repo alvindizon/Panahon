@@ -1,7 +1,10 @@
 package com.alvindizon.panahon.locations.ui
 
 import android.widget.Toast
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,17 +13,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.alvindizon.panahon.design.R
@@ -36,7 +44,7 @@ fun LocationsScreen(
     viewModel: LocationScreenViewModel,
     onLocationClick: (LocationForecast) -> Unit,
     onUpButtonClicked: () -> Unit,
-    onSearchIconClick: () -> Unit,
+    onSearchIconClick: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -75,13 +83,21 @@ fun LocationsScreen(
                 LocationsList(
                     modifier = Modifier.padding(padding),
                     locationForecasts = state.list,
-                    onLocationClick = { onLocationClick(it) }
+                    onLocationClick = onLocationClick,
+                    onItemSwipe = viewModel::deleteLocation
                 )
             }
             is LocationScreenUiState.Error -> {
                 Toast.makeText(
                     context,
                     "Error: ${state.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            is LocationScreenUiState.LocationDeleted -> {
+                Toast.makeText(
+                    context,
+                    stringResource(com.alvindizon.panahon.locations.R.string.location_deleted),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -97,10 +113,14 @@ fun LocationsScreen(
 fun LocationsList(
     modifier: Modifier = Modifier,
     locationForecasts: List<LocationForecast>,
-    onLocationClick: (LocationForecast) -> Unit
+    onLocationClick: (LocationForecast) -> Unit,
+    onItemSwipe: (LocationForecast) -> Unit
 ) {
     Column(modifier = modifier) {
-        LazyColumn(contentPadding = PaddingValues(top = 8.dp)) {
+        LazyColumn(
+            contentPadding = PaddingValues(top = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             if (locationForecasts.any { it.isHomeLocation }) {
                 item {
                     Text(
@@ -110,8 +130,17 @@ fun LocationsList(
                     )
                 }
             }
-            items(locationForecasts.filter { it.isHomeLocation }) { locationForecast ->
-                LocationsListItem(locationForecast) { onLocationClick(it) }
+            items(
+                locationForecasts.filter { it.isHomeLocation },
+                key = { it.latitude + it.longitude }
+            )
+            { locationForecast ->
+                SwipeableItem(
+                    modifier = Modifier.animateItemPlacement(),
+                    locationForecast = locationForecast,
+                    onItemSwipe = onItemSwipe,
+                    onLocationClick = onLocationClick
+                )
             }
             if (locationForecasts.any { !it.isHomeLocation }) {
                 item {
@@ -120,33 +149,87 @@ fun LocationsList(
                         text = stringResource(id = com.alvindizon.panahon.locations.R.string.recent_locations),
                         style = MaterialTheme.typography.subtitle1
                     )
-
                 }
             }
-            items(locationForecasts.filter { !it.isHomeLocation }) { locationForecast ->
-                LocationsListItem(locationForecast) { onLocationClick(it) }
+            items(locationForecasts.filter { !it.isHomeLocation },  key = { it.latitude + it.longitude }) { locationForecast ->
+                SwipeableItem(
+                    modifier = Modifier.animateItemPlacement(),
+                    locationForecast = locationForecast,
+                    onItemSwipe = onItemSwipe,
+                    onLocationClick = onLocationClick
+                )
             }
         }
     }
 }
 
 @Composable
+fun SwipeableItem(
+    modifier: Modifier = Modifier,
+    locationForecast: LocationForecast,
+    onItemSwipe: (LocationForecast) -> Unit,
+    onLocationClick: (LocationForecast) -> Unit
+) {
+    val dismissState = rememberDismissState(
+        confirmStateChange = {
+            if (it == DismissValue.DismissedToStart) {
+                onItemSwipe(locationForecast)
+            }
+            true
+        }
+    )
+    val elevation by animateDpAsState(if (dismissState.dismissDirection != null) 4.dp else 1.dp)
+    val scale by animateFloatAsState(
+        if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f
+    )
+    SwipeToDismiss(
+        modifier = modifier,
+        state = dismissState,
+        directions = setOf(DismissDirection.EndToStart),
+        dismissThresholds = { FractionalThreshold(0.25f) },
+        background = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Red)
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(id = com.alvindizon.panahon.locations.R.string.delete),
+                    modifier = Modifier
+                        .scale(scale),
+                    tint = Color.White
+                )
+            }
+        }, dismissContent = {
+            LocationsListItem(
+                locationForecast = locationForecast,
+                cardElevation = elevation,
+                onLocationClick = onLocationClick
+            )
+        })
+}
+
+@Composable
 fun LocationsListItem(
     locationForecast: LocationForecast,
-    onLocationClick: (LocationForecast) -> Unit
+    cardElevation: Dp = 1.dp,
+    onLocationClick: (LocationForecast) -> Unit,
 ) {
     Card(
         shape = RoundedCornerShape(5.dp),
         modifier = Modifier
             .clickable { onLocationClick(locationForecast) }
             .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(8.dp)
+            .wrapContentHeight(),
+        elevation = cardElevation
     ) {
         Row(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
                 horizontalAlignment = Alignment.Start,
@@ -234,7 +317,7 @@ private fun LocationsListPreview() {
         )
     )
     PanahonTheme {
-        LocationsList(locationForecasts = locationForecasts, onLocationClick = {})
+        LocationsList(locationForecasts = locationForecasts, onLocationClick = {}, onItemSwipe = {})
     }
 }
 
