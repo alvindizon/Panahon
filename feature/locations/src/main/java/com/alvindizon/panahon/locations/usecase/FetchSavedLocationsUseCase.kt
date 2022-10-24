@@ -7,7 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FetchForecastsUseCase @Inject constructor(private val repo: LocationsViewRepository) {
+class FetchSavedLocationsUseCase @Inject constructor(private val repo: LocationsViewRepository) {
 
     fun execute(): Flow<List<LocationForecast>> = repo.fetchSavedLocations()
 }
