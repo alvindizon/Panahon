@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.locations.model.LocationForecast
 import com.alvindizon.panahon.locations.usecase.DeleteLocationUseCase
-import com.alvindizon.panahon.locations.usecase.FetchForecastsUseCase
+import com.alvindizon.panahon.locations.usecase.FetchSavedLocationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +23,7 @@ sealed class LocationScreenUiState {
 
 @HiltViewModel
 class LocationScreenViewModel @Inject constructor(
-    private val fetchForecastsUseCase: FetchForecastsUseCase,
+    private val fetchSavedLocationsUseCase: FetchSavedLocationsUseCase,
     private val deleteLocationUseCase: DeleteLocationUseCase
 ) : ViewModel() {
 
@@ -32,9 +32,9 @@ class LocationScreenViewModel @Inject constructor(
 
     fun fetchForecasts() {
         _uiState.value = LocationScreenUiState.Loading
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             runCatching {
-                fetchForecastsUseCase.execute()
+                fetchSavedLocationsUseCase.execute()
             }.onSuccess { forecasts ->
                 forecasts.collect {
                     _uiState.value = LocationScreenUiState.Success(it)
@@ -47,7 +47,7 @@ class LocationScreenViewModel @Inject constructor(
 
     fun deleteLocation(locationForecast: LocationForecast) {
         _uiState.value = LocationScreenUiState.Loading
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             runCatching {
                 deleteLocationUseCase.execute(locationForecast)
             }.onSuccess {
