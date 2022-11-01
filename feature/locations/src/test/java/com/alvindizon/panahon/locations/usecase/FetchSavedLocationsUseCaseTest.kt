@@ -29,10 +29,8 @@ class FetchSavedLocationsUseCaseTest {
             LocationForecast("Jakarta", "", "", "Clouds", "28", "01d", false),
             LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d", false)
         )
-        coEvery { repo.fetchSavedLocations() } returns flow {
-            emit(locations)
-        }
-        val result = useCase.execute().first()
+        coEvery { repo.fetchSavedLocations() } returns locations
+        val result = useCase.execute()
         assertEquals(locations, result)
     }
 }

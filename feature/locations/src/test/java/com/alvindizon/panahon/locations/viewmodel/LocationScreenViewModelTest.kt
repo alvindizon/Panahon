@@ -40,9 +40,7 @@ class LocationScreenViewModelTest {
             LocationForecast("Jakarta", "", "", "Clouds", "28", "01d", false),
             LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d", false)
         )
-        coEvery { fetchSavedLocationsUseCase.execute() } returns flow {
-            emit(locations)
-        }
+        coEvery { fetchSavedLocationsUseCase.execute() } returns locations
         viewModel.fetchForecasts()
         assertEquals(locations, (viewModel.locationScreenUiState.value as LocationScreenUiState.Success).list)
     }
@@ -62,9 +60,7 @@ class LocationScreenViewModelTest {
             LocationForecast("Jakarta", "", "", "Clouds", "28", "01d", false),
             LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d", false)
         )
-        coEvery { fetchSavedLocationsUseCase.execute() } returns flow {
-            emit(locations)
-        }
+        coEvery { fetchSavedLocationsUseCase.execute() } returns locations
         viewModel.fetchForecasts()
         assert(viewModel.locationScreenUiState.value is LocationScreenUiState.Loading)
         // Execute pending coroutine actions
