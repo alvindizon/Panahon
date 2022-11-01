@@ -35,10 +35,8 @@ class LocationScreenViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 fetchSavedLocationsUseCase.execute()
-            }.onSuccess { forecasts ->
-                forecasts.collect {
-                    _uiState.value = LocationScreenUiState.Success(it)
-                }
+            }.onSuccess {
+                _uiState.value = LocationScreenUiState.Success(it)
             }.onFailure {
                 _uiState.value = LocationScreenUiState.Error(it.message ?: it.javaClass.name)
             }
