@@ -13,6 +13,9 @@ dependencyResolutionManagement {
         maven {
             url "https://androidx.dev/storage/compose-compiler/repository/"
         }
+        maven {
+            url "https://dl.google.com/dl/android/maven2"
+        }
     }
 }
 rootProject.name = "Panahon"
