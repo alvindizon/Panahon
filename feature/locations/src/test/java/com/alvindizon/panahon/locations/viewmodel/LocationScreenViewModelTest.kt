@@ -40,16 +40,16 @@ class LocationScreenViewModelTest {
             LocationForecast("Jakarta", "", "", "Clouds", "28", "01d", false),
             LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d", false)
         )
-        coEvery { fetchSavedLocationsUseCase.execute() } returns locations
+        coEvery { fetchSavedLocationsUseCase.execute() } returns flow { emit(locations) }
         viewModel.fetchForecasts()
-        assertEquals(locations, (viewModel.locationScreenUiState.value as LocationScreenUiState.Success).list)
+        assertEquals(locations, (viewModel.uiState.value.list))
     }
 
     @Test
     fun `verify uistate is Error if fetch saved locations returns successfully`() = runTest {
         coEvery { fetchSavedLocationsUseCase.execute() } throws Throwable("meh")
         viewModel.fetchForecasts()
-        assertEquals("meh", (viewModel.locationScreenUiState.value as LocationScreenUiState.Error).message)
+        assertEquals("meh", (viewModel.uiState.value.errorMessage))
     }
 
     @Test
@@ -60,11 +60,11 @@ class LocationScreenViewModelTest {
             LocationForecast("Jakarta", "", "", "Clouds", "28", "01d", false),
             LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d", false)
         )
-        coEvery { fetchSavedLocationsUseCase.execute() } returns locations
+        coEvery { fetchSavedLocationsUseCase.execute() } returns flow { emit(locations) }
         viewModel.fetchForecasts()
-        assert(viewModel.locationScreenUiState.value is LocationScreenUiState.Loading)
+        assert(viewModel.uiState.value.isLoading)
         // Execute pending coroutine actions
         advanceUntilIdle()
-        assertFalse(viewModel.locationScreenUiState.value is LocationScreenUiState.Loading)
+        assertFalse(viewModel.uiState.value.isLoading)
     }
 }
