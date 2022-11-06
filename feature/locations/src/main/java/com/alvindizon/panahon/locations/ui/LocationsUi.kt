@@ -1,6 +1,5 @@
 package com.alvindizon.panahon.locations.ui
 
-import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -15,15 +14,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,7 +30,6 @@ import com.alvindizon.panahon.design.R
 import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.locations.model.LocationForecast
-import com.alvindizon.panahon.locations.viewmodel.LocationScreenUiState
 import com.alvindizon.panahon.locations.viewmodel.LocationScreenViewModel
 
 
@@ -46,7 +40,11 @@ fun LocationsScreen(
     onUpButtonClicked: () -> Unit,
     onSearchIconClick: () -> Unit
 ) {
-    val context = LocalContext.current
+    val scaffoldState = rememberScaffoldState()
+    val (showSnackbar, setShowSnackbar) = remember { mutableStateOf(false) }
+    val state = viewModel.uiState.collectAsState().value
+
+    if (state.errorMessage != null) setShowSnackbar(true)
 
     // need this to prevent infinite loop that happens when using functions
     // ref: https://code.luasoftware.com/tutorials/android/jetpack-compose-load-data-collectasstate-common-mistakes/
@@ -55,6 +53,7 @@ fun LocationsScreen(
     }
 
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(id = com.alvindizon.panahon.locations.R.string.locations)) },
@@ -77,35 +76,54 @@ fun LocationsScreen(
             )
         }
     ) { padding ->
-        when (val state = viewModel.locationScreenUiState.collectAsState().value) {
-            LocationScreenUiState.Loading -> LoadingScreen(Modifier.padding(padding))
-            is LocationScreenUiState.Success -> {
-                LocationsList(
-                    modifier = Modifier.padding(padding),
-                    locationForecasts = state.list,
-                    onLocationClick = onLocationClick,
-                    onItemSwipe = viewModel::deleteLocation
-                )
-            }
-            is LocationScreenUiState.Error -> {
-                Toast.makeText(
-                    context,
-                    "Error: ${state.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            is LocationScreenUiState.LocationDeleted -> {
-                Toast.makeText(
-                    context,
-                    stringResource(com.alvindizon.panahon.locations.R.string.location_deleted),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            else -> Text(
-                text = "No data available",
-                modifier = Modifier.padding(16.dp)
+        LocationsList(
+            modifier = Modifier.padding(padding),
+            scaffoldState = scaffoldState,
+            locationForecasts = state.list,
+            showSnackbar = showSnackbar,
+            errorMessage = state.errorMessage,
+            isLoading = state.isLoading,
+            setShowSnackbar = setShowSnackbar,
+            onLocationClick = onLocationClick,
+            onItemSwipe = viewModel::deleteLocation
+        )
+    }
+}
+
+
+@Composable
+internal fun LocationsList(
+    modifier: Modifier = Modifier,
+    scaffoldState: ScaffoldState,
+    locationForecasts: List<LocationForecast>,
+    showSnackbar: Boolean,
+    errorMessage: String?,
+    isLoading: Boolean,
+    setShowSnackbar: (Boolean) -> Unit,
+    onLocationClick: (LocationForecast) -> Unit,
+    onItemSwipe: (LocationForecast) -> Unit
+) {
+    val genericErrorMsg =
+        stringResource(id = R.string.generic_error_msg)
+    if (showSnackbar) {
+        LaunchedEffect(scaffoldState.snackbarHostState) {
+            val result = scaffoldState.snackbarHostState.showSnackbar(
+                message = errorMessage ?: genericErrorMsg
             )
+            when (result) {
+                SnackbarResult.Dismissed, SnackbarResult.ActionPerformed -> setShowSnackbar(false)
+            }
         }
+    }
+    if (isLoading) {
+        LoadingScreen(modifier = modifier)
+    } else {
+        LocationsList(
+            modifier = modifier,
+            locationForecasts = locationForecasts,
+            onLocationClick = onLocationClick,
+            onItemSwipe = onItemSwipe
+        )
     }
 }
 
@@ -132,7 +150,7 @@ fun LocationsList(
             }
             items(
                 locationForecasts.filter { it.isHomeLocation },
-                key = { it.latitude + it.longitude }
+                key = { it.hashCode() }
             )
             { locationForecast ->
                 SwipeableItem(
@@ -151,7 +169,9 @@ fun LocationsList(
                     )
                 }
             }
-            items(locationForecasts.filter { !it.isHomeLocation },  key = { it.latitude + it.longitude }) { locationForecast ->
+            items(
+                locationForecasts.filter { !it.isHomeLocation },
+                key = { it.hashCode() }) { locationForecast ->
                 SwipeableItem(
                     modifier = Modifier.animateItemPlacement(),
                     locationForecast = locationForecast,
@@ -198,8 +218,7 @@ fun SwipeableItem(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = stringResource(id = com.alvindizon.panahon.locations.R.string.delete),
-                    modifier = Modifier
-                        .scale(scale),
+                    modifier = Modifier.scale(scale),
                     tint = Color.White
                 )
             }
@@ -317,7 +336,9 @@ private fun LocationsListPreview() {
         )
     )
     PanahonTheme {
-        LocationsList(locationForecasts = locationForecasts, onLocationClick = {}, onItemSwipe = {})
+        LocationsList(
+            locationForecasts = locationForecasts, onLocationClick = {}, onItemSwipe = {}
+        )
     }
 }
 

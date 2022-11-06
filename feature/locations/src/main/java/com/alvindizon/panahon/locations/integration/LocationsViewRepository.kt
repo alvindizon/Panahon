@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocationsViewRepository {
 
-    suspend fun fetchSavedLocations(): List<LocationForecast>
+    fun fetchSavedLocations(): Flow<List<LocationForecast>>
 
     suspend fun deleteLocation(locationForecast: LocationForecast)
 }
