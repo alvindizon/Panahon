@@ -264,6 +264,7 @@ class LocationManagerImplTest {
             every { subAdminArea } returns expectedSubAdminArea
             every { adminArea } returns expectedAdminArea
         }
+        @Suppress("DEPRECATION")
         every { anyConstructed<Geocoder>().getFromLocation(any(), any(), any()) } returns listOf(expectedAddress)
 
         val result = locationManager.getLocationName(-33.865143, 151.209900)
@@ -272,6 +273,7 @@ class LocationManagerImplTest {
 
     @Test
     fun `verify getLocationName returns null if geocoder request returns null`() = runTest {
+        @Suppress("DEPRECATION")
         every { anyConstructed<Geocoder>().getFromLocation(any(), any(), any()) } returns null
 
         val result = locationManager.getLocationName(-33.865143, 151.209900)
