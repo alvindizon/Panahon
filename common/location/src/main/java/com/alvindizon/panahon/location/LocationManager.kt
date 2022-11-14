@@ -5,20 +5,17 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import com.alvindizon.panahon.core.utils.PermissionUtils
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.Priority
-import com.google.android.gms.location.SettingsClient
+import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +27,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 interface LocationManager {
 
@@ -112,18 +110,31 @@ class LocationManagerImpl @Inject constructor(@ApplicationContext private val co
 
     override suspend fun getLocationName(latitude: Double, longitude: Double): String? =
         withContext(Dispatchers.IO) {
-            runCatching {
-                val addresses = geocoder.getFromLocation(latitude, longitude, 1)
-                var locationName: String? = null
-                if (!addresses.isNullOrEmpty()) {
-                    val fetchedAddress = addresses[0]
-                    if (fetchedAddress.maxAddressLineIndex > -1) {
-                        locationName = fetchedAddress.locality ?: fetchedAddress.subLocality
-                                ?: fetchedAddress.subAdminArea ?: fetchedAddress.adminArea
+            suspendCoroutine { cont ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    geocoder.getFromLocation(
+                        latitude,
+                        longitude,
+                        1,
+                        object : Geocoder.GeocodeListener {
+                            override fun onGeocode(addresses: MutableList<Address>) {
+                                cont.resume(getLocationFromAddress(addresses))
+                            }
+
+                            override fun onError(errorMessage: String?) {
+                                cont.resumeWithException(Exception(errorMessage))
+                            }
+                        })
+                } else {
+                    try {
+                        @Suppress("DEPRECATION")
+                        val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+                        cont.resume(getLocationFromAddress(addresses))
+                    } catch (e: Exception) {
+                        cont.resumeWithException(e)
                     }
                 }
-                locationName
-            }.getOrNull()
+            }
         }
 
     private fun isGooglePlayServicesAvailable(context: Context): Boolean {
@@ -140,6 +151,18 @@ class LocationManagerImpl @Inject constructor(@ApplicationContext private val co
         } catch (e: ActivityNotFoundException) {
             // ignore error
         }
+    }
+
+    private fun getLocationFromAddress(addresses: List<Address>?): String? {
+        var locationName: String? = null
+        if (!addresses.isNullOrEmpty()) {
+            val fetchedAddress = addresses[0]
+            if (fetchedAddress.maxAddressLineIndex > -1) {
+                locationName = fetchedAddress.locality ?: fetchedAddress.subLocality
+                        ?: fetchedAddress.subAdminArea ?: fetchedAddress.adminArea
+            }
+        }
+        return locationName
     }
 
     companion object {
