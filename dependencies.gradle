@@ -31,7 +31,7 @@ def versions = [:]
     versions.coreLibraryDesugarVersion = "2.0.0"
     versions.playServicesLocationVersion = "20.0.0"
     versions.timber = "5.0.1"
-    versions.accompanist = "0.27.0"
+    versions.accompanist = "0.27.1"
     versions.datastore = "1.0.0"
 ext.versions = versions
 
