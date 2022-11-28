@@ -55,12 +55,10 @@ class LocationManagerImpl @Inject constructor(@ApplicationContext private val co
     }
 
     private val locationRequest by lazy {
-        LocationRequest.create().apply {
-            interval = TimeUnit.SECONDS.toMillis(INTERVAL_SEC)
-            fastestInterval = TimeUnit.SECONDS.toMillis(FASTEST_INTERVAL_SEC)
-            maxWaitTime = TimeUnit.MINUTES.toMillis(MAX_WAIT_TIME_MIN)
-            priority = Priority.PRIORITY_HIGH_ACCURACY
-        }
+        LocationRequest.Builder(TimeUnit.SECONDS.toMillis(INTERVAL_SEC))
+            .setMinUpdateIntervalMillis(TimeUnit.SECONDS.toMillis(FASTEST_INTERVAL_SEC))
+            .setMaxUpdateDelayMillis(TimeUnit.MINUTES.toMillis(MAX_WAIT_TIME_MIN))
+            .setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
     }
 
     @SuppressLint("MissingPermission")
