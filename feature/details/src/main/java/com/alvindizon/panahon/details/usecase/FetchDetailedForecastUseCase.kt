@@ -1,6 +1,6 @@
 package com.alvindizon.panahon.details.usecase
 
-import com.alvindizon.panahon.details.integration.DetailsViewRepository
+import com.alvindizon.panahon.details.data.DetailsViewRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 

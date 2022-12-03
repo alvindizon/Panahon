@@ -1,8 +1,6 @@
 package com.alvindizon.panahon.di
 
-import com.alvindizon.panahon.details.integration.DetailsViewRepository
 import com.alvindizon.panahon.home.integration.HomeViewRepository
-import com.alvindizon.panahon.integration.DetailsViewRepositoryImpl
 import com.alvindizon.panahon.integration.HomeViewRepositoryImpl
 import com.alvindizon.panahon.integration.LocationsViewRepositoryImpl
 import com.alvindizon.panahon.integration.SearchLocationViewRepositoryImpl
@@ -27,9 +25,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindSearchLocationViewRepo(repo: SearchLocationViewRepositoryImpl): SearchLocationViewRepository
-
-    @Binds
-    abstract fun bindDetailsViewRepo(repo: DetailsViewRepositoryImpl): DetailsViewRepository
 
     @Binds
     abstract fun bindHomeViewRepo(repo: HomeViewRepositoryImpl): HomeViewRepository
