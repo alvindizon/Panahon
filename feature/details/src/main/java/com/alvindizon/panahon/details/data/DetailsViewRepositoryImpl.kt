@@ -1,23 +1,22 @@
-package com.alvindizon.panahon.integration
+package com.alvindizon.panahon.details.data
 
+import com.alvindizon.panahon.api.OpenWeatherApi
 import com.alvindizon.panahon.api.model.Daily
 import com.alvindizon.panahon.api.model.Hourly
 import com.alvindizon.panahon.common.preferences.PreferencesManager
 import com.alvindizon.panahon.core.units.Temperature
 import com.alvindizon.panahon.core.utils.celsiusToOthers
 import com.alvindizon.panahon.core.utils.convertTimestampToString
-import com.alvindizon.panahon.details.integration.DetailsViewRepository
 import com.alvindizon.panahon.details.model.DailyForecast
 import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.model.HourlyForecast
-import com.alvindizon.panahon.repo.PanahonRepo
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class DetailsViewRepositoryImpl @Inject constructor(
-    private val panahonRepo: PanahonRepo,
+    private val api: OpenWeatherApi,
     private val preferencesManager: PreferencesManager
 ) : DetailsViewRepository {
 
@@ -27,7 +26,7 @@ class DetailsViewRepositoryImpl @Inject constructor(
         longitude: String
     ): DetailedForecast {
         val tempUnit = preferencesManager.getTemperatureUnit().first()
-        return panahonRepo.getWeatherForLocation(latitude, longitude).run {
+        return api.getWeather(latitude = latitude, longitude = longitude).run {
             DetailedForecast(
                 locationName,
                 current.sunrise?.toLong()?.convertTimestampToString(EXACT_HOURLY_PATTERN, timezone)
