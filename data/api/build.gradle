@@ -13,6 +13,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        buildConfigField "String", "OPENWEATHER_KEY", "\"" + getAccessKey('OPENWEATHER_KEY') + "\""
     }
 
     buildTypes {
@@ -38,4 +39,14 @@ dependencies {
 
     implementation deps.network.moshi.moshi
     kapt deps.network.moshi.codegen
+}
+
+String getAccessKey(String keyName) {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    def applicationKey = properties.getProperty(keyName)
+    if (applicationKey == null || "" == applicationKey) {
+        throw new IllegalStateException("Set your ${keyName} access key in local.properties file.")
+    }
+    return applicationKey
 }

@@ -6,15 +6,17 @@ import com.alvindizon.panahon.api.model.ReverseGeocodeResponseItem
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+private const val UNIT_METRIC = "metric"
+
 interface OpenWeatherApi {
 
     @GET("data/2.5/onecall")
     suspend fun getWeather(
         @Query("lat") latitude: String,
         @Query("lon") longitude: String,
-        @Query("exclude") exclude: String?,
-        @Query("units") units: String?,
-        @Query("appId") appId: String
+        @Query("exclude") exclude: String? = null,
+        @Query("units") units: String? = UNIT_METRIC,
+        @Query("appId") appId: String = BuildConfig.OPENWEATHER_KEY
     ): OneCallResponse
 
     @GET("geo/1.0/direct")

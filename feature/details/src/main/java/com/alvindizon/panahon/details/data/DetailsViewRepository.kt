@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.details.integration
+package com.alvindizon.panahon.details.data
 
 import com.alvindizon.panahon.details.model.DetailedForecast
 
