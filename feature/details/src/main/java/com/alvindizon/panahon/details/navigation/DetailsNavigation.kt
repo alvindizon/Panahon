@@ -35,8 +35,6 @@ fun NavGraphBuilder.detailsGraph(
         DetailsScreen(
             viewModel = hiltViewModel(),
             location = it.arguments?.getString(DetailsNavigation.locationArg)!!,
-            latitude = it.arguments?.getString(DetailsNavigation.latitudeArg)!!,
-            longitude = it.arguments?.getString(DetailsNavigation.longitudeArg)!!,
             onSettingsIconClick = onSettingsIconClick,
             onNavigationIconClick = onNavigationIconClick
         )
