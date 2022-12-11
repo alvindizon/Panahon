@@ -1,6 +1,5 @@
 package com.alvindizon.panahon.details.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -12,12 +11,9 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -37,17 +33,10 @@ import com.alvindizon.panahon.details.viewmodel.DetailsScreenViewModel
 fun DetailsScreen(
     viewModel: DetailsScreenViewModel,
     location: String,
-    latitude: String,
-    longitude: String,
     onSettingsIconClick: () -> Unit,
     onNavigationIconClick: () -> Unit
 ) {
-    val context = LocalContext.current
-    // need this to prevent infinite loop that happens when using functions
-    // ref: https://code.luasoftware.com/tutorials/android/jetpack-compose-load-data-collectasstate-common-mistakes/
-    LaunchedEffect(true) {
-        viewModel.fetchDetailedForecast(location, latitude, longitude)
-    }
+    val state = viewModel.uiState.collectAsState().value
     Scaffold(
         topBar = {
             TopAppBar(
@@ -68,23 +57,44 @@ fun DetailsScreen(
             )
         }
     ) { padding ->
-        when (val state = viewModel.uiState.collectAsState().value) {
-            is DetailsScreenUiState.Success -> DetailedForecastScreen(
-                Modifier.padding(padding),
-                state.detailedForecast
-            )
-            is DetailsScreenUiState.Error -> Toast.makeText(
-                context,
-                "Error: ${state.message}",
-                Toast.LENGTH_SHORT
-            ).show()
-            else -> LoadingScreen(Modifier.padding(padding))
-        }
+        DetailedForecastScreen(modifier = Modifier.padding(padding), state = state)
     }
 }
 
 @Composable
-fun DetailedForecastScreen(modifier: Modifier = Modifier, detailedForecast: DetailedForecast) {
+internal fun DetailedForecastScreen(
+    modifier: Modifier = Modifier,
+    state: DetailsScreenUiState
+) {
+    val scaffoldState = rememberScaffoldState()
+    var showSnackBar by remember { mutableStateOf(false) }
+    val genericErrorMsg =
+        stringResource(id = com.alvindizon.panahon.design.R.string.generic_error_msg)
+    if (showSnackBar) {
+        LaunchedEffect(scaffoldState.snackbarHostState) {
+            val result = scaffoldState.snackbarHostState.showSnackbar(
+                message = state.errorMessage ?: genericErrorMsg
+            )
+            when (result) {
+                SnackbarResult.Dismissed, SnackbarResult.ActionPerformed -> showSnackBar = false
+            }
+        }
+    }
+    when {
+        state.isLoading -> LoadingScreen(modifier)
+        state.errorMessage != null -> showSnackBar = true
+        state.detailedForecast != null -> DetailedForecastScreen(
+            modifier = modifier,
+            detailedForecast = state.detailedForecast
+        )
+    }
+}
+
+@Composable
+fun DetailedForecastScreen(
+    modifier: Modifier = Modifier,
+    detailedForecast: DetailedForecast
+) {
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceEvenly,
