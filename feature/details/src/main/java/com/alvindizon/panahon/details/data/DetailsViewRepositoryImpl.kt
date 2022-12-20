@@ -37,35 +37,30 @@ class DetailsViewRepositoryImpl @Inject constructor(
                 current.feelsLike?.celsiusToOthers(tempUnit),
                 current.weather[0].description,
                 current.weather[0].icon,
-                hourly?.take(HOURLY_ITEMS)?.map { mapResponseToHourlyForecast(it, tempUnit, timezone) },
-                daily?.drop(1)?.map { mapResponseToDailyForecast(it, tempUnit, timezone) }
+                hourly?.take(HOURLY_ITEMS)?.map { it.toHourlyForecast(tempUnit, timezone) },
+                daily?.drop(1)?.map { it.toDailyForecast(tempUnit, timezone) }
             )
         }
     }
 
-    private fun mapResponseToDailyForecast(dailyResponse: Daily, tempUnit: Temperature, timezone: String?): DailyForecast =
-        with(dailyResponse) {
-            DailyForecast(
-                dt?.toLong()?.convertTimestampToString(DAILY_PATTERN, timezone),
-                temp?.max?.celsiusToOthers(tempUnit),
-                temp?.min?.celsiusToOthers(tempUnit),
-                weather?.get(0)?.description,
-                weather?.get(0)?.icon,
-            )
-        }
+    private fun Daily.toDailyForecast(tempUnit: Temperature, timezone: String?): DailyForecast =
+        DailyForecast(
+            dt?.toLong()?.convertTimestampToString(DAILY_PATTERN, timezone),
+            temp?.max?.celsiusToOthers(tempUnit),
+            temp?.min?.celsiusToOthers(tempUnit),
+            weather?.get(0)?.description,
+            weather?.get(0)?.icon,
+        )
 
-    private fun mapResponseToHourlyForecast(
-        hourlyResponse: Hourly,
+    private fun Hourly.toHourlyForecast(
         tempUnit: Temperature,
         timezone: String?
     ): HourlyForecast =
-        with(hourlyResponse) {
-            HourlyForecast(
-                dt?.toLong()?.convertTimestampToString(HOURLY_PATTERN, timezone)?.lowercase(),
-                temp?.celsiusToOthers(tempUnit),
-                weather?.get(0)?.icon,
-            )
-        }
+        HourlyForecast(
+            dt?.toLong()?.convertTimestampToString(HOURLY_PATTERN, timezone)?.lowercase(),
+            temp?.celsiusToOthers(tempUnit),
+            weather?.get(0)?.icon,
+        )
 
     companion object {
         private const val HOURLY_PATTERN = "ha" // example: 5 PM
