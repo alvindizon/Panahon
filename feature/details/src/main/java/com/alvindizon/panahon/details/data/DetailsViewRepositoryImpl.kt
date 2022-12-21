@@ -3,14 +3,16 @@ package com.alvindizon.panahon.details.data
 import com.alvindizon.panahon.api.OpenWeatherApi
 import com.alvindizon.panahon.api.model.Daily
 import com.alvindizon.panahon.api.model.Hourly
+import com.alvindizon.panahon.api.model.OneCallResponse
 import com.alvindizon.panahon.common.preferences.PreferencesManager
 import com.alvindizon.panahon.core.units.Temperature
+import com.alvindizon.panahon.core.units.toTemperatureString
 import com.alvindizon.panahon.core.utils.celsiusToOthers
 import com.alvindizon.panahon.core.utils.convertTimestampToString
 import com.alvindizon.panahon.details.model.DailyForecast
 import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.model.HourlyForecast
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,25 +25,31 @@ class DetailsViewRepositoryImpl @Inject constructor(
     override suspend fun fetchDetailedForecast(
         locationName: String,
         latitude: String,
-        longitude: String
+        longitude: String,
+        temperature: Temperature
     ): DetailedForecast {
-        val tempUnit = preferencesManager.getTemperatureUnit().first()
-        return api.getWeather(latitude = latitude, longitude = longitude).run {
-            DetailedForecast(
-                locationName,
-                current.sunrise?.toLong()?.convertTimestampToString(EXACT_HOURLY_PATTERN, timezone)
-                    ?.lowercase(),
-                current.sunset?.toLong()?.convertTimestampToString(EXACT_HOURLY_PATTERN, timezone)
-                    ?.lowercase(),
-                current.temp.celsiusToOthers(tempUnit),
-                current.feelsLike?.celsiusToOthers(tempUnit),
-                current.weather[0].description,
-                current.weather[0].icon,
-                hourly?.take(HOURLY_ITEMS)?.map { it.toHourlyForecast(tempUnit, timezone) },
-                daily?.drop(1)?.map { it.toDailyForecast(tempUnit, timezone) }
-            )
-        }
+        return api.getWeather(latitude = latitude, longitude = longitude)
+            .toDetailedForecast(locationName, temperature)
     }
+
+    override fun fetchTemperatureUnit(): Flow<Temperature> = preferencesManager.getTemperatureUnit()
+
+    private fun OneCallResponse.toDetailedForecast(locationName: String, temperature: Temperature) =
+        DetailedForecast(
+            locationName,
+            current.sunrise?.toLong()
+                ?.convertTimestampToString(EXACT_HOURLY_PATTERN, timezone)
+                ?.lowercase(),
+            current.sunset?.toLong()
+                ?.convertTimestampToString(EXACT_HOURLY_PATTERN, timezone)
+                ?.lowercase(),
+            current.temp.celsiusToOthers(temperature),
+            current.feelsLike?.celsiusToOthers(temperature),
+            current.weather[0].description,
+            current.weather[0].icon,
+            hourly?.take(HOURLY_ITEMS)?.map { it.toHourlyForecast(temperature, timezone) },
+            daily?.drop(1)?.map { it.toDailyForecast(temperature, timezone) }
+        )
 
     private fun Daily.toDailyForecast(tempUnit: Temperature, timezone: String?): DailyForecast =
         DailyForecast(
@@ -58,7 +66,7 @@ class DetailsViewRepositoryImpl @Inject constructor(
     ): HourlyForecast =
         HourlyForecast(
             dt?.toLong()?.convertTimestampToString(HOURLY_PATTERN, timezone)?.lowercase(),
-            temp?.celsiusToOthers(tempUnit),
+            temp?.toTemperatureString(tempUnit),
             weather?.get(0)?.icon,
         )
 
