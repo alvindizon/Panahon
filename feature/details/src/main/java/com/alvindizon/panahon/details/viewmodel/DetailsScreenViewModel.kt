@@ -6,10 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.navigation.DetailsNavigation
 import com.alvindizon.panahon.details.usecase.FetchDetailedForecastUseCase
+import com.alvindizon.panahon.details.usecase.FetchTemperatureUnitUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,6 +22,7 @@ data class DetailsScreenUiState(
 @HiltViewModel
 class DetailsScreenViewModel @Inject constructor(
     private val fetchDetailedForecastUseCase: FetchDetailedForecastUseCase,
+    private val fetchTemperatureUnitUseCase: FetchTemperatureUnitUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -40,18 +40,26 @@ class DetailsScreenViewModel @Inject constructor(
     }
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             runCatching {
-                fetchDetailedForecastUseCase.execute(locationName, latitude, longitude)
-            }.onSuccess { detailedForecast ->
-                _uiState.value =
-                    DetailsScreenUiState(isLoading = false, detailedForecast = detailedForecast)
+                fetchTemperatureUnitUseCase().flatMapLatest { temp ->
+                    fetchDetailedForecastUseCase(locationName, latitude, longitude, temp)
+                }.catch { handleError(it) }
+            }.onSuccess {
+                it.collectLatest { detailedForecast ->
+                    _uiState.value =
+                        DetailsScreenUiState(isLoading = false, detailedForecast = detailedForecast)
+                }
             }.onFailure {
-                _uiState.value = DetailsScreenUiState(
-                    isLoading = false,
-                    errorMessage = it.message ?: it.javaClass.name
-                )
+                handleError(it)
             }
         }
+    }
+
+    private fun handleError(throwable: Throwable) {
+        _uiState.value = DetailsScreenUiState(
+            isLoading = false,
+            errorMessage = throwable.message ?: throwable.javaClass.name
+        )
     }
 }
