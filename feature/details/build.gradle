@@ -36,7 +36,8 @@ android {
                 "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
                 "-opt-in=kotlinx.coroutines.FlowPreview",
                 "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
-                "-opt-in=androidx.compose.material.ExperimentalMaterialApi"
+                "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+                "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi"
         ]
     }
     buildFeatures {
@@ -106,4 +107,6 @@ dependencies {
 
     // Accompanist
     implementation deps.accompanist.navigationAnimation
+    implementation deps.accompanist.pager
+    implementation deps.accompanist.pagerIndicators
 }

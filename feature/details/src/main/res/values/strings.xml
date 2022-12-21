@@ -2,4 +2,12 @@
 <resources>
     <string name="weather">Weather</string>
     <string name="last_updated">Last updated: %s</string>
+    <string name="sunrise_label">Sunrise: %s</string>
+    <string name="sunset_label">Sunset: %s</string>
+    <string name="high_temp_label">High: %s</string>
+    <string name="low_temp_label">Low: %s</string>
+    <string name="wind_label">Wind: %s</string>
+    <string name="pressure_label">Pressure: %s</string>
+    <string name="visibility_label">Visibility: %s</string>
+    <string name="uvi_label">UV index: %s</string>
 </resources>

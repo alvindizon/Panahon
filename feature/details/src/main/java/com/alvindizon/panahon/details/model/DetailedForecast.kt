@@ -10,7 +10,11 @@ data class DetailedForecast(
     val icon: String,
     val hourly: List<HourlyForecast>?,
     val daily: List<DailyForecast>?,
-    val lastUpdatedTime: String
+    val lastUpdatedTime: String,
+    val windSpeed: String,
+    val pressure: String,
+    val visibility: String,
+    val uvIndex: String
 )
 
 data class DailyForecast(
