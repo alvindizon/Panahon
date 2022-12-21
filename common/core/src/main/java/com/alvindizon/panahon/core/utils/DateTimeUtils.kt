@@ -13,3 +13,10 @@ fun Long.convertTimestampToString(format: String, timezone: String?): String {
     val zoneId = timezone?.let { ZoneId.of(it) } ?: ZoneId.systemDefault()
     return instant.atZone(zoneId).format(df).toString()
 }
+
+fun getCurrentTimeString(format: String, timezone: String?): String {
+    val instant = Instant.now()
+    val df = DateTimeFormatter.ofPattern(format, DEFAULT_FORMAT_LOCALE)
+    val zoneId = timezone?.let { ZoneId.of(it) } ?: ZoneId.systemDefault()
+    return instant.atZone(zoneId).format(df).toString()
+}

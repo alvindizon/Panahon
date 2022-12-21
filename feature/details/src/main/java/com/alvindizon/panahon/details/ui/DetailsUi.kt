@@ -11,6 +11,9 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.alvindizon.panahon.design.R
-import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.details.model.DailyForecast
 import com.alvindizon.panahon.details.model.DetailedForecast
@@ -57,7 +59,25 @@ fun DetailsScreen(
             )
         }
     ) { padding ->
-        DetailedForecastScreen(modifier = Modifier.padding(padding), state = state)
+        val refreshState = rememberPullRefreshState(
+            refreshing = state.isLoading,
+            onRefresh = { viewModel.fetchData() },
+        )
+        Box(
+            modifier = Modifier
+                .pullRefresh(refreshState)
+                .fillMaxSize() // fillMaxSize so that pull refresh indicator won't be aligned at top start
+        ) {
+            DetailedForecastScreen(modifier = Modifier.padding(padding), state = state)
+            PullRefreshIndicator(
+                state.isLoading,
+                refreshState,
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(padding)
+
+            )
+        }
     }
 }
 
@@ -81,7 +101,6 @@ internal fun DetailedForecastScreen(
         }
     }
     when {
-        state.isLoading -> LoadingScreen(modifier)
         state.errorMessage != null -> showSnackBar = true
         state.detailedForecast != null -> DetailedForecastScreen(
             modifier = modifier,
@@ -102,6 +121,14 @@ fun DetailedForecastScreen(
     ) {
         // TODO handle empty/null data
         with(detailedForecast) {
+            Text(
+                modifier = Modifier.wrapContentWidth(),
+                style = MaterialTheme.typography.caption,
+                text = stringResource(
+                    com.alvindizon.panahon.details.R.string.last_updated,
+                    lastUpdatedTime
+                ),
+            )
             MainDetails(
                 icon = icon,
                 temperature = currentTemp ?: "",
@@ -219,7 +246,7 @@ fun HourlyForecastItem(time: String, icon: String, temperature: String) {
             modifier = Modifier
                 .size(64.dp)
         )
-        Text(text = "$temperature", style = MaterialTheme.typography.h6)
+        Text(text = temperature, style = MaterialTheme.typography.h6)
 
     }
 }
@@ -337,27 +364,9 @@ fun DailyForecastCard(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-private fun MainDetailsPreview() {
-    PanahonTheme {
-        MainDetails("04d", "30", "Sunny", "38")
-
-    }
-}
-
-@Preview
-@Composable
-private fun AdditionalDetailsPreview() {
-    PanahonTheme {
-        AdditionalDetailsRow("5:30 am", "6:00 pm", "30", "24")
-
-    }
-}
-
-@Preview
-@Composable
-private fun HourlyForecastCardPreview() {
+fun DetailsScreenPreview() {
     val hourlyForecasts = listOf(
         HourlyForecast("5pm", "32", "01d"),
         HourlyForecast("6pm", "32", "01d"),
@@ -365,14 +374,6 @@ private fun HourlyForecastCardPreview() {
         HourlyForecast("8pm", "32", "01d"),
         HourlyForecast("9pm", "32", "01d"),
     )
-    PanahonTheme {
-        HourlyForecastCard(hourlyForecasts = hourlyForecasts)
-    }
-}
-
-@Preview
-@Composable
-private fun DailyForecastCardPreview() {
     val dailyForecasts = listOf(
         DailyForecast("Wed Jun 08", "30", "28", "Sunny", "01d"),
         DailyForecast("Thu Jun 09", "30", "28", "Sunny", "01d"),
@@ -380,9 +381,21 @@ private fun DailyForecastCardPreview() {
         DailyForecast("Sat Jun 11", "30", "28", "Sunny", "01d"),
         DailyForecast("Sun Jun 12", "30", "28", "Sunny", "01d"),
     )
+    val detailedForecast = DetailedForecast(
+        locationName = "San Pedro",
+        sunriseTime = "5:30 am",
+        sunsetTime = "6:00 pm",
+        currentTemp = "30",
+        feelsLikeTemp = "38",
+        condition = "Sunny",
+        icon = "04d",
+        hourly = hourlyForecasts,
+        daily = dailyForecasts,
+        lastUpdatedTime = "2022-12-21T11:27:00:00+02:00"
+    )
     PanahonTheme {
-        DailyForecastCard(dailyForecasts = dailyForecasts)
+        DetailedForecastScreen(detailedForecast = detailedForecast)
     }
-
 }
+
 
