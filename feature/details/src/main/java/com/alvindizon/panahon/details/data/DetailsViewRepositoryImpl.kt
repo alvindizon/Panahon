@@ -5,11 +5,8 @@ import com.alvindizon.panahon.api.model.Daily
 import com.alvindizon.panahon.api.model.Hourly
 import com.alvindizon.panahon.api.model.OneCallResponse
 import com.alvindizon.panahon.common.preferences.PreferencesManager
-import com.alvindizon.panahon.core.units.Temperature
-import com.alvindizon.panahon.core.units.toTemperatureString
-import com.alvindizon.panahon.core.utils.celsiusToOthers
-import com.alvindizon.panahon.core.utils.convertTimestampToString
-import com.alvindizon.panahon.core.utils.getCurrentTimeString
+import com.alvindizon.panahon.core.units.*
+import com.alvindizon.panahon.core.utils.*
 import com.alvindizon.panahon.details.model.DailyForecast
 import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.model.HourlyForecast
@@ -27,31 +24,45 @@ class DetailsViewRepositoryImpl @Inject constructor(
         locationName: String,
         latitude: String,
         longitude: String,
-        temperature: Temperature
+        temperature: Temperature,
+        speed: Speed,
+        pressure: Pressure,
+        distance: Distance
     ): DetailedForecast {
         return api.getWeather(latitude = latitude, longitude = longitude)
-            .toDetailedForecast(locationName, temperature)
+            .toDetailedForecast(locationName, temperature, speed, pressure, distance)
     }
 
     override fun fetchTemperatureUnit(): Flow<Temperature> = preferencesManager.getTemperatureUnit()
 
-    private fun OneCallResponse.toDetailedForecast(locationName: String, temperature: Temperature) =
+    override fun fetchSpeedUnit(): Flow<Speed> = preferencesManager.getSpeedUnit()
+
+    override fun fetchPressureUnit(): Flow<Pressure> = preferencesManager.getPressureUnit()
+
+    override fun fetchDistanceUnit(): Flow<Distance> = preferencesManager.getDistanceUnit()
+
+    // TODO map OneCallResponse to another model that contains raw values
+    private fun OneCallResponse.toDetailedForecast(locationName: String, temperature: Temperature, speed: Speed, pressure: Pressure, distance: Distance) =
         DetailedForecast(
-            locationName,
-            current.sunrise?.toLong()
+            locationName = locationName,
+            sunriseTime = current.sunrise?.toLong()
                 ?.convertTimestampToString(EXACT_HOURLY_PATTERN, timezone)
                 ?.lowercase(),
-            current.sunset?.toLong()
+            sunsetTime = current.sunset?.toLong()
                 ?.convertTimestampToString(EXACT_HOURLY_PATTERN, timezone)
                 ?.lowercase(),
-            current.temp.celsiusToOthers(temperature),
-            current.feelsLike?.celsiusToOthers(temperature),
-            current.weather[0].description,
-            current.weather[0].icon,
-            hourly?.take(HOURLY_ITEMS)?.map { it.toHourlyForecast(temperature, timezone) },
-            daily?.drop(1)?.map { it.toDailyForecast(temperature, timezone) },
-            current.dt?.toLong()?.convertTimestampToString(COMPLETE_DATE_TIME, null)
-                ?: getCurrentTimeString(COMPLETE_DATE_TIME, null)
+            currentTemp = current.temp.celsiusToOthers(temperature),
+            feelsLikeTemp = current.feelsLike?.celsiusToOthers(temperature),
+            condition = current.weather[0].description,
+            icon = current.weather[0].icon,
+            hourly = hourly?.take(HOURLY_ITEMS)?.map { it.toHourlyForecast(temperature, timezone) },
+            daily = daily?.drop(1)?.map { it.toDailyForecast(temperature, timezone) },
+            lastUpdatedTime = current.dt?.toLong()?.convertTimestampToString(COMPLETE_DATE_TIME, null)
+                ?: getCurrentTimeString(COMPLETE_DATE_TIME, null),
+            windSpeed = current.windSpeed?.msToOthers(speed) ?: "0",
+            pressure = current.pressure?.hPaToOthers(pressure) ?: "0",
+            visibility = current.visibility?.metersToOthers(distance) ?: "0",
+            uvIndex = current.uvi?.toString() ?: "0.0"
         )
 
     private fun Daily.toDailyForecast(tempUnit: Temperature, timezone: String?): DailyForecast =

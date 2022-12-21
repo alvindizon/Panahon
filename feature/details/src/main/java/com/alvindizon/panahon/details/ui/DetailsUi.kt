@@ -23,13 +23,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.alvindizon.panahon.design.R
+import com.alvindizon.panahon.details.R
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.details.model.DailyForecast
 import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.model.HourlyForecast
 import com.alvindizon.panahon.details.viewmodel.DetailsScreenUiState
 import com.alvindizon.panahon.details.viewmodel.DetailsScreenViewModel
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.HorizontalPagerIndicator
+import com.google.accompanist.pager.rememberPagerState
 
 @Composable
 fun DetailsScreen(
@@ -45,14 +48,17 @@ fun DetailsScreen(
                 title = { Text(text = location) },
                 navigationIcon = {
                     IconButton(onClick = onNavigationIconClick) {
-                        Icon(Icons.Filled.Menu, stringResource(id = R.string.menu))
+                        Icon(
+                            Icons.Filled.Menu,
+                            stringResource(id = com.alvindizon.panahon.design.R.string.menu)
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = { onSettingsIconClick() }) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
-                            contentDescription = stringResource(id = R.string.settings)
+                            contentDescription = stringResource(id = com.alvindizon.panahon.design.R.string.settings)
                         )
                     }
                 }
@@ -135,11 +141,21 @@ fun DetailedForecastScreen(
                 condition = condition,
                 feelsLikeTemp = feelsLikeTemp ?: ""
             )
-            AdditionalDetailsRow(
-                sunriseTime = sunriseTime ?: "",
-                sunsetTime = sunsetTime ?: "",
-                maximumTemp = daily?.get(0)?.maximumTemp ?: "",
-                minimumTemp = daily?.get(0)?.minimumTemp ?: ""
+            AdditionalDetailsPager(
+                sunriseTime = stringResource(R.string.sunrise_label, sunriseTime ?: "N/A"),
+                sunsetTime = stringResource(R.string.sunset_label, sunsetTime ?: "N/A"),
+                maximumTemp = stringResource(
+                    R.string.high_temp_label,
+                    daily?.get(0)?.maximumTemp ?: "N/A"
+                ),
+                minimumTemp = stringResource(
+                    R.string.low_temp_label,
+                    daily?.get(0)?.minimumTemp ?: "N/A"
+                ),
+                windSpeed = stringResource(R.string.wind_label, windSpeed),
+                pressure = stringResource(R.string.pressure_label, pressure),
+                visibility = stringResource(id = R.string.visibility_label, visibility),
+                uvIndex = stringResource(id = R.string.uvi_label, uvIndex),
             )
             HourlyForecastCard(hourlyForecasts = detailedForecast.hourly ?: emptyList())
             DailyForecastCard(dailyForecasts = detailedForecast.daily ?: emptyList())
@@ -164,7 +180,7 @@ fun MainDetails(icon: String, temperature: String, condition: String, feelsLikeT
                 painter = rememberAsyncImagePainter(
                     model = "https://openweathermap.org/img/wn/$icon@2x.png",
                     placeholder = painterResource(
-                        id = R.drawable.ic_weather_placeholder
+                        id = com.alvindizon.panahon.design.R.drawable.ic_weather_placeholder
                     )
                 ),
                 contentDescription = "weather icon",
@@ -194,11 +210,11 @@ fun MainDetails(icon: String, temperature: String, condition: String, feelsLikeT
 }
 
 @Composable
-fun AdditionalDetailsRow(
-    sunriseTime: String,
-    sunsetTime: String,
-    maximumTemp: String,
-    minimumTemp: String
+fun AdditionalDetailsCard(
+    text1: String,
+    text2: String,
+    text3: String,
+    text4: String
 ) {
     Card(
         shape = RoundedCornerShape(5.dp),
@@ -214,15 +230,15 @@ fun AdditionalDetailsRow(
                 modifier = Modifier.padding(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "Sunrise: $sunriseTime", style = MaterialTheme.typography.h6)
-                Text(text = "Sunset: $sunsetTime", style = MaterialTheme.typography.h6)
+                Text(text = text1, style = MaterialTheme.typography.subtitle2)
+                Text(text = text2, style = MaterialTheme.typography.subtitle2)
             }
             Column(
                 modifier = Modifier.padding(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "High: $maximumTemp", style = MaterialTheme.typography.h6)
-                Text(text = "Low: $minimumTemp", style = MaterialTheme.typography.h6)
+                Text(text = text3, style = MaterialTheme.typography.subtitle2)
+                Text(text = text4, style = MaterialTheme.typography.subtitle2)
             }
         }
     }
@@ -239,7 +255,7 @@ fun HourlyForecastItem(time: String, icon: String, temperature: String) {
             painter = rememberAsyncImagePainter(
                 model = "https://openweathermap.org/img/wn/$icon@2x.png",
                 placeholder = painterResource(
-                    id = R.drawable.ic_weather_placeholder
+                    id = com.alvindizon.panahon.design.R.drawable.ic_weather_placeholder
                 )
             ),
             contentDescription = "weather icon",
@@ -315,7 +331,7 @@ fun DailyForecastItem(time: String, maximumTemp: String, minimumTemp: String, ic
             painter = rememberAsyncImagePainter(
                 model = "https://openweathermap.org/img/wn/$icon@2x.png",
                 placeholder = painterResource(
-                    id = R.drawable.ic_weather_placeholder
+                    id = com.alvindizon.panahon.design.R.drawable.ic_weather_placeholder
                 )
             ),
             contentDescription = "weather icon",
@@ -364,34 +380,82 @@ fun DailyForecastCard(
     }
 }
 
+@Composable
+fun AdditionalDetailsPager(
+    modifier: Modifier = Modifier,
+    sunriseTime: String,
+    sunsetTime: String,
+    maximumTemp: String,
+    minimumTemp: String,
+    windSpeed: String,
+    pressure: String,
+    visibility: String,
+    uvIndex: String
+) {
+    val pagerState = rememberPagerState()
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        HorizontalPager(count = 2, modifier = modifier, state = pagerState) { page ->
+            when (page) {
+                0 -> {
+                    AdditionalDetailsCard(
+                        text1 = sunriseTime,
+                        text2 = sunsetTime,
+                        text3 = maximumTemp,
+                        text4 = minimumTemp
+                    )
+                }
+                1 -> {
+                    AdditionalDetailsCard(
+                        text1 = windSpeed,
+                        text2 = pressure,
+                        text3 = visibility,
+                        text4 = uvIndex
+                    )
+                }
+            }
+        }
+        HorizontalPagerIndicator(
+            pagerState = pagerState,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(8.dp),
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun DetailsScreenPreview() {
     val hourlyForecasts = listOf(
-        HourlyForecast("5pm", "32", "01d"),
-        HourlyForecast("6pm", "32", "01d"),
-        HourlyForecast("7pm", "32", "01d"),
-        HourlyForecast("8pm", "32", "01d"),
-        HourlyForecast("9pm", "32", "01d"),
+        HourlyForecast("5pm", "32°C", "01d"),
+        HourlyForecast("6pm", "32°C", "01d"),
+        HourlyForecast("7pm", "32°C", "01d"),
+        HourlyForecast("8pm", "32°C", "01d"),
+        HourlyForecast("9pm", "32°C", "01d"),
     )
     val dailyForecasts = listOf(
-        DailyForecast("Wed Jun 08", "30", "28", "Sunny", "01d"),
-        DailyForecast("Thu Jun 09", "30", "28", "Sunny", "01d"),
-        DailyForecast("Fri Jun 10", "30", "28", "Sunny", "01d"),
-        DailyForecast("Sat Jun 11", "30", "28", "Sunny", "01d"),
-        DailyForecast("Sun Jun 12", "30", "28", "Sunny", "01d"),
+        DailyForecast("Wed Jun 08", "30°C", "28°C", "Sunny", "01d"),
+        DailyForecast("Thu Jun 09", "30°C", "28°C", "Sunny", "01d"),
+        DailyForecast("Fri Jun 10", "30°C", "28°C", "Sunny", "01d"),
+        DailyForecast("Sat Jun 11", "30°C", "28°C", "Sunny", "01d"),
+        DailyForecast("Sun Jun 12", "30°C", "28°C", "Sunny", "01d"),
     )
     val detailedForecast = DetailedForecast(
         locationName = "San Pedro",
         sunriseTime = "5:30 am",
         sunsetTime = "6:00 pm",
-        currentTemp = "30",
-        feelsLikeTemp = "38",
+        currentTemp = "30°C",
+        feelsLikeTemp = "38°C",
         condition = "Sunny",
         icon = "04d",
         hourly = hourlyForecasts,
         daily = dailyForecasts,
-        lastUpdatedTime = "2022-12-21T11:27:00:00+02:00"
+        lastUpdatedTime = "2022-12-21T11:27:00:00+02:00",
+        windSpeed = "2 m/s",
+        pressure = "1000 hPa",
+        visibility = "10 km",
+        uvIndex = "0.0",
     )
     PanahonTheme {
         DetailedForecastScreen(detailedForecast = detailedForecast)
