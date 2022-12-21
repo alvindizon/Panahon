@@ -40,7 +40,12 @@ class DetailsScreenViewModel @Inject constructor(
     }
 
     init {
+        fetchData()
+    }
+
+    fun fetchData() {
         viewModelScope.launch {
+            _uiState.value = DetailsScreenUiState(isLoading = true)
             runCatching {
                 fetchTemperatureUnitUseCase().flatMapLatest { temp ->
                     fetchDetailedForecastUseCase(locationName, latitude, longitude, temp)

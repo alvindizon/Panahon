@@ -9,7 +9,8 @@ data class DetailedForecast(
     val condition: String,
     val icon: String,
     val hourly: List<HourlyForecast>?,
-    val daily: List<DailyForecast>?
+    val daily: List<DailyForecast>?,
+    val lastUpdatedTime: String
 )
 
 data class DailyForecast(
