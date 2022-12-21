@@ -59,6 +59,7 @@ dependencies {
     implementation project(":common:design")
     implementation project(":common:core")
     implementation project(":common:navigation")
+    implementation platform(deps.androidX.compose.bom)
     implementation deps.androidX.compose.runtime
     implementation deps.androidX.compose.ui
     implementation deps.androidX.compose.foundationLayout
@@ -83,9 +84,10 @@ dependencies {
     testImplementation deps.junit
     testImplementation deps.androidX.test.core
     testImplementation deps.mockk
+    androidTestImplementation platform(deps.androidX.compose.bom)
     androidTestImplementation deps.androidX.test.testExtJunit
     androidTestImplementation deps.androidX.test.espresso
-    androidTestImplementation deps.androidX.test.composeJunit4
+    androidTestImplementation deps.androidX.compose.junit4
     debugImplementation deps.androidX.compose.uiTooling
 
     // Dagger Hilt

@@ -4,7 +4,6 @@
  **/
 ext.deps = [:]
 def versions = [:]
-    versions.composeVersion = "1.3.1"
     versions.composeCompilerVersion = "1.3.0"
     versions.appCompatVersion = "1.6.1"
     versions.coroutinesVersion = "1.6.4"
@@ -33,6 +32,7 @@ def versions = [:]
     versions.timber = "5.0.1"
     versions.accompanist = "0.28.0"
     versions.datastore = "1.0.0"
+    versions.composeBom = "2022.12.00"
 ext.versions = versions
 
 def buildVersions = [:]
@@ -53,15 +53,17 @@ def androidX = [:]
     androidX.datastore = "androidx.datastore:datastore-preferences:$versions.datastore"
 
     def compose = [:]
-        compose.runtime ="androidx.compose.runtime:runtime:$versions.composeVersion"
-        compose.ui ="androidx.compose.ui:ui:$versions.composeVersion"
-        compose.foundationLayout ="androidx.compose.foundation:foundation-layout:$versions.composeVersion"
-        compose.material="androidx.compose.material:material:$versions.composeVersion"
-        compose.materialIconsExtended ="androidx.compose.material:material-icons-extended:$versions.composeVersion"
-        compose.foundation ="androidx.compose.foundation:foundation:$versions.composeVersion"
-        compose.animation ="androidx.compose.animation:animation:$versions.composeVersion"
-        compose.uiTooling ="androidx.compose.ui:ui-tooling:$versions.composeVersion"
-        compose.runtimeLivedata ="androidx.compose.runtime:runtime-livedata:$versions.composeVersion"
+        compose.runtime ="androidx.compose.runtime:runtime"
+        compose.ui ="androidx.compose.ui:ui"
+        compose.foundationLayout ="androidx.compose.foundation:foundation-layout"
+        compose.material="androidx.compose.material:material"
+        compose.materialIconsExtended ="androidx.compose.material:material-icons-extended"
+        compose.foundation ="androidx.compose.foundation:foundation"
+        compose.animation ="androidx.compose.animation:animation"
+        compose.uiTooling ="androidx.compose.ui:ui-tooling"
+        compose.runtimeLivedata ="androidx.compose.runtime:runtime-livedata"
+        compose.junit4 = "androidx.compose.ui:ui-test-junit4"
+        compose.bom = "androidx.compose:compose-bom:$versions.composeBom"
     androidX.compose = compose
 
     def room = [:]
@@ -74,7 +76,6 @@ def androidX = [:]
         test.core = "androidx.arch.core:core-testing:$versions.coreTestingVersion"
         test.testExtJunit = "androidx.test.ext:junit:$versions.testExtJunitVersion"
         test.espresso = "androidx.test.espresso:espresso-core:$versions.espressoVersion"
-        test.composeJunit4 = "androidx.compose.ui:ui-test-junit4:$versions.composeVersion"
     androidX.test = test
 
 deps.androidX = androidX

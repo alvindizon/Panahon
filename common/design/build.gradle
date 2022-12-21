@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation platform(deps.androidX.compose.bom)
     implementation deps.androidX.compose.runtime
     implementation deps.androidX.compose.ui
     implementation deps.androidX.compose.foundationLayout
