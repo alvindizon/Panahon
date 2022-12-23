@@ -28,20 +28,21 @@ fun CustomSegmentedControl(
     modifier: Modifier = Modifier,
     items: List<String>,
     initialSelectedIndex: Int,
-    onItemClick: (Int) -> Unit
+    onItemClick: (String) -> Unit
 ) {
     // pre-select item based on datastore by recalculating the lambda on initialSelectedIndex change
     var selectedIndex by remember(initialSelectedIndex) { mutableStateOf(initialSelectedIndex) }
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         items.forEachIndexed { index, item ->
             OutlinedButton(
+                contentPadding = PaddingValues(0.dp),
                 modifier = when (index) {
                     0 -> Modifier.offset(0.dp, 0.dp)
                     else -> Modifier.offset((-1 * index).dp, 0.dp)
                 }.zIndex(if (selectedIndex == index) 1f else 0f),
                 onClick = {
                     selectedIndex = index
-                    onItemClick(index)
+                    onItemClick(item)
                 },
                 shape = when (index) {
                     0 -> RoundedCornerShape(topStart = 4.dp, bottomStart = 4.dp)

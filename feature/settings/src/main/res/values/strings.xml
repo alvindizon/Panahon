@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="unit_header">Units of measurement</string>
-    <string name="temperature_label">Temperature</string>
+    <string name="temperature_unit_label">Temperature</string>
+    <string name="speed_unit_label">Speed</string>
+    <string name="pressure_unit_label">Pressure</string>
+    <string name="distance_unit_label">Distance</string>
 </resources>

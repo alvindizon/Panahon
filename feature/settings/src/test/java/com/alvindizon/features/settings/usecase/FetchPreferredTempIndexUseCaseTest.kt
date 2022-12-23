@@ -26,13 +26,13 @@ class FetchPreferredTempIndexUseCaseTest {
     fun `verify correct ordinal value is returned by usecase given temperature unit returned by preferences`() = runTest {
         coEvery { preferencesManager.getTemperatureUnit() } returns flow { emit(Temperature.Celsius) }
 
-        var result = useCase.execute()
+        var result = useCase()
 
         assertEquals(0, result)
 
         coEvery { preferencesManager.getTemperatureUnit() } returns flow { emit(Temperature.Fahrenheit) }
 
-        result = useCase.execute()
+        result = useCase()
 
         assertEquals(1, result)
     }
