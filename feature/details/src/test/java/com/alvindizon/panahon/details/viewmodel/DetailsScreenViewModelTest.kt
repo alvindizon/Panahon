@@ -1,11 +1,8 @@
 package com.alvindizon.panahon.details.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import com.alvindizon.panahon.core.units.Temperature
 import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.usecase.FetchDetailedForecastUseCase
-import com.alvindizon.panahon.details.usecase.FetchTemperatureUnitUseCase
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -22,18 +19,12 @@ import org.junit.jupiter.api.Test
 
 class DetailsScreenViewModelTest {
 
-    private val fetchTemperatureUnitUseCase: FetchTemperatureUnitUseCase = mockk()
-
     private val fetchDetailedForecastUseCase: FetchDetailedForecastUseCase = mockk()
 
     private val savedStateHandle: SavedStateHandle = mockk()
 
     private val viewModel: DetailsScreenViewModel by lazy {
-        DetailsScreenViewModel(
-            fetchDetailedForecastUseCase,
-            fetchTemperatureUnitUseCase,
-            savedStateHandle
-        )
+        DetailsScreenViewModel(fetchDetailedForecastUseCase, savedStateHandle)
     }
 
     @BeforeEach
@@ -47,48 +38,25 @@ class DetailsScreenViewModelTest {
     }
 
     @Test
-    fun `verify uistate contains correct error message when fetch temperature unit usecase errors`() =
-        runTest {
-            coEvery { savedStateHandle.get<String>(any()) } returns ""
-            coEvery { fetchTemperatureUnitUseCase() } throws Throwable("bleh")
-            coEvery {
-                fetchDetailedForecastUseCase(
-                    any(),
-                    any(),
-                    any(),
-                    any()
-                )
-            } returns mockk()
-            assertEquals("bleh", viewModel.uiState.value.errorMessage)
-        }
-
-    @Test
     fun `verify uistate contains correct error message when fetch detailed forecast usecase errors`() =
         runTest {
-            coEvery { savedStateHandle.get<String>(any()) } returns ""
-            coEvery { fetchTemperatureUnitUseCase() } returns flow { emit(Temperature.Celsius) }
-            coEvery {
-                fetchDetailedForecastUseCase(
-                    any(),
-                    any(),
-                    any(),
-                    any()
-                )
-            } throws Throwable("bleh")
+            every { savedStateHandle.get<String>(any()) } returns ""
+            // seems like you only need coEvery for suspending functions--if you use coEvery here
+            // you won't get an error
+            every { fetchDetailedForecastUseCase(any(), any(), any()) } throws Throwable("bleh")
             assertEquals("bleh", viewModel.uiState.value.errorMessage)
         }
 
+
     @Test
-    fun `verify uistate contains correct detailed forecast when fetch forecast and fetch temp unit usecase succeeds`() =
+    fun `verify uistate contains correct detailed forecast when fetch forecast usecase succeeds`() =
         runTest {
             val mockForecast = mockk<DetailedForecast> {
                 every { locationName } returns "Sydney"
             }
-            coEvery { savedStateHandle.get<String>(any()) } returns ""
-            coEvery { fetchTemperatureUnitUseCase() } returns flow { emit(Temperature.Celsius) }
-            coEvery {
+            every { savedStateHandle.get<String>(any()) } returns ""
+            every {
                 fetchDetailedForecastUseCase(
-                    any(),
                     any(),
                     any(),
                     any()

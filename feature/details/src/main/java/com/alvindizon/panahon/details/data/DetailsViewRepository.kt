@@ -4,20 +4,16 @@ import com.alvindizon.panahon.core.units.Distance
 import com.alvindizon.panahon.core.units.Pressure
 import com.alvindizon.panahon.core.units.Speed
 import com.alvindizon.panahon.core.units.Temperature
-import com.alvindizon.panahon.details.model.DetailedForecast
+import com.alvindizon.panahon.details.model.RawDetailedForecast
 import kotlinx.coroutines.flow.Flow
 
 interface DetailsViewRepository {
 
-    suspend fun fetchDetailedForecast(
+    fun fetchDetailedForecast(
         locationName: String,
         latitude: String,
         longitude: String,
-        temperature: Temperature,
-        speed: Speed,
-        pressure: Pressure,
-        distance: Distance
-    ): DetailedForecast
+    ): Flow<RawDetailedForecast>
 
     fun fetchTemperatureUnit(): Flow<Temperature>
 
