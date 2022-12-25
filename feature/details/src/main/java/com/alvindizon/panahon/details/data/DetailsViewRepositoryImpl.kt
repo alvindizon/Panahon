@@ -5,12 +5,16 @@ import com.alvindizon.panahon.api.model.Daily
 import com.alvindizon.panahon.api.model.Hourly
 import com.alvindizon.panahon.api.model.OneCallResponse
 import com.alvindizon.panahon.common.preferences.PreferencesManager
-import com.alvindizon.panahon.core.units.*
-import com.alvindizon.panahon.core.utils.*
-import com.alvindizon.panahon.details.model.DailyForecast
-import com.alvindizon.panahon.details.model.DetailedForecast
-import com.alvindizon.panahon.details.model.HourlyForecast
+import com.alvindizon.panahon.core.units.Distance
+import com.alvindizon.panahon.core.units.Pressure
+import com.alvindizon.panahon.core.units.Speed
+import com.alvindizon.panahon.core.units.Temperature
+import com.alvindizon.panahon.core.utils.DateTimeUtils
+import com.alvindizon.panahon.details.model.RawDaily
+import com.alvindizon.panahon.details.model.RawDetailedForecast
+import com.alvindizon.panahon.details.model.RawHourly
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,18 +24,12 @@ class DetailsViewRepositoryImpl @Inject constructor(
     private val preferencesManager: PreferencesManager
 ) : DetailsViewRepository {
 
-    override suspend fun fetchDetailedForecast(
+    override fun fetchDetailedForecast(
         locationName: String,
         latitude: String,
-        longitude: String,
-        temperature: Temperature,
-        speed: Speed,
-        pressure: Pressure,
-        distance: Distance
-    ): DetailedForecast {
-        return api.getWeather(latitude = latitude, longitude = longitude)
-            .toDetailedForecast(locationName, temperature, speed, pressure, distance)
-    }
+        longitude: String
+    ): Flow<RawDetailedForecast> =
+        flow { emit(api.getWeather(latitude, longitude).toRawDetailedForecast(locationName)) }
 
     override fun fetchTemperatureUnit(): Flow<Temperature> = preferencesManager.getTemperatureUnit()
 
@@ -41,54 +39,38 @@ class DetailsViewRepositoryImpl @Inject constructor(
 
     override fun fetchDistanceUnit(): Flow<Distance> = preferencesManager.getDistanceUnit()
 
-    // TODO map OneCallResponse to another model that contains raw values
-    private fun OneCallResponse.toDetailedForecast(locationName: String, temperature: Temperature, speed: Speed, pressure: Pressure, distance: Distance) =
-        DetailedForecast(
+    private fun OneCallResponse.toRawDetailedForecast(locationName: String) =
+        RawDetailedForecast(
             locationName = locationName,
-            sunriseTime = current.sunrise?.toLong()
-                ?.convertTimestampToString(EXACT_HOURLY_PATTERN, timezone)
-                ?.lowercase(),
-            sunsetTime = current.sunset?.toLong()
-                ?.convertTimestampToString(EXACT_HOURLY_PATTERN, timezone)
-                ?.lowercase(),
-            currentTemp = current.temp.celsiusToOthers(temperature),
-            feelsLikeTemp = current.feelsLike?.celsiusToOthers(temperature),
+            timezone = timezone,
+            sunriseTime = current.sunrise,
+            sunsetTime = current.sunset,
+            currentTemp = current.temp,
+            feelsLikeTemp = current.feelsLike,
             condition = current.weather[0].description,
             icon = current.weather[0].icon,
-            hourly = hourly?.take(HOURLY_ITEMS)?.map { it.toHourlyForecast(temperature, timezone) },
-            daily = daily?.drop(1)?.map { it.toDailyForecast(temperature, timezone) },
-            lastUpdatedTime = current.dt?.toLong()?.convertTimestampToString(COMPLETE_DATE_TIME, null)
-                ?: getCurrentTimeString(COMPLETE_DATE_TIME, null),
-            windSpeed = current.windSpeed?.msToOthers(speed) ?: "0",
-            pressure = current.pressure?.hPaToOthers(pressure) ?: "0",
-            visibility = current.visibility?.metersToOthers(distance) ?: "0",
-            uvIndex = current.uvi?.toString() ?: "0.0"
+            hourly = hourly?.take(DateTimeUtils.HOURLY_ITEMS)?.map { it.toRawHourly() },
+            daily = daily?.drop(1)?.map { it.toRawDaily() },
+            lastUpdatedTime = current.dt,
+            windSpeed = current.windSpeed,
+            pressure = current.pressure,
+            visibility = current.visibility,
+            uvIndex = current.uvi
         )
 
-    private fun Daily.toDailyForecast(tempUnit: Temperature, timezone: String?): DailyForecast =
-        DailyForecast(
-            dt?.toLong()?.convertTimestampToString(DAILY_PATTERN, timezone),
-            temp?.max?.celsiusToOthers(tempUnit),
-            temp?.min?.celsiusToOthers(tempUnit),
-            weather?.get(0)?.description,
-            weather?.get(0)?.icon,
+    private fun Daily.toRawDaily(): RawDaily =
+        RawDaily(
+            date = dt,
+            maximumTemp = temp?.max,
+            minimumTemp = temp?.min,
+            condition = weather?.get(0)?.description,
+            icon = weather?.get(0)?.icon,
         )
 
-    private fun Hourly.toHourlyForecast(
-        tempUnit: Temperature,
-        timezone: String?
-    ): HourlyForecast =
-        HourlyForecast(
-            dt?.toLong()?.convertTimestampToString(HOURLY_PATTERN, timezone)?.lowercase(),
-            temp?.toTemperatureString(tempUnit),
-            weather?.get(0)?.icon,
+    private fun Hourly.toRawHourly(): RawHourly =
+        RawHourly(
+            time = dt,
+            temperature = temp,
+            icon = weather?.get(0)?.icon,
         )
-
-    companion object {
-        private const val HOURLY_PATTERN = "ha" // example: 5 PM
-        private const val EXACT_HOURLY_PATTERN = "h:mm a" // example: 5:55 PM
-        private const val DAILY_PATTERN = "EEE d MMM" // example: Thu Jun 9
-        private const val COMPLETE_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ssZ"
-        private const val HOURLY_ITEMS = 24
-    }
 }
