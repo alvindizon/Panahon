@@ -2,13 +2,12 @@ package com.alvindizon.features.settings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alvindizon.features.settings.usecase.*
+import com.alvindizon.features.settings.usecase.FetchPreferredUnitsUseCase
+import com.alvindizon.features.settings.usecase.SetPreferredUnitUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,13 +20,9 @@ data class SettingsUiState(
     val errorMessage: String? = null
 )
 
-// TODO try to find a way to generalize fetching units into a single usecase
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val fetchPreferredTempIndexUseCase: FetchPreferredTempIndexUseCase,
-    private val fetchPreferredSpeedIndexUseCase: FetchPreferredSpeedIndexUseCase,
-    private val fetchPreferredPressureIndexUseCase: FetchPreferredPressureIndexUseCase,
-    private val fetchPreferredDistanceIndexUseCase: FetchPreferredDistanceIndexUseCase,
+    private val fetchPreferredUnitsUseCase: FetchPreferredUnitsUseCase,
     private val setPreferredUnitUseCase: SetPreferredUnitUseCase
 ) : ViewModel() {
 
@@ -39,29 +34,18 @@ class SettingsViewModel @Inject constructor(
         _uiState.value = SettingsUiState(isLoading = true)
         viewModelScope.launch {
             runCatching {
-                awaitAll(
-                    async { fetchPreferredTempIndexUseCase() },
-                    async { fetchPreferredSpeedIndexUseCase() },
-                    async { fetchPreferredPressureIndexUseCase() },
-                    async { fetchPreferredDistanceIndexUseCase() }
-                )
-            }.onSuccess { indices ->
-                _uiState.value = SettingsUiState(
-                    preferredTempUnitIndex = indices[0],
-                    preferredSpeedUnitIndex = indices[1],
-                    preferredPressureUnitIndex = indices[2],
-                    preferredDistanceUnitIndex = indices[3]
-                )
-            }.onFailure {
-                // if any of the above usecases fails, a CancellationException occurs which
-                // has an error message of "StandaloneCoroutine is Cancelling". This doesn't help the
-                // user if this is displayed, thus we replace it with something more human friendly
-                val message = if (it is CancellationException) {
-                    "An error occurred, please try again"
-                } else {
-                    it.message
+                fetchPreferredUnitsUseCase()
+            }.onSuccess {
+                it.collectLatest { indices ->
+                    _uiState.value = SettingsUiState(
+                        preferredTempUnitIndex = indices[0],
+                        preferredSpeedUnitIndex = indices[1],
+                        preferredPressureUnitIndex = indices[2],
+                        preferredDistanceUnitIndex = indices[3]
+                    )
                 }
-                _uiState.value = SettingsUiState(errorMessage = message)
+            }.onFailure {
+                _uiState.value = SettingsUiState(errorMessage = it.message)
             }
         }
     }
