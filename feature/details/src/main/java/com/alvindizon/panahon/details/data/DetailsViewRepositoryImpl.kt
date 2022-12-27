@@ -65,6 +65,7 @@ class DetailsViewRepositoryImpl @Inject constructor(
             minimumTemp = temp?.min,
             condition = weather?.get(0)?.description,
             icon = weather?.get(0)?.icon,
+            pop = pop
         )
 
     private fun Hourly.toRawHourly(): RawHourly =
@@ -72,5 +73,6 @@ class DetailsViewRepositoryImpl @Inject constructor(
             time = dt,
             temperature = temp,
             icon = weather?.get(0)?.icon,
+            pop = pop
         )
 }

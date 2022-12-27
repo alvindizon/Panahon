@@ -9,7 +9,9 @@ import com.alvindizon.panahon.details.model.*
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import java.math.MathContext
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @ViewModelScoped
 class FetchDetailedForecastUseCase @Inject constructor(private val repo: DetailsViewRepository) {
@@ -51,7 +53,7 @@ class FetchDetailedForecastUseCase @Inject constructor(private val repo: Details
                     windSpeed = windSpeed?.msToOthers(speedUnit) ?: "0",
                     pressure = pressure?.hPaToOthers(pressureUnit) ?: "0",
                     visibility = visibility?.metersToOthers(distUnit) ?: "0",
-                    uvIndex = uvIndex?.toString() ?: "0.0"
+                    uvIndex = uvIndex?.toString() ?: "0.0",
                 )
             }
         }
@@ -63,6 +65,7 @@ class FetchDetailedForecastUseCase @Inject constructor(private val repo: Details
             minimumTemp = minimumTemp?.celsiusToOthers(tempUnit),
             condition = condition,
             icon = icon,
+            pop = "${pop?.times(100)?.roundToInt() ?: 0}%"
         )
 
     private fun RawHourly.toHourlyForecast(
@@ -74,5 +77,6 @@ class FetchDetailedForecastUseCase @Inject constructor(private val repo: Details
                 ?.lowercase(),
             temperature = temperature?.toTemperatureString(tempUnit),
             icon = icon,
+            pop = "${pop?.times(100)?.roundToInt() ?: 0}%"
         )
 }
