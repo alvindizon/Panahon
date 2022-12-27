@@ -22,11 +22,13 @@ data class DailyForecast(
     val maximumTemp: String?,
     val minimumTemp: String?,
     val condition: String?,
-    val icon: String?
+    val icon: String?,
+    val pop: String
 )
 
 data class HourlyForecast(
     val time: String?,
     val temperature: String?,
-    val icon: String?
+    val icon: String?,
+    val pop: String
 )

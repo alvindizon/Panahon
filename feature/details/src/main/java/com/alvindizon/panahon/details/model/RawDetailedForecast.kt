@@ -23,11 +23,13 @@ data class RawDaily(
     val maximumTemp: Double?,
     val minimumTemp: Double?,
     val condition: String?,
-    val icon: String?
+    val icon: String?,
+    val pop: Double?
 )
 
 data class RawHourly(
     val time: Int?,
     val temperature: Double?,
-    val icon: String?
+    val icon: String?,
+    val pop: Double?
 )
