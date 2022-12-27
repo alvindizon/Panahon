@@ -22,9 +22,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.alvindizon.panahon.design.components.DataUnavailableScreen
+import com.alvindizon.panahon.design.theme.Hot
 import com.alvindizon.panahon.design.theme.PanahonTheme
+import com.alvindizon.panahon.design.theme.Snow
+import com.alvindizon.panahon.design.utils.IconUtils
 import com.alvindizon.panahon.details.R
 import com.alvindizon.panahon.details.model.DailyForecast
 import com.alvindizon.panahon.details.model.DetailedForecast
@@ -178,12 +180,7 @@ fun MainDetails(icon: String, temperature: String, condition: String, feelsLikeT
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = rememberAsyncImagePainter(
-                    model = "https://openweathermap.org/img/wn/$icon@2x.png",
-                    placeholder = painterResource(
-                        id = com.alvindizon.panahon.design.R.drawable.ic_weather_placeholder
-                    )
-                ),
+                painter = painterResource(id = IconUtils.getWeatherIconRes(icon)),
                 contentDescription = stringResource(R.string.content_description_icon),
                 modifier = Modifier
                     .size(100.dp)
@@ -248,20 +245,16 @@ fun AdditionalDetailsCard(
 @Composable
 fun HourlyForecastItem(time: String, icon: String, temperature: String, pop: String) {
     Column(
-        modifier = Modifier.padding(4.dp),
+        modifier = Modifier.padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(text = time, style = MaterialTheme.typography.h6)
         Image(
-            painter = rememberAsyncImagePainter(
-                model = "https://openweathermap.org/img/wn/$icon@2x.png",
-                placeholder = painterResource(
-                    id = com.alvindizon.panahon.design.R.drawable.ic_weather_placeholder
-                )
-            ),
+            painter = painterResource(id = IconUtils.getWeatherIconRes(icon)),
             contentDescription = stringResource(R.string.content_description_icon),
             modifier = Modifier
                 .size(64.dp)
+                .padding(vertical = 8.dp)
         )
         Text(text = temperature, style = MaterialTheme.typography.h6)
         Row(
@@ -335,23 +328,44 @@ fun DailyForecastItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = time,
             style = MaterialTheme.typography.subtitle1,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(2f),
+            textAlign = TextAlign.Start
+        )
+        Image(
+            painter = painterResource(id = IconUtils.getWeatherIconRes(icon)),
+            contentDescription = stringResource(id = R.string.content_description_icon),
+            modifier = Modifier
+                .size(40.dp)
+                .padding(4.dp)
+                .weight(1f)
         )
         Text(
-            text = "$maximumTemp/$minimumTemp",
+            text = maximumTemp,
             style = MaterialTheme.typography.subtitle1,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
             modifier = Modifier.weight(1f),
-            maxLines = 1
+            color = Hot
+        )
+        Text(
+            text = minimumTemp,
+            style = MaterialTheme.typography.subtitle1,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.weight(1f),
+            color = Snow
         )
         Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
+            // fill set to false so that temps will have space
+            modifier = Modifier.weight(2f, false)
         ) {
             Text(text = pop)
             Image(
@@ -360,17 +374,6 @@ fun DailyForecastItem(
                 modifier = Modifier.size(18.dp)
             )
         }
-        Image(
-            painter = rememberAsyncImagePainter(
-                model = "https://openweathermap.org/img/wn/$icon@2x.png",
-                placeholder = painterResource(
-                    id = com.alvindizon.panahon.design.R.drawable.ic_weather_placeholder
-                )
-            ),
-            contentDescription = stringResource(id = R.string.content_description_icon),
-            modifier = Modifier
-                .size(48.dp)
-        )
     }
 }
 
@@ -470,14 +473,17 @@ fun DetailsScreenPreview() {
         HourlyForecast("6pm", "32°C", "01d", "2%"),
         HourlyForecast("7pm", "32°C", "01d", "2%"),
         HourlyForecast("8pm", "32°C", "01d", "2%"),
-        HourlyForecast("9pm", "32°C", "01d", "2%"),
+        HourlyForecast("10pm", "32°C", "01d", "2%"),
+        HourlyForecast("11pm", "32°C", "01d", "2%"),
+        HourlyForecast("12pm", "32°C", "01d", "2%")
     )
     val dailyForecasts = listOf(
         DailyForecast("Wed Jun 08", "30°C", "28°C", "Sunny", "01d", "2%"),
         DailyForecast("Thu Jun 09", "30°C", "28°C", "Sunny", "01d", "2%"),
         DailyForecast("Fri Jun 10", "30°C", "28°C", "Sunny", "01d", "2%"),
         DailyForecast("Sat Jun 11", "30°C", "28°C", "Sunny", "01d", "2%"),
-        DailyForecast("Sun Jun 12", "30°C", "28°C", "Sunny", "01d", "2%"),
+        DailyForecast("Mon Jun 12", "30°C", "28°C", "Sunny", "01d", "2%"),
+        DailyForecast("Tue Jun 13", "30°C", "28°C", "Sunny", "01d", "2%"),
     )
     val detailedForecast = DetailedForecast(
         locationName = "San Pedro",
