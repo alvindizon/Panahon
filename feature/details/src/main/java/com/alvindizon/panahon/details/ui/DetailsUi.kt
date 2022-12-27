@@ -245,7 +245,7 @@ fun AdditionalDetailsCard(
 }
 
 @Composable
-fun HourlyForecastItem(time: String, icon: String, temperature: String) {
+fun HourlyForecastItem(time: String, icon: String, temperature: String, pop: String) {
     Column(
         modifier = Modifier.padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -263,7 +263,17 @@ fun HourlyForecastItem(time: String, icon: String, temperature: String) {
                 .size(64.dp)
         )
         Text(text = temperature, style = MaterialTheme.typography.h6)
-
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = pop)
+            Image(
+                contentDescription = "percentage of precipitation",
+                painter = painterResource(id = com.alvindizon.panahon.design.R.drawable.ic_drops),
+                modifier = Modifier.size(18.dp)
+            )
+        }
     }
 }
 
@@ -278,7 +288,8 @@ fun HourlyForecastList(
                 HourlyForecastItem(
                     hourlyForecast.time ?: "",
                     hourlyForecast.icon ?: "",
-                    hourlyForecast.temperature ?: ""
+                    hourlyForecast.temperature ?: "",
+                    hourlyForecast.pop
                 )
             }
         }
@@ -308,7 +319,7 @@ fun HourlyForecastCard(
 }
 
 @Composable
-fun DailyForecastItem(time: String, maximumTemp: String, minimumTemp: String, icon: String) {
+fun DailyForecastItem(time: String, maximumTemp: String, minimumTemp: String, icon: String, pop: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -318,15 +329,26 @@ fun DailyForecastItem(time: String, maximumTemp: String, minimumTemp: String, ic
     ) {
         Text(
             text = time,
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.weight(1f)
         )
         Text(
             text = "$maximumTemp/$minimumTemp",
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.weight(1f),
             maxLines = 1
         )
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = pop)
+            Image(
+                contentDescription = "percentage of precipitation",
+                painter = painterResource(id = com.alvindizon.panahon.design.R.drawable.ic_drops),
+                modifier = Modifier.size(18.dp)
+            )
+        }
         Image(
             painter = rememberAsyncImagePainter(
                 model = "https://openweathermap.org/img/wn/$icon@2x.png",
@@ -352,7 +374,8 @@ fun DailyForecastList(
                 time = it.date ?: "",
                 maximumTemp = it.maximumTemp ?: "",
                 minimumTemp = it.minimumTemp ?: "",
-                icon = it.icon ?: ""
+                icon = it.icon ?: "",
+                pop = it.pop
             )
         }
     }
@@ -428,18 +451,18 @@ fun AdditionalDetailsPager(
 @Composable
 fun DetailsScreenPreview() {
     val hourlyForecasts = listOf(
-        HourlyForecast("5pm", "32°C", "01d"),
-        HourlyForecast("6pm", "32°C", "01d"),
-        HourlyForecast("7pm", "32°C", "01d"),
-        HourlyForecast("8pm", "32°C", "01d"),
-        HourlyForecast("9pm", "32°C", "01d"),
+        HourlyForecast("5pm", "32°C", "01d", "2%"),
+        HourlyForecast("6pm", "32°C", "01d", "2%"),
+        HourlyForecast("7pm", "32°C", "01d", "2%"),
+        HourlyForecast("8pm", "32°C", "01d", "2%"),
+        HourlyForecast("9pm", "32°C", "01d", "2%"),
     )
     val dailyForecasts = listOf(
-        DailyForecast("Wed Jun 08", "30°C", "28°C", "Sunny", "01d"),
-        DailyForecast("Thu Jun 09", "30°C", "28°C", "Sunny", "01d"),
-        DailyForecast("Fri Jun 10", "30°C", "28°C", "Sunny", "01d"),
-        DailyForecast("Sat Jun 11", "30°C", "28°C", "Sunny", "01d"),
-        DailyForecast("Sun Jun 12", "30°C", "28°C", "Sunny", "01d"),
+        DailyForecast("Wed Jun 08", "30°C", "28°C", "Sunny", "01d", "2%"),
+        DailyForecast("Thu Jun 09", "30°C", "28°C", "Sunny", "01d", "2%"),
+        DailyForecast("Fri Jun 10", "30°C", "28°C", "Sunny", "01d", "2%"),
+        DailyForecast("Sat Jun 11", "30°C", "28°C", "Sunny", "01d", "2%"),
+        DailyForecast("Sun Jun 12", "30°C", "28°C", "Sunny", "01d", "2%"),
     )
     val detailedForecast = DetailedForecast(
         locationName = "San Pedro",
