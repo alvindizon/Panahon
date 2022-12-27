@@ -23,8 +23,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.alvindizon.panahon.details.R
+import com.alvindizon.panahon.design.components.DataUnavailableScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
+import com.alvindizon.panahon.details.R
 import com.alvindizon.panahon.details.model.DailyForecast
 import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.model.HourlyForecast
@@ -183,7 +184,7 @@ fun MainDetails(icon: String, temperature: String, condition: String, feelsLikeT
                         id = com.alvindizon.panahon.design.R.drawable.ic_weather_placeholder
                     )
                 ),
-                contentDescription = "weather icon",
+                contentDescription = stringResource(R.string.content_description_icon),
                 modifier = Modifier
                     .size(100.dp)
             )
@@ -192,17 +193,17 @@ fun MainDetails(icon: String, temperature: String, condition: String, feelsLikeT
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    style = MaterialTheme.typography.h2,
+                    style = MaterialTheme.typography.h3,
                     text = temperature
                 )
                 Text(
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.h5,
                     text = condition
                 )
                 Text(
                     style = MaterialTheme.typography.subtitle1,
-                    text = "Feels like $feelsLikeTemp",
+                    text = stringResource(R.string.feels_like_label, feelsLikeTemp)
                 )
             }
         }
@@ -258,7 +259,7 @@ fun HourlyForecastItem(time: String, icon: String, temperature: String, pop: Str
                     id = com.alvindizon.panahon.design.R.drawable.ic_weather_placeholder
                 )
             ),
-            contentDescription = "weather icon",
+            contentDescription = stringResource(R.string.content_description_icon),
             modifier = Modifier
                 .size(64.dp)
         )
@@ -269,8 +270,8 @@ fun HourlyForecastItem(time: String, icon: String, temperature: String, pop: Str
         ) {
             Text(text = pop)
             Image(
-                contentDescription = "percentage of precipitation",
                 painter = painterResource(id = com.alvindizon.panahon.design.R.drawable.ic_drops),
+                contentDescription = stringResource(R.string.content_description_pop),
                 modifier = Modifier.size(18.dp)
             )
         }
@@ -282,15 +283,19 @@ fun HourlyForecastList(
     hourlyForecasts: List<HourlyForecast>
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
-        LazyRow(contentPadding = PaddingValues(top = 8.dp)) {
-            items(hourlyForecasts) { hourlyForecast ->
-                // TODO create ui for null situations
-                HourlyForecastItem(
-                    hourlyForecast.time ?: "",
-                    hourlyForecast.icon ?: "",
-                    hourlyForecast.temperature ?: "",
-                    hourlyForecast.pop
-                )
+        if (hourlyForecasts.isEmpty()) {
+            DataUnavailableScreen()
+        } else {
+            LazyRow(contentPadding = PaddingValues(top = 8.dp)) {
+                items(hourlyForecasts) { hourlyForecast ->
+                    // TODO create ui for null situations
+                    HourlyForecastItem(
+                        hourlyForecast.time ?: "",
+                        hourlyForecast.icon ?: "",
+                        hourlyForecast.temperature ?: "",
+                        hourlyForecast.pop
+                    )
+                }
             }
         }
     }
@@ -310,8 +315,8 @@ fun HourlyForecastCard(
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 modifier = Modifier.padding(4.dp),
-                text = "Next 24 hours",
-                style = MaterialTheme.typography.h5
+                text = stringResource(R.string.hourly_forecast_label),
+                style = MaterialTheme.typography.h6
             )
             HourlyForecastList(hourlyForecasts = hourlyForecasts)
         }
@@ -319,7 +324,13 @@ fun HourlyForecastCard(
 }
 
 @Composable
-fun DailyForecastItem(time: String, maximumTemp: String, minimumTemp: String, icon: String, pop: String) {
+fun DailyForecastItem(
+    time: String,
+    maximumTemp: String,
+    minimumTemp: String,
+    icon: String,
+    pop: String
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -344,8 +355,8 @@ fun DailyForecastItem(time: String, maximumTemp: String, minimumTemp: String, ic
         ) {
             Text(text = pop)
             Image(
-                contentDescription = "percentage of precipitation",
                 painter = painterResource(id = com.alvindizon.panahon.design.R.drawable.ic_drops),
+                contentDescription = stringResource(R.string.content_description_pop),
                 modifier = Modifier.size(18.dp)
             )
         }
@@ -356,7 +367,7 @@ fun DailyForecastItem(time: String, maximumTemp: String, minimumTemp: String, ic
                     id = com.alvindizon.panahon.design.R.drawable.ic_weather_placeholder
                 )
             ),
-            contentDescription = "weather icon",
+            contentDescription = stringResource(id = R.string.content_description_icon),
             modifier = Modifier
                 .size(48.dp)
         )
@@ -368,15 +379,19 @@ fun DailyForecastList(
     dailyForecasts: List<DailyForecast>
 ) {
     Column(modifier = Modifier.wrapContentHeight()) {
-        // TODO create ui for null situations
-        dailyForecasts.forEach {
-            DailyForecastItem(
-                time = it.date ?: "",
-                maximumTemp = it.maximumTemp ?: "",
-                minimumTemp = it.minimumTemp ?: "",
-                icon = it.icon ?: "",
-                pop = it.pop
-            )
+        if (dailyForecasts.isEmpty()) {
+            DataUnavailableScreen()
+        } else {
+            // TODO create ui for null situations
+            dailyForecasts.forEach {
+                DailyForecastItem(
+                    time = it.date ?: "",
+                    maximumTemp = it.maximumTemp ?: "",
+                    minimumTemp = it.minimumTemp ?: "",
+                    icon = it.icon ?: "",
+                    pop = it.pop
+                )
+            }
         }
     }
 }
@@ -395,8 +410,8 @@ fun DailyForecastCard(
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 modifier = Modifier.padding(4.dp),
-                text = "1 Week Forecast",
-                style = MaterialTheme.typography.h5
+                text = stringResource(R.string.daily_forecast_label),
+                style = MaterialTheme.typography.h6
             )
             DailyForecastList(dailyForecasts = dailyForecasts)
         }
