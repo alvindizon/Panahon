@@ -8,8 +8,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.alvindizon.panahon.design.R
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
@@ -20,6 +23,15 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
     ) {
         CircularProgressIndicator()
     }
+}
+
+@Composable
+fun DataUnavailableScreen(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(id = R.string.generic_try_again_msg),
+        modifier = modifier.wrapContentSize(),
+        textAlign = TextAlign.Center
+    )
 }
 
 // ref: https://stackoverflow.com/questions/67023923/materialbuttontogglegroup-in-jetpack-compose
