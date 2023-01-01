@@ -26,9 +26,9 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun DataUnavailableScreen(modifier: Modifier = Modifier) {
+fun DataUnavailableScreen(modifier: Modifier = Modifier, messageResId: Int? = null) {
     Text(
-        text = stringResource(id = R.string.generic_try_again_msg),
+        text = stringResource(id = messageResId ?: R.string.generic_try_again_msg),
         modifier = modifier.wrapContentSize(),
         textAlign = TextAlign.Center
     )
@@ -95,4 +95,15 @@ fun CustomSegmentedControl(
         }
     }
 
+}
+
+@Composable
+fun NoDataScreen(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        DataUnavailableScreen(messageResId = R.string.generic_error_msg)
+    }
 }
