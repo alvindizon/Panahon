@@ -7,6 +7,7 @@ import com.alvindizon.panahon.details.model.DetailedForecast
 import com.alvindizon.panahon.details.navigation.DetailsNavigation
 import com.alvindizon.panahon.details.usecase.FetchDetailedForecastUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -39,14 +40,18 @@ class DetailsScreenViewModel @Inject constructor(
         savedStateHandle.get<String>(DetailsNavigation.longitudeArg) ?: ""
     }
 
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        handleError(exception)
+    }
+
     init {
         fetchData()
     }
 
     fun fetchData() {
-        viewModelScope.launch {
-            _uiState.value = DetailsScreenUiState(isLoading = true)
+        viewModelScope.launch(coroutineExceptionHandler) {
             runCatching {
+                _uiState.value = _uiState.value.copy(isLoading = true)
                 fetchDetailedForecastUseCase(locationName, latitude, longitude)
             }.onSuccess {
                 it.collectLatest { detailedForecast ->
@@ -59,10 +64,10 @@ class DetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private fun handleError(throwable: Throwable) {
-        _uiState.value = DetailsScreenUiState(
+    private fun handleError(error: Throwable) {
+        _uiState.value = _uiState.value.copy(
             isLoading = false,
-            errorMessage = throwable.message ?: throwable.javaClass.name
+            errorMessage = error.message ?: error.javaClass.name
         )
     }
 }

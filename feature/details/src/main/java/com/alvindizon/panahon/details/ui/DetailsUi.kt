@@ -10,11 +10,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -23,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alvindizon.panahon.design.components.DataUnavailableScreen
+import com.alvindizon.panahon.design.components.NoDataScreen
 import com.alvindizon.panahon.design.theme.Hot
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.design.theme.Snow
@@ -44,8 +49,15 @@ fun DetailsScreen(
     onSettingsIconClick: () -> Unit,
     onNavigationIconClick: () -> Unit
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val state = viewModel.uiState.collectAsState().value
+    state.errorMessage?.let {
+        LaunchedEffect(it) {
+            snackbarHostState.showSnackbar(it)
+        }
+    }
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(text = location) },
@@ -58,7 +70,13 @@ fun DetailsScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onSettingsIconClick() }) {
+                    IconButton(onClick = viewModel::fetchData) {
+                        Icon(
+                            imageVector = Icons.Filled.Refresh,
+                            contentDescription = stringResource(id = com.alvindizon.panahon.design.R.string.Refresh)
+                        )
+                    }
+                    IconButton(onClick = onSettingsIconClick) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
                             contentDescription = stringResource(id = com.alvindizon.panahon.design.R.string.settings)
@@ -67,53 +85,44 @@ fun DetailsScreen(
                 }
             )
         }
-    ) { padding ->
-        val refreshState = rememberPullRefreshState(
-            refreshing = state.isLoading,
-            onRefresh = { viewModel.fetchData() },
+    ) { paddingValues ->
+        DetailedForecastScreen(
+            state = state,
+            paddingValues = paddingValues,
+            onRefresh = viewModel::fetchData
         )
-        Box(
-            modifier = Modifier
-                .pullRefresh(refreshState)
-                .fillMaxSize() // fillMaxSize so that pull refresh indicator won't be aligned at top start
-        ) {
-            DetailedForecastScreen(modifier = Modifier.padding(padding), state = state)
-            PullRefreshIndicator(
-                state.isLoading,
-                refreshState,
-                Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(padding)
-
-            )
-        }
     }
 }
 
 @Composable
 internal fun DetailedForecastScreen(
-    modifier: Modifier = Modifier,
-    state: DetailsScreenUiState
+    state: DetailsScreenUiState,
+    paddingValues: PaddingValues,
+    onRefresh: () -> Unit
 ) {
-    val scaffoldState = rememberScaffoldState()
-    var showSnackBar by remember { mutableStateOf(false) }
-    val genericErrorMsg =
-        stringResource(id = com.alvindizon.panahon.design.R.string.generic_error_msg)
-    if (showSnackBar) {
-        LaunchedEffect(scaffoldState.snackbarHostState) {
-            val result = scaffoldState.snackbarHostState.showSnackbar(
-                message = state.errorMessage ?: genericErrorMsg
+    val refreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = onRefresh,
+    )
+    Box(
+        modifier = Modifier
+            .pullRefresh(refreshState)
+            .fillMaxSize() // fillMaxSize so that pull refresh indicator won't be aligned at top start
+    ) {
+        if (state.detailedForecast == null) {
+            NoDataScreen()
+        } else {
+            DetailedForecastScreen(
+                modifier = Modifier.padding(paddingValues),
+                detailedForecast = state.detailedForecast
             )
-            when (result) {
-                SnackbarResult.Dismissed, SnackbarResult.ActionPerformed -> showSnackBar = false
-            }
         }
-    }
-    when {
-        state.errorMessage != null -> showSnackBar = true
-        state.detailedForecast != null -> DetailedForecastScreen(
-            modifier = modifier,
-            detailedForecast = state.detailedForecast
+        PullRefreshIndicator(
+            refreshing = state.isLoading,
+            state = refreshState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(paddingValues)
         )
     }
 }
@@ -133,10 +142,7 @@ fun DetailedForecastScreen(
             Text(
                 modifier = Modifier.wrapContentWidth(),
                 style = MaterialTheme.typography.caption,
-                text = stringResource(
-                    com.alvindizon.panahon.details.R.string.last_updated,
-                    lastUpdatedTime
-                ),
+                text = stringResource(R.string.last_updated, lastUpdatedTime),
             )
             MainDetails(
                 icon = icon,
