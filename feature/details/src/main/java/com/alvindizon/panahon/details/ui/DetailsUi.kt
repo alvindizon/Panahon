@@ -340,45 +340,50 @@ fun DailyForecastItem(
         Text(
             text = time,
             style = MaterialTheme.typography.subtitle1,
-            modifier = Modifier.weight(2f),
+            modifier = Modifier.weight(1f),
             textAlign = TextAlign.Start
         )
-        Image(
-            painter = painterResource(id = IconUtils.getWeatherIconRes(icon)),
-            contentDescription = stringResource(id = R.string.content_description_icon),
-            modifier = Modifier
-                .size(40.dp)
-                .padding(4.dp)
-                .weight(1f)
-        )
-        Text(
-            text = maximumTemp,
-            style = MaterialTheme.typography.subtitle1,
-            maxLines = 1,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f),
-            color = Hot
-        )
-        Text(
-            text = minimumTemp,
-            style = MaterialTheme.typography.subtitle1,
-            maxLines = 1,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f),
-            color = Snow
-        )
         Row(
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-            // fill set to false so that temps will have space
-            modifier = Modifier.weight(2f, false)
+            modifier = Modifier.weight(2f),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = pop)
             Image(
-                painter = painterResource(id = com.alvindizon.panahon.design.R.drawable.ic_drops),
-                contentDescription = stringResource(R.string.content_description_pop),
-                modifier = Modifier.size(18.dp)
+                painter = painterResource(id = IconUtils.getWeatherIconRes(icon)),
+                contentDescription = stringResource(id = R.string.content_description_icon),
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(4.dp)
+                    .weight(1f)
             )
+            Text(
+                text = maximumTemp,
+                style = MaterialTheme.typography.subtitle1,
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f),
+                color = Hot
+            )
+            Text(
+                text = minimumTemp,
+                style = MaterialTheme.typography.subtitle1,
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f),
+                color = Snow
+            )
+            Row(
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = pop)
+                Image(
+                    painter = painterResource(id = com.alvindizon.panahon.design.R.drawable.ic_drops),
+                    contentDescription = stringResource(R.string.content_description_pop),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
         }
     }
 }
