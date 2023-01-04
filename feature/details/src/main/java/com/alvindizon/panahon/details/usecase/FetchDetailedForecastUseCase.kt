@@ -43,7 +43,7 @@ class FetchDetailedForecastUseCase @Inject constructor(private val repo: Details
                     icon = icon,
                     hourly = hourly?.take(DateTimeUtils.HOURLY_ITEMS)
                         ?.map { it.toHourlyForecast(tempUnit, timezone) },
-                    daily = daily?.drop(1)?.map { it.toDailyForecast(tempUnit, timezone) },
+                    daily = daily?.map { it.toDailyForecast(tempUnit, timezone) },
                     lastUpdatedTime = lastUpdatedTime?.toLong()
                         ?.convertTimestampToString(DateTimeUtils.COMPLETE_DATE_TIME, null)
                         ?: DateTimeUtils.getCurrentTimeString(
