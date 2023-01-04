@@ -377,7 +377,7 @@ fun DailyForecastItem(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
-                Text(text = pop)
+                Text(text = pop, style = MaterialTheme.typography.subtitle2)
                 Image(
                     painter = painterResource(id = com.alvindizon.panahon.design.R.drawable.ic_drops),
                     contentDescription = stringResource(R.string.content_description_pop),
