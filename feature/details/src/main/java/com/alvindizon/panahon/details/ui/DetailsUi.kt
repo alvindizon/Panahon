@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alvindizon.panahon.design.components.DataUnavailableScreen
-import com.alvindizon.panahon.design.components.NoDataScreen
 import com.alvindizon.panahon.design.theme.Hot
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.design.theme.Snow
@@ -51,9 +50,9 @@ fun DetailsScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val state = viewModel.uiState.collectAsState().value
-    state.errorMessage?.let {
-        LaunchedEffect(it) {
-            snackbarHostState.showSnackbar(it)
+    state.errorMessage?.let { message ->
+        LaunchedEffect(message) {
+            snackbarHostState.showSnackbar(message.message)
         }
     }
     Scaffold(
@@ -109,9 +108,7 @@ internal fun DetailedForecastScreen(
             .pullRefresh(refreshState)
             .fillMaxSize() // fillMaxSize so that pull refresh indicator won't be aligned at top start
     ) {
-        if (state.detailedForecast == null) {
-            NoDataScreen()
-        } else {
+        if (state.detailedForecast != null) {
             DetailedForecastScreen(
                 modifier = Modifier.padding(paddingValues),
                 detailedForecast = state.detailedForecast
