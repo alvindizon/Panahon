@@ -44,7 +44,7 @@ class DetailsScreenViewModelTest {
             // seems like you only need coEvery for suspending functions--if you use coEvery here
             // you won't get an error
             every { fetchDetailedForecastUseCase(any(), any(), any()) } throws Throwable("bleh")
-            assertEquals("bleh", viewModel.uiState.value.errorMessage)
+            assertEquals("bleh", viewModel.uiState.value.errorMessage?.message)
         }
 
 
