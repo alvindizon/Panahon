@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.searchlocation.search
+package com.alvindizon.panahon.searchlocation.ui
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -23,12 +23,15 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +49,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.alvindizon.panahon.core.utils.rememberFlowWithLifecycle
 import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.searchlocation.R
@@ -60,50 +62,53 @@ fun SearchScreen(
     viewModel: SearchLocationViewModel,
     onUpButtonClicked: () -> Unit
 ) {
-
-    val searchQuery by viewModel.searchQuery.collectAsState()
-
     val context = LocalContext.current
-
-    val state = rememberFlowWithLifecycle(viewModel.searchLocationUiState).collectAsState(
-        initial = SearchLocationUiState.Empty
-    ).value
-
+    val state by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    state.errorMessage?.let { message ->
+        LaunchedEffect(message) {
+            snackbarHostState.showSnackbar(message.message)
+        }
+    }
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             SearchTopAppBar(
-                searchQuery = searchQuery,
-                onUpButtonClicked = { onUpButtonClicked() },
-                onClearClicked = { viewModel.clearQuery() },
-                onSearchQueryChanged = { viewModel.searchForLocations(it) }
+                searchQuery = state.searchQuery,
+                onUpButtonClicked = onUpButtonClicked,
+                onClearClicked = viewModel::clearQuery,
+                onSearchQueryChanged = viewModel::searchForLocations
             )
         }
-    ) { padding ->
-        when (state) {
-            SearchLocationUiState.Empty -> NoSearchResults(Modifier.padding(padding))
-            is SearchLocationUiState.Searching -> LoadingScreen(Modifier.padding(padding))
-            is SearchLocationUiState.Error -> {
+    ) { paddingValues ->
+        SearchScreen(
+            modifier = Modifier.padding(paddingValues),
+            state = state,
+            onSearchResultClicked = {
+                viewModel.saveResultToDb(it)
                 Toast.makeText(
                     context,
-                    state.message,
+                    "Location saved",
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            is SearchLocationUiState.Success -> {
-                SearchResultList(
-                    modifier = Modifier.padding(padding),
-                    searchResults = state.searchResults,
-                    onSearchResultClicked = {
-                        viewModel.saveResultToDb(it)
-                        Toast.makeText(
-                            context,
-                            "Location saved",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                )
-            }
-        }
+        )
+    }
+}
+
+@Composable
+internal fun SearchScreen(
+    modifier: Modifier = Modifier,
+    state: SearchLocationUiState,
+    onSearchResultClicked: (SearchResult) -> Unit
+) {
+    when {
+        state.isLoading -> LoadingScreen(modifier)
+        state.searchResults.isNullOrEmpty() -> NoSearchResults(modifier)
+        else -> SearchResultList(
+            searchResults = state.searchResults,
+            onSearchResultClicked = onSearchResultClicked
+        )
     }
 }
 
