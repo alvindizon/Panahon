@@ -4,24 +4,32 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.core.utils.getStateFlow
+import com.alvindizon.panahon.design.message.UiMessage
 import com.alvindizon.panahon.searchlocation.model.SearchResult
 import com.alvindizon.panahon.searchlocation.usecase.SaveLocationToDbUseCase
 import com.alvindizon.panahon.searchlocation.usecase.SearchForLocationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
-sealed class SearchLocationUiState {
-    object Empty : SearchLocationUiState()
-    object Searching : SearchLocationUiState()
-    class Success(val searchResults: List<SearchResult>) : SearchLocationUiState()
-    class Error(val message: String) : SearchLocationUiState()
+data class SearchLocationUiState(
+    val searchQuery: String = "",
+    val searchResults: List<SearchResult>? = null,
+    val isLoading: Boolean = false,
+    val errorMessage: UiMessage? = null
+) {
+    companion object {
+        val Empty = SearchLocationUiState()
+    }
 }
 
 @HiltViewModel
@@ -31,38 +39,46 @@ class SearchLocationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val searchQuery = savedStateHandle.getStateFlow(viewModelScope, "searchQuery", "")
+    private val searchQuery: MutableStateFlow<String> =
+        savedStateHandle.getStateFlow(viewModelScope, "searchQuery", "")
+    private val isLoadingFlow = MutableStateFlow(true)
+    private val errorMessageFlow = MutableStateFlow<UiMessage?>(null)
 
-    private val _searchLocationUiState =
-        MutableStateFlow<SearchLocationUiState>(SearchLocationUiState.Empty)
-    val searchLocationUiState: StateFlow<SearchLocationUiState> = _searchLocationUiState
+    val uiState: StateFlow<SearchLocationUiState> = combine(
+        searchQuery,
+        searchForLocationsUseCase.flow,
+        isLoadingFlow,
+        errorMessageFlow,
+        ::SearchLocationUiState
+    ).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = SearchLocationUiState.Empty
+    )
 
-    fun searchForLocations(query: String) {
-        searchQuery.value = query
+    init {
         viewModelScope.launch {
-            runCatching {
-                searchQuery.debounce(300L).filter { it.isNotEmpty() }
-                    .flatMapLatest {
-                        _searchLocationUiState.value = SearchLocationUiState.Searching
-                        searchForLocationsUseCase.execute(it)
+            searchQuery.debounce(300L)
+                .onEach { query ->
+                    val job = launch {
+                        isLoadingFlow.value = true
+                        searchForLocationsUseCase(query)
                     }
-            }.onSuccess { results ->
-                results.collect {
-                    _searchLocationUiState.value = if (it.isEmpty()) {
-                        SearchLocationUiState.Empty
-                    } else {
-                        SearchLocationUiState.Success(it)
-                    }
+                    job.invokeOnCompletion { isLoadingFlow.value = false }
+                    job.join()
                 }
-            }.onFailure {
-                val message = it.message ?: it.javaClass.name
-                _searchLocationUiState.value = SearchLocationUiState.Error(message)
-            }
+                .catch {
+                    errorMessageFlow.value = UiMessage(it.message ?: it.javaClass.name)
+                }
+                .collect()
         }
     }
 
+    fun searchForLocations(query: String) {
+        searchQuery.value = query
+    }
+
     fun clearQuery() {
-        _searchLocationUiState.value = SearchLocationUiState.Empty
         searchQuery.value = ""
     }
 

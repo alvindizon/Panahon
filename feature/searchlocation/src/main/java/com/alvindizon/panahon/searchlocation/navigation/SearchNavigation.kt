@@ -5,7 +5,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import com.alvindizon.core.navigation.NavigationDestination
-import com.alvindizon.panahon.searchlocation.search.SearchScreen
+import com.alvindizon.panahon.searchlocation.ui.SearchScreen
 import com.google.accompanist.navigation.animation.composable
 
 object SearchNavigation : NavigationDestination {
