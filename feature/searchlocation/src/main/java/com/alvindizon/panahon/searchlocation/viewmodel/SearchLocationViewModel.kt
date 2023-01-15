@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.core.utils.getStateFlow
 import com.alvindizon.panahon.design.message.UiMessage
-import com.alvindizon.panahon.searchlocation.integration.SearchLocationViewRepository
+import com.alvindizon.panahon.searchlocation.data.SearchLocationViewRepository
 import com.alvindizon.panahon.searchlocation.model.SearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
