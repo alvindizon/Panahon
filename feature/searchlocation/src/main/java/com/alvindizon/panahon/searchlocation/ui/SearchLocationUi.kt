@@ -64,6 +64,7 @@ fun SearchScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     state.errorMessage?.let { message ->
         LaunchedEffect(message) {
@@ -74,7 +75,7 @@ fun SearchScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             SearchTopAppBar(
-                searchQuery = state.searchQuery,
+                searchQuery = searchQuery,
                 onUpButtonClicked = onUpButtonClicked,
                 onClearClicked = viewModel::clearQuery,
                 onSearchQueryChanged = viewModel::searchForLocations
