@@ -1,8 +1,9 @@
 package com.alvindizon.panahon.searchlocation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import com.alvindizon.panahon.searchlocation.integration.SearchLocationViewRepository
+import com.alvindizon.panahon.searchlocation.data.SearchLocationViewRepository
 import com.alvindizon.panahon.searchlocation.model.SearchResult
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,7 @@ class SearchLocationViewModelTest {
                 "151.2099"
             )
         )
-        every { repo.searchForLocation(any()) } returns flowOf(results)
+        coEvery { repo.searchForLocation(any()) } returns flowOf(results)
 
         viewModel.searchForLocations("Sydney")
 
@@ -60,7 +61,7 @@ class SearchLocationViewModelTest {
     fun `verify ui state contains error message when repo throws Exception`() = runTest {
         val errorMsg = "error!"
 
-        every { repo.searchForLocation(any()) } throws Throwable(errorMsg)
+        coEvery { repo.searchForLocation(any()) } throws Throwable(errorMsg)
 
         viewModel.searchForLocations("Sydney")
 
