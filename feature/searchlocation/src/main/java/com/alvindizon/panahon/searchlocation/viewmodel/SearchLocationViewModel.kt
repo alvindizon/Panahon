@@ -5,24 +5,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.core.utils.getStateFlow
 import com.alvindizon.panahon.design.message.UiMessage
+import com.alvindizon.panahon.searchlocation.integration.SearchLocationViewRepository
 import com.alvindizon.panahon.searchlocation.model.SearchResult
-import com.alvindizon.panahon.searchlocation.usecase.SaveLocationToDbUseCase
-import com.alvindizon.panahon.searchlocation.usecase.SearchForLocationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SearchLocationUiState(
-    val searchQuery: String = "",
     val searchResults: List<SearchResult>? = null,
     val isLoading: Boolean = false,
     val errorMessage: UiMessage? = null
@@ -34,55 +30,62 @@ data class SearchLocationUiState(
 
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
-    private val searchForLocationsUseCase: SearchForLocationsUseCase,
-    private val saveLocationToDbUseCase: SaveLocationToDbUseCase,
+    private val repository: SearchLocationViewRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val searchQuery: MutableStateFlow<String> =
-        savedStateHandle.getStateFlow(viewModelScope, "searchQuery", "")
-    private val isLoadingFlow = MutableStateFlow(true)
-    private val errorMessageFlow = MutableStateFlow<UiMessage?>(null)
+    val searchQuery = savedStateHandle.getStateFlow(viewModelScope, QUERY_KEY, "")
 
-    val uiState: StateFlow<SearchLocationUiState> = combine(
-        searchQuery,
-        searchForLocationsUseCase.flow,
-        isLoadingFlow,
-        errorMessageFlow,
-        ::SearchLocationUiState
-    ).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = SearchLocationUiState.Empty
-    )
+    private val _uiState = MutableStateFlow(SearchLocationUiState.Empty)
+    val uiState: StateFlow<SearchLocationUiState> = _uiState
 
-    init {
-        viewModelScope.launch {
-            searchQuery.debounce(300L)
-                .onEach { query ->
-                    val job = launch {
-                        isLoadingFlow.value = true
-                        searchForLocationsUseCase(query)
-                    }
-                    job.invokeOnCompletion { isLoadingFlow.value = false }
-                    job.join()
-                }
-                .catch {
-                    errorMessageFlow.value = UiMessage(it.message ?: it.javaClass.name)
-                }
-                .collect()
-        }
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        handleError(exception)
     }
 
     fun searchForLocations(query: String) {
         searchQuery.value = query
+        viewModelScope.launch(coroutineExceptionHandler) {
+            runCatching {
+                searchQuery.debounce(300L)
+                    .filter { it.isNotEmpty() }
+                    .flatMapLatest {
+                        _uiState.value = SearchLocationUiState(isLoading = true)
+                        repository.searchForLocation(it)
+                    }
+            }.onSuccess {
+                it.collectLatest { results ->
+                    _uiState.value = _uiState.value.copy(
+                        searchResults = results,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                }
+            }.onFailure {
+                handleError(it)
+            }
+        }
     }
 
     fun clearQuery() {
         searchQuery.value = ""
     }
 
-    fun saveResultToDb(result: SearchResult) = viewModelScope.launch {
-        saveLocationToDbUseCase.execute(result)
+    fun saveResultToDb(result: SearchResult) = viewModelScope.launch(coroutineExceptionHandler) {
+        runCatching {
+            repository.saveLocationToDatabase(result.locationName, result.lat, result.lon)
+        }.onFailure { handleError(it) }
+    }
+
+    private fun handleError(error: Throwable) {
+        _uiState.value =
+            _uiState.value.copy(
+                isLoading = false,
+                errorMessage = UiMessage(error.message ?: error.javaClass.name)
+            )
+    }
+
+    companion object {
+        private const val QUERY_KEY = "searchQuery"
     }
 }
