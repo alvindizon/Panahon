@@ -8,9 +8,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -51,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
+import com.alvindizon.panahon.design.utils.toFlagEmoji
 import com.alvindizon.panahon.searchlocation.R
 import com.alvindizon.panahon.searchlocation.model.SearchResult
 import com.alvindizon.panahon.searchlocation.viewmodel.SearchLocationUiState
@@ -196,12 +200,21 @@ fun SearchResultItem(searchResult: SearchResult, onResultClick: (SearchResult) -
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Text(
-                text = searchResult.stateCountry,
-                style = MaterialTheme.typography.h6,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(horizontalArrangement = Arrangement.Start) {
+                Text(
+                    text = searchResult.stateCountry,
+                    style = MaterialTheme.typography.h6,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = searchResult.country.toFlagEmoji(),
+                    style = MaterialTheme.typography.h6,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
@@ -240,7 +253,7 @@ private fun SearchResultItemPreview() {
             SearchResult(
                 locationName = "Tokyo",
                 state = null,
-                country = "Japan",
+                country = "JP",
                 lat = "0",
                 lon = ""
             )
