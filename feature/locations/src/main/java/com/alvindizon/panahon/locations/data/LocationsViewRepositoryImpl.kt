@@ -1,10 +1,10 @@
-package com.alvindizon.panahon.integration
+package com.alvindizon.panahon.locations.data
 
+import com.alvindizon.panahon.api.OpenWeatherApi
 import com.alvindizon.panahon.common.preferences.PreferencesManager
 import com.alvindizon.panahon.core.utils.celsiusToOthers
-import com.alvindizon.panahon.locations.integration.LocationsViewRepository
+import com.alvindizon.panahon.db.LocationDao
 import com.alvindizon.panahon.locations.model.LocationForecast
-import com.alvindizon.panahon.repo.PanahonRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -13,13 +13,15 @@ import javax.inject.Singleton
 
 @Singleton
 class LocationsViewRepositoryImpl @Inject constructor(
-    private val panahonRepo: PanahonRepo, private val preferencesManager: PreferencesManager
+    private val api: OpenWeatherApi,
+    private val dao: LocationDao,
+    private val preferencesManager: PreferencesManager
 ) : LocationsViewRepository {
 
     override fun fetchSavedLocations(): Flow<List<LocationForecast>> =
-        panahonRepo.fetchSavedLocations().map { list ->
+        dao.fetchLocations().map { list ->
             list.map {
-                val resp = panahonRepo.getWeatherForLocation(it.latitude, it.longitude)
+                val resp = api.getWeather(it.latitude, it.longitude)
                 val tempUnit = preferencesManager.getTemperatureUnit().first()
                 LocationForecast(
                     it.name,
@@ -33,7 +35,6 @@ class LocationsViewRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun deleteLocation(locationForecast: LocationForecast) {
-        return panahonRepo.deleteLocation(locationForecast.name)
-    }
+    override suspend fun deleteLocation(locationForecast: LocationForecast) =
+        dao.delete(locationForecast.name)
 }

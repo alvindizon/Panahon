@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.locations.integration
+package com.alvindizon.panahon.locations.data
 
 import com.alvindizon.panahon.locations.model.LocationForecast
 import kotlinx.coroutines.flow.Flow
