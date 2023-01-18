@@ -1,6 +1,6 @@
 package com.alvindizon.panahon.locations.usecase
 
-import com.alvindizon.panahon.locations.integration.LocationsViewRepository
+import com.alvindizon.panahon.locations.data.LocationsViewRepository
 import com.alvindizon.panahon.locations.model.LocationForecast
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
