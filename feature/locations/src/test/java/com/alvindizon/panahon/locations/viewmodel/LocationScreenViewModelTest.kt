@@ -1,13 +1,19 @@
 package com.alvindizon.panahon.locations.viewmodel
 
+import com.alvindizon.panahon.locations.data.LocationsViewRepository
 import com.alvindizon.panahon.locations.model.LocationForecast
-import com.alvindizon.panahon.locations.usecase.DeleteLocationUseCase
-import com.alvindizon.panahon.locations.usecase.FetchSavedLocationsUseCase
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -16,16 +22,15 @@ import org.junit.jupiter.api.Test
 
 class LocationScreenViewModelTest {
 
-    private lateinit var viewModel: LocationScreenViewModel
+    private val repository: LocationsViewRepository = mockk()
 
-    private val fetchSavedLocationsUseCase: FetchSavedLocationsUseCase = mockk()
-
-    private val deleteLocationUseCase: DeleteLocationUseCase = mockk()
+    private val viewModel: LocationScreenViewModel by lazy {
+        LocationScreenViewModel(repository)
+    }
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        viewModel = LocationScreenViewModel(fetchSavedLocationsUseCase, deleteLocationUseCase)
     }
 
     @AfterEach
@@ -34,37 +39,32 @@ class LocationScreenViewModelTest {
     }
 
     @Test
-    fun `verify uistate is Success if fetch saved locations returns successfully`() = runTest {
-        val locations = listOf(
-            LocationForecast("Singapore", "", "", "Clouds", "25", "01d", true),
-            LocationForecast("Jakarta", "", "", "Clouds", "28", "01d", false),
-            LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d", false)
-        )
-        coEvery { fetchSavedLocationsUseCase.execute() } returns flow { emit(locations) }
-        viewModel.fetchForecasts()
+    fun `verify uistate contains locations list if fetch saved locations returns successfully`() = runTest {
+        every { repository.fetchSavedLocations() } returns flowOf(locations)
         assertEquals(locations, (viewModel.uiState.value.list))
     }
 
     @Test
-    fun `verify uistate is Error if fetch saved locations returns successfully`() = runTest {
-        coEvery { fetchSavedLocationsUseCase.execute() } throws Throwable("meh")
-        viewModel.fetchForecasts()
-        assertEquals("meh", (viewModel.uiState.value.errorMessage))
+    fun `verify uistate contains error message if fetch saved locations errors`() = runTest {
+        every { repository.fetchSavedLocations() } throws Exception("error")
+        assertEquals("error", (viewModel.uiState.value.errorMessage))
     }
 
     @Test
     fun `verify uistate isLoading contains correct values as usecase executes`() = runTest {
         Dispatchers.setMain(StandardTestDispatcher())
-        val locations = listOf(
-            LocationForecast("Singapore", "", "", "Clouds", "25", "01d", true),
-            LocationForecast("Jakarta", "", "", "Clouds", "28", "01d", false),
-            LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d", false)
-        )
-        coEvery { fetchSavedLocationsUseCase.execute() } returns flow { emit(locations) }
-        viewModel.fetchForecasts()
+        coEvery { repository.fetchSavedLocations() } returns flow { emit(locations) }
         assert(viewModel.uiState.value.isLoading)
         // Execute pending coroutine actions
         advanceUntilIdle()
         assertFalse(viewModel.uiState.value.isLoading)
+    }
+
+    companion object {
+        private val locations = listOf(
+            LocationForecast("Singapore", "", "", "Clouds", "25", "01d", true),
+            LocationForecast("Jakarta", "", "", "Clouds", "28", "01d", false),
+            LocationForecast("Nizhny Novgorod", "", "", "Clouds", "28", "01d", false)
+        )
     }
 }
