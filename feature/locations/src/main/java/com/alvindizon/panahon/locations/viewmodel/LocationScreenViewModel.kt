@@ -3,9 +3,8 @@ package com.alvindizon.panahon.locations.viewmodel
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alvindizon.panahon.locations.data.LocationsViewRepository
 import com.alvindizon.panahon.locations.model.LocationForecast
-import com.alvindizon.panahon.locations.usecase.DeleteLocationUseCase
-import com.alvindizon.panahon.locations.usecase.FetchSavedLocationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,38 +25,40 @@ data class LocationScreenUiState(
 
 @HiltViewModel
 class LocationScreenViewModel @Inject constructor(
-    private val fetchSavedLocationsUseCase: FetchSavedLocationsUseCase,
-    private val deleteLocationUseCase: DeleteLocationUseCase
+    private val repository: LocationsViewRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LocationScreenUiState.Empty)
     val uiState: StateFlow<LocationScreenUiState> = _uiState
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        _uiState.value = LocationScreenUiState(errorMessage = exception.message ?: exception.javaClass.name)
+        _uiState.value =
+            LocationScreenUiState(errorMessage = exception.message ?: exception.javaClass.name)
     }
 
-    fun fetchForecasts() {
+    init {
         _uiState.value = LocationScreenUiState(isLoading = true)
         viewModelScope.launch(coroutineExceptionHandler) {
             runCatching {
-                fetchSavedLocationsUseCase.execute()
+                repository.fetchSavedLocations()
             }.onSuccess { results ->
                 results.collect {
                     _uiState.value = LocationScreenUiState(list = it)
                 }
             }.onFailure {
-                _uiState.value = LocationScreenUiState(errorMessage = it.message ?: it.javaClass.name)
+                _uiState.value =
+                    LocationScreenUiState(errorMessage = it.message ?: it.javaClass.name)
             }
         }
     }
 
     fun deleteLocation(locationForecast: LocationForecast) {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             runCatching {
-                deleteLocationUseCase.execute(locationForecast)
+                repository.deleteLocation(locationForecast)
             }.onFailure {
-                _uiState.value = LocationScreenUiState(errorMessage = it.message ?: it.javaClass.name)
+                _uiState.value =
+                    LocationScreenUiState(errorMessage = it.message ?: it.javaClass.name)
             }
         }
     }

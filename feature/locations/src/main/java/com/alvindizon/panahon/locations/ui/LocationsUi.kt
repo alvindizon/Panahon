@@ -46,12 +46,6 @@ fun LocationsScreen(
 
     if (state.errorMessage != null) setShowSnackbar(true)
 
-    // need this to prevent infinite loop that happens when using functions
-    // ref: https://code.luasoftware.com/tutorials/android/jetpack-compose-load-data-collectasstate-common-mistakes/
-    LaunchedEffect(true) {
-        viewModel.fetchForecasts()
-    }
-
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
