@@ -2,6 +2,7 @@ package com.alvindizon.panahon.locations.viewmodel
 
 import com.alvindizon.panahon.locations.data.LocationsViewRepository
 import com.alvindizon.panahon.locations.model.LocationForecast
+import com.alvindizon.panahon.locations.usecase.FetchLocationsUseCase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -24,8 +25,10 @@ class LocationScreenViewModelTest {
 
     private val repository: LocationsViewRepository = mockk()
 
+    private val useCase: FetchLocationsUseCase = mockk()
+
     private val viewModel: LocationScreenViewModel by lazy {
-        LocationScreenViewModel(repository)
+        LocationScreenViewModel(repository, useCase)
     }
 
     @BeforeEach
@@ -40,20 +43,20 @@ class LocationScreenViewModelTest {
 
     @Test
     fun `verify uistate contains locations list if fetch saved locations returns successfully`() = runTest {
-        every { repository.fetchSavedLocations() } returns flowOf(locations)
+        every { useCase() } returns flowOf(locations)
         assertEquals(locations, (viewModel.uiState.value.list))
     }
 
     @Test
     fun `verify uistate contains error message if fetch saved locations errors`() = runTest {
-        every { repository.fetchSavedLocations() } throws Exception("error")
-        assertEquals("error", (viewModel.uiState.value.errorMessage))
+        every { useCase() } throws Exception("error")
+        assertEquals("error", (viewModel.uiState.value.errorMessage?.message))
     }
 
     @Test
     fun `verify uistate isLoading contains correct values as usecase executes`() = runTest {
         Dispatchers.setMain(StandardTestDispatcher())
-        coEvery { repository.fetchSavedLocations() } returns flow { emit(locations) }
+        coEvery { useCase() } returns flow { emit(locations) }
         assert(viewModel.uiState.value.isLoading)
         // Execute pending coroutine actions
         advanceUntilIdle()

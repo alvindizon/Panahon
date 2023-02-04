@@ -30,6 +30,7 @@ import com.alvindizon.panahon.design.R
 import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.locations.model.LocationForecast
+import com.alvindizon.panahon.locations.viewmodel.LocationScreenUiState
 import com.alvindizon.panahon.locations.viewmodel.LocationScreenViewModel
 
 
@@ -40,14 +41,15 @@ fun LocationsScreen(
     onUpButtonClicked: () -> Unit,
     onSearchIconClick: () -> Unit
 ) {
-    val scaffoldState = rememberScaffoldState()
-    val (showSnackbar, setShowSnackbar) = remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
     val state = viewModel.uiState.collectAsState().value
-
-    if (state.errorMessage != null) setShowSnackbar(true)
-
+    state.errorMessage?.let { message ->
+        LaunchedEffect(message) {
+            snackbarHostState.showSnackbar(message.message)
+        }
+    }
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(id = com.alvindizon.panahon.locations.R.string.locations)) },
@@ -69,15 +71,10 @@ fun LocationsScreen(
                 }
             )
         }
-    ) { padding ->
+    ) { paddingValues ->
         LocationsList(
-            modifier = Modifier.padding(padding),
-            scaffoldState = scaffoldState,
-            locationForecasts = state.list,
-            showSnackbar = showSnackbar,
-            errorMessage = state.errorMessage,
-            isLoading = state.isLoading,
-            setShowSnackbar = setShowSnackbar,
+            paddingValues = paddingValues,
+            state = state,
             onLocationClick = onLocationClick,
             onItemSwipe = viewModel::deleteLocation
         )
@@ -87,34 +84,17 @@ fun LocationsScreen(
 
 @Composable
 internal fun LocationsList(
-    modifier: Modifier = Modifier,
-    scaffoldState: ScaffoldState,
-    locationForecasts: List<LocationForecast>,
-    showSnackbar: Boolean,
-    errorMessage: String?,
-    isLoading: Boolean,
-    setShowSnackbar: (Boolean) -> Unit,
+    paddingValues: PaddingValues,
+    state: LocationScreenUiState,
     onLocationClick: (LocationForecast) -> Unit,
     onItemSwipe: (LocationForecast) -> Unit
 ) {
-    val genericErrorMsg =
-        stringResource(id = R.string.generic_error_msg)
-    if (showSnackbar) {
-        LaunchedEffect(scaffoldState.snackbarHostState) {
-            val result = scaffoldState.snackbarHostState.showSnackbar(
-                message = errorMessage ?: genericErrorMsg
-            )
-            when (result) {
-                SnackbarResult.Dismissed, SnackbarResult.ActionPerformed -> setShowSnackbar(false)
-            }
-        }
-    }
-    if (isLoading) {
-        LoadingScreen(modifier = modifier)
+    if (state.isLoading) {
+        LoadingScreen(modifier = Modifier.padding(paddingValues))
     } else {
         LocationsList(
-            modifier = modifier,
-            locationForecasts = locationForecasts,
+            modifier = Modifier.padding(paddingValues),
+            locationForecasts = state.list,
             onLocationClick = onLocationClick,
             onItemSwipe = onItemSwipe
         )
