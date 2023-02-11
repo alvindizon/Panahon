@@ -60,6 +60,7 @@ android {
 dependencies {
     implementation project(":common:design")
     implementation project(":common:core")
+    implementation project(":common:core-android")
     implementation project(":common:navigation")
     implementation project(":common:preferences")
     implementation platform(deps.androidX.compose.bom)

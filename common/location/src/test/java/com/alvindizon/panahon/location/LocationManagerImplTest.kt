@@ -7,7 +7,7 @@ import android.location.Geocoder
 import android.location.Location
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
-import com.alvindizon.panahon.core.utils.PermissionUtils
+import com.alvindizon.panahon.core.android.utils.PermissionUtils
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ResolvableApiException
@@ -51,7 +51,7 @@ class LocationManagerImplTest {
     fun setUp() {
         locationManager = LocationManagerImpl(context)
         mockkStatic(LocationServices::class)
-        mockkObject(PermissionUtils)
+        mockkObject(com.alvindizon.panahon.core.android.utils.PermissionUtils)
         mockkStatic(GoogleApiAvailability::class)
         mockkConstructor(LocationSettingsRequest.Builder::class)
         mockkConstructor(Geocoder::class)
@@ -124,7 +124,7 @@ class LocationManagerImplTest {
     fun `when app has location permissions and has google play services and has location settings verify locationManager returns true`() = runTest {
         val task = mockTask<LocationSettingsResponse>()
 
-        every { PermissionUtils.hasSelfPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION,
+        every { com.alvindizon.panahon.core.android.utils.PermissionUtils.hasSelfPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION) } returns true
 
         val googleApiAvailability = mockk<GoogleApiAvailability>()
@@ -157,7 +157,7 @@ class LocationManagerImplTest {
         val task = mockTask<LocationSettingsResponse>()
         val exception = Exception("error!")
 
-        every { PermissionUtils.hasSelfPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION,
+        every { com.alvindizon.panahon.core.android.utils.PermissionUtils.hasSelfPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION) } returns hasLocationPermission
 
         val googleApiAvailability = mockk<GoogleApiAvailability>()
@@ -185,7 +185,7 @@ class LocationManagerImplTest {
     fun `when app has location permissions and has google play services but location settings returns cancel verify locationManager returns false`() = runTest {
         val task = mockTask<LocationSettingsResponse>()
 
-        every { PermissionUtils.hasSelfPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION,
+        every { com.alvindizon.panahon.core.android.utils.PermissionUtils.hasSelfPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION) } returns true
 
         val googleApiAvailability = mockk<GoogleApiAvailability>()

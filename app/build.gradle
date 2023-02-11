@@ -64,6 +64,7 @@ dependencies {
     implementation project(":data:db")
     implementation project(":common:design")
     implementation project(":common:core")
+    implementation project(":common:core-android")
     implementation project(":common:navigation")
     implementation project(":common:preferences")
     implementation project(":feature:locations")

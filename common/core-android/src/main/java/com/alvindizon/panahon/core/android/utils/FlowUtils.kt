@@ -1,33 +1,14 @@
-package com.alvindizon.panahon.core.utils
+package com.alvindizon.panahon.core.android.utils
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.flowWithLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
-
-// https://github.com/chrisbanes/tivi/blob/8d15aab2a14a37354cf2231f816c481cf6326f73/common-ui-compose/src/main/java/app/tivi/common/compose/FlowWithLifecycle.kt
-@Composable
-fun <T> rememberFlowWithLifecycle(
-    flow: Flow<T>,
-    lifecycle: Lifecycle = LocalLifecycleOwner.current.lifecycle,
-    minActiveState: Lifecycle.State = Lifecycle.State.STARTED
-): Flow<T> = remember(flow, lifecycle) {
-    flow.flowWithLifecycle(
-        lifecycle = lifecycle,
-        minActiveState = minActiveState
-    )
-}
 
 
 /**

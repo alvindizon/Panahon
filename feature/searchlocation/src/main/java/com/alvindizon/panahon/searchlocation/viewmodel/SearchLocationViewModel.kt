@@ -3,7 +3,7 @@ package com.alvindizon.panahon.searchlocation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alvindizon.panahon.core.utils.getStateFlow
+import com.alvindizon.panahon.core.android.utils.getStateFlow
 import com.alvindizon.panahon.design.message.UiMessage
 import com.alvindizon.panahon.searchlocation.data.SearchLocationViewRepository
 import com.alvindizon.panahon.searchlocation.model.SearchResult
