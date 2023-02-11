@@ -32,7 +32,7 @@ def versions = [:]
     versions.timber = "5.0.1"
     versions.accompanist = "0.28.0"
     versions.datastore = "1.0.0"
-    versions.composeBom = "2022.12.00"
+    versions.composeBom = "2023.01.00"
 ext.versions = versions
 
 def buildVersions = [:]
