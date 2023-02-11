@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.core.utils
+package com.alvindizon.panahon.core.android.utils
 
 import android.content.Context
 import android.content.pm.PackageManager

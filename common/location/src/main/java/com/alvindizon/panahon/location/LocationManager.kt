@@ -11,7 +11,7 @@ import android.location.Location
 import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
-import com.alvindizon.panahon.core.utils.PermissionUtils
+import com.alvindizon.panahon.core.android.utils.PermissionUtils
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ResolvableApiException

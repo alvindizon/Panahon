@@ -53,7 +53,8 @@ dependencies {
     // Coroutines
     implementation deps.coroutines.core
     implementation deps.coroutines.android
-    implementation project(path: ':common:core')
+    implementation project(":common:core-android")
+    implementation project(":common:core")
 
     // Testing
     testImplementation deps.junit
