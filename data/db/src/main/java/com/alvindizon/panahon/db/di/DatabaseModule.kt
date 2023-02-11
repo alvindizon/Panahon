@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.di
+package com.alvindizon.panahon.db.di
 
 import android.content.Context
 import androidx.room.Room
