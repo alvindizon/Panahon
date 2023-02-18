@@ -36,7 +36,7 @@ def versions = [:]
 ext.versions = versions
 
 def buildVersions = [:]
-    buildVersions.minSdkVersion = 24
+    buildVersions.minSdkVersion = 26
     buildVersions.compileSdkVersion = 33
     buildVersions.targetSdkVersion = 33
 ext.buildVersions = buildVersions

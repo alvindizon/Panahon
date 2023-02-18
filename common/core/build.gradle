@@ -1,64 +1,16 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    id 'java-library'
+    id 'kotlin'
+    id 'com.android.lint'
 }
 
-android {
-    compileSdk buildVersions.compileSdkVersion
-
-    defaultConfig {
-        minSdk buildVersions.minSdkVersion
-        targetSdk buildVersions.targetSdkVersion
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        // Flag to enable support for the new language APIs
-        coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-        freeCompilerArgs += [
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview"
-        ]
-    }
-    buildFeatures {
-        compose true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion versions.composeCompilerVersion
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 dependencies {
-    implementation platform(deps.androidX.compose.bom)
-    implementation deps.androidX.compose.runtime
-    implementation deps.androidX.compose.ui
-    implementation deps.androidX.compose.foundation
-
     // Coroutines
     implementation deps.coroutines.core
-    implementation deps.coroutines.android
-
-    // for Observer
-    implementation deps.androidX.lifecycleRuntimeKtx
-    // for savedstatehandle
-    implementation deps.androidX.activityCompose
-
-    coreLibraryDesugaring deps.coreLibraryDesugaring
-
-    api deps.timber
 }
+
