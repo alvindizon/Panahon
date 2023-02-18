@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
+    implementation project(":data:networking")
     implementation deps.network.retrofit.retrofit
     implementation deps.network.retrofit.moshiConverter
 
@@ -39,6 +40,9 @@ dependencies {
 
     implementation deps.network.moshi.moshi
     kapt deps.network.moshi.codegen
+
+    implementation deps.dagger.hiltAndroid
+    kapt deps.dagger.hiltCompiler
 }
 
 String getAccessKey(String keyName) {
