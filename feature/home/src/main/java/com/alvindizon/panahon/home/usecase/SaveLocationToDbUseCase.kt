@@ -1,12 +1,12 @@
 package com.alvindizon.panahon.home.usecase
 
-import com.alvindizon.panahon.home.integration.HomeViewRepository
+import com.alvindizon.panahon.home.data.HomeRepository
 import com.alvindizon.panahon.home.model.CurrentLocation
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SaveLocationToDbUseCase @Inject constructor(private val repo: HomeViewRepository) {
+class SaveLocationToDbUseCase @Inject constructor(private val repo: HomeRepository) {
 
     suspend fun execute(name: String, latitude: String, longitude: String) {
         val locationToBeSaved = CurrentLocation(name, latitude, longitude)

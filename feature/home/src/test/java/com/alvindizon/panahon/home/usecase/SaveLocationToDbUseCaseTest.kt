@@ -1,10 +1,9 @@
 package com.alvindizon.panahon.home.usecase
 
-import com.alvindizon.panahon.home.integration.HomeViewRepository
+import com.alvindizon.panahon.home.data.HomeRepository
 import com.alvindizon.panahon.home.model.CurrentLocation
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.*
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,7 +12,7 @@ class SaveLocationToDbUseCaseTest {
 
     private lateinit var useCase: SaveLocationToDbUseCase
 
-    private val repo: HomeViewRepository = mockk()
+    private val repo: HomeRepository = mockk()
 
     private val currentLocation = CurrentLocation("Sydney", "-33.865143", "151.2099")
 

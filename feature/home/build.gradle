@@ -61,6 +61,7 @@ dependencies {
     implementation project(":common:core-android")
     implementation project(":common:location")
     implementation project(":common:navigation")
+    implementation project(":data:db")
     implementation platform(deps.androidX.compose.bom)
     implementation deps.androidX.compose.runtime
     implementation deps.androidX.compose.ui

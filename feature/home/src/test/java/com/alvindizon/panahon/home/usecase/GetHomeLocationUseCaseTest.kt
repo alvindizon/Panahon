@@ -1,6 +1,6 @@
 package com.alvindizon.panahon.home.usecase
 
-import com.alvindizon.panahon.home.integration.HomeViewRepository
+import com.alvindizon.panahon.home.data.HomeRepository
 import com.alvindizon.panahon.home.model.CurrentLocation
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 class GetHomeLocationUseCaseTest {
 
-    private val repository: HomeViewRepository = mockk()
+    private val repository: HomeRepository = mockk()
 
     private lateinit var useCase: GetHomeLocationUseCase
 
