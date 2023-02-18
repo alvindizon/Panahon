@@ -25,4 +25,7 @@ interface LocationDao {
 
     @Update(entity = Location::class)
     suspend fun update(location: Location)
+
+    @Query("SELECT * FROM savedLocations ORDER BY ROWID ASC LIMIT 1")
+    suspend fun getFirstLocation(): Location?
 }

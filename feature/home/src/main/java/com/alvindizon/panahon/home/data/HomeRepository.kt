@@ -10,6 +10,7 @@ interface HomeRepository {
     suspend fun getHomeLocation(): CurrentLocation?
     suspend fun saveHomeLocationToDatabase(name: String, latitude: String, longitude: String)
     suspend fun updateDbLocation(name: String, latitude: String, longitude: String, isHomeLocation: Boolean)
+    suspend fun getFirstLocation(): CurrentLocation?
 }
 
 @Singleton
@@ -29,4 +30,7 @@ class HomeRepositoryImpl @Inject constructor(private val dao: LocationDao) :
         longitude: String,
         isHomeLocation: Boolean
     ) = dao.update(Location(name, latitude, longitude, isHomeLocation))
+
+    override suspend fun getFirstLocation(): CurrentLocation?
+        = dao.getFirstLocation()?.run { CurrentLocation(name, latitude, longitude) }
 }
