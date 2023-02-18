@@ -1,12 +1,9 @@
-package com.alvindizon.panahon.di
-
+package com.alvindizon.panahon.networking.di
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.alvindizon.panahon.BuildConfig
-import com.alvindizon.panahon.api.OpenWeatherApi
+import com.alvindizon.panahon.networking.BuildConfig
 import com.alvindizon.panahon.networking.interceptor.ConnectivityInterceptor
-import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,15 +11,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
-    private const val OPENWEATHER_URL = "https://api.openweathermap.org/"
 
     @Provides
     @Singleton
@@ -48,21 +41,4 @@ object NetworkModule {
         .addInterceptor(httpLoggingInterceptor)
         .addInterceptor(connectivityInterceptor)
         .build()
-
-    @Provides
-    @Singleton
-    fun provideMoshi(): Moshi = Moshi.Builder().build()
-
-    @Provides
-    @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit = Retrofit.Builder()
-        .baseUrl(OPENWEATHER_URL)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .client(okHttpClient)
-        .build()
-
-    @Provides
-    @Singleton
-    fun provideOpenWeatherApi(retrofit: Retrofit): com.alvindizon.panahon.api.OpenWeatherApi =
-        retrofit.create(com.alvindizon.panahon.api.OpenWeatherApi::class.java)
 }
