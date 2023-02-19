@@ -1,6 +1,5 @@
 package com.alvindizon.panahon.searchlocation.ui
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -45,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -64,9 +62,9 @@ import com.alvindizon.panahon.searchlocation.viewmodel.SearchLocationViewModel
 @Composable
 fun SearchScreen(
     viewModel: SearchLocationViewModel,
-    onUpButtonClicked: () -> Unit
+    onUpButtonClicked: () -> Unit,
+    onSearchResultClicked: (SearchResult) -> Unit
 ) {
-    val context = LocalContext.current
     val state by viewModel.uiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -91,11 +89,7 @@ fun SearchScreen(
             state = state,
             onSearchResultClicked = {
                 viewModel.saveResultToDb(it)
-                Toast.makeText(
-                    context,
-                    "Location saved",
-                    Toast.LENGTH_SHORT
-                ).show()
+                onSearchResultClicked(it)
             }
         )
     }
