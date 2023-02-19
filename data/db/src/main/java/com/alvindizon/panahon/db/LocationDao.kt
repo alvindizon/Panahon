@@ -14,7 +14,7 @@ interface LocationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(location: Location)
 
-    @Query("SELECT * FROM savedLocations")
+    @Query("SELECT * FROM savedLocations ORDER BY ROWID DESC")
     fun fetchLocations() : Flow<List<Location>>
 
     @Query("DELETE FROM savedLocations WHERE name = :name")
@@ -26,6 +26,6 @@ interface LocationDao {
     @Update(entity = Location::class)
     suspend fun update(location: Location)
 
-    @Query("SELECT * FROM savedLocations ORDER BY ROWID ASC LIMIT 1")
+    @Query("SELECT * FROM savedLocations ORDER BY ROWID DESC LIMIT 1")
     suspend fun getFirstLocation(): Location?
 }
