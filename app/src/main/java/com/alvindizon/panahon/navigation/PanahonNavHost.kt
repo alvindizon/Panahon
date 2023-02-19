@@ -30,7 +30,7 @@ fun PanahonNavHost(
     popBackStack: () -> Unit,
 ) {
     Box(modifier = modifier) {
-        AnimatedNavHost(navController = navController, startDestination = startDestination){
+        AnimatedNavHost(navController = navController, startDestination = startDestination) {
             homeGraph(
                 onLocationFound = {
                     navController.navigate(
@@ -49,7 +49,15 @@ fun PanahonNavHost(
                 },
                 onSearchLinkClick = { navController.navigate(SearchNavigation.route) },
                 onErrorOkBtnClick = finishActivity,
-                nestedGraphs = { searchGraph(onUpButtonClicked = popBackStack) }
+                nestedGraphs = {
+                    searchGraph(onUpButtonClicked = popBackStack, onSearchResultClicked = {
+                        navController.navigate(
+                            DetailsNavigation.createNavigationRoute(
+                                it.locationName, it.lat, it.lon
+                            )
+                        )
+                    })
+                }
             )
             locationsGraph(
                 onLocationClick = {
@@ -61,9 +69,23 @@ fun PanahonNavHost(
                 },
                 onUpButtonClicked = popBackStack,
                 onSearchIconClick = { navController.navigate(SearchNavigation.route) },
-                nestedGraphs = { searchGraph(onUpButtonClicked = popBackStack) }
+                nestedGraphs = {
+                    searchGraph(onUpButtonClicked = popBackStack, onSearchResultClicked = {
+                        navController.navigate(
+                            DetailsNavigation.createNavigationRoute(
+                                it.locationName, it.lat, it.lon
+                            )
+                        )
+                    })
+                }
             )
-            searchGraph(onUpButtonClicked = popBackStack)
+            searchGraph(onUpButtonClicked = popBackStack, onSearchResultClicked = {
+                navController.navigate(
+                    DetailsNavigation.createNavigationRoute(
+                        it.locationName, it.lat, it.lon
+                    )
+                )
+            })
             detailsGraph(
                 onSettingsIconClick = { navController.navigate(SettingsNavigation.route) },
                 onNavigationIconClick = { navController.navigate(LocationsNavigation.route) }
