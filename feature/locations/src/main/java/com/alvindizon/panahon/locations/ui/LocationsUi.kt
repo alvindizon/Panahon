@@ -293,7 +293,7 @@ fun WeatherIconAndTemperature(
         Text(
             temperature,
             style = MaterialTheme.typography.h6,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(2f),
             textAlign = TextAlign.Center
         )
     }
