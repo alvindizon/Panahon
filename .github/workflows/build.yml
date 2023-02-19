@@ -8,13 +8,14 @@ jobs:
   lintRelease:
     runs-on: macos-latest
     steps:
-      - name: Set up JDK 11
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK 11 and cache dependencies
         uses: actions/setup-java@v3
         with:
           java-version: 11
           distribution: 'adopt'
-      - name: Checkout
-        uses: actions/checkout@v3
+          cache: gradle
       - name: Access secret
         env:
           OPENWEATHER_KEY: ${{ secrets.OPENWEATHER_KEY }}
@@ -27,13 +28,14 @@ jobs:
   test:
     runs-on: macos-latest
     steps:
-      - name: Set up JDK 11
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK 11 and cache dependencies
         uses: actions/setup-java@v3
         with:
           java-version: 11
           distribution: 'adopt'
-      - name: Checkout
-        uses: actions/checkout@v3
+          cache: gradle
       - name: Access secret
         env:
           OPENWEATHER_KEY: ${{ secrets.OPENWEATHER_KEY }}
