@@ -34,9 +34,7 @@ fun PanahonNavHost(
             homeGraph(
                 onLocationFound = {
                     navController.navigate(
-                        DetailsNavigation.createNavigationRoute(
-                            it.locationName, it.latitude, it.longitude
-                        )
+                        DetailsNavigation.createNavigationRoute(it.locationName, it.latitude, it.longitude)
                     )
                 },
                 onSnackbarButtonClick = {
@@ -52,9 +50,11 @@ fun PanahonNavHost(
                 nestedGraphs = {
                     searchGraph(onUpButtonClicked = popBackStack, onSearchResultClicked = {
                         navController.navigate(
-                            DetailsNavigation.createNavigationRoute(
-                                it.locationName, it.lat, it.lon
-                            )
+                            DetailsNavigation.createNavigationRoute(it.locationName, it.lat, it.lon)
+                        )
+                    }, onLocationFound = {
+                        navController.navigate(
+                            DetailsNavigation.createNavigationRoute(it.locationName, it.latitude, it.longitude)
                         )
                     })
                 }
@@ -72,18 +72,22 @@ fun PanahonNavHost(
                 nestedGraphs = {
                     searchGraph(onUpButtonClicked = popBackStack, onSearchResultClicked = {
                         navController.navigate(
-                            DetailsNavigation.createNavigationRoute(
-                                it.locationName, it.lat, it.lon
-                            )
+                            DetailsNavigation.createNavigationRoute(it.locationName, it.lat, it.lon)
+                        )
+                    }, onLocationFound = {
+                        navController.navigate(
+                            DetailsNavigation.createNavigationRoute(it.locationName, it.latitude, it.longitude)
                         )
                     })
                 }
             )
             searchGraph(onUpButtonClicked = popBackStack, onSearchResultClicked = {
                 navController.navigate(
-                    DetailsNavigation.createNavigationRoute(
-                        it.locationName, it.lat, it.lon
-                    )
+                    DetailsNavigation.createNavigationRoute(it.locationName, it.lat, it.lon)
+                )
+            }, onLocationFound = {
+                navController.navigate(
+                    DetailsNavigation.createNavigationRoute(it.locationName, it.latitude, it.longitude)
                 )
             })
             detailsGraph(

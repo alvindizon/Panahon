@@ -1,11 +1,13 @@
 package com.alvindizon.panahon.searchlocation.viewmodel
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.core.android.utils.getStateFlow
 import com.alvindizon.panahon.design.message.UiMessage
 import com.alvindizon.panahon.searchlocation.data.SearchLocationViewRepository
+import com.alvindizon.panahon.searchlocation.model.CurrentLocation
 import com.alvindizon.panahon.searchlocation.model.SearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -15,13 +17,17 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SearchLocationUiState(
     val searchResults: List<SearchResult>? = null,
     val isLoading: Boolean = false,
-    val errorMessage: UiMessage? = null
+    val errorMessage: UiMessage? = null,
+    val locationSettingsNotEnabled: Boolean = false,
+    val locationNotFound: Boolean = false,
+    val currentLocation: CurrentLocation? = null
 ) {
     companion object {
         val Empty = SearchLocationUiState()
@@ -55,11 +61,13 @@ class SearchLocationViewModel @Inject constructor(
                     }
             }.onSuccess {
                 it.collectLatest { results ->
-                    _uiState.value = _uiState.value.copy(
-                        searchResults = results,
-                        isLoading = false,
-                        errorMessage = null
-                    )
+                    _uiState.update { state ->
+                        state.copy(
+                            searchResults = results,
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
                 }
             }.onFailure {
                 handleError(it)
@@ -77,12 +85,46 @@ class SearchLocationViewModel @Inject constructor(
         }.onFailure { handleError(it) }
     }
 
+    /**
+     * Checks if precise location is enabled. If enabled, current location is fetched and saved to DB.
+     * If disabled, a dialog informing users that precise location setting needs to be enabled is shown.
+     */
+    fun checkIfPreciseLocationEnabled() = viewModelScope.launch(coroutineExceptionHandler) {
+        runCatching {
+            repository.isPreciseLocationEnabled()
+        }.onSuccess {
+            if (it) {
+                _uiState.update { state -> state.copy(locationSettingsNotEnabled = false) }
+                fetchCurrentLocation()
+            } else {
+                _uiState.update { state -> state.copy(locationSettingsNotEnabled = true) }
+            }
+        }.onFailure { handleError(it) }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun fetchCurrentLocation() = viewModelScope.launch(coroutineExceptionHandler) {
+        runCatching {
+            repository.fetchCurrentLocation()
+        }.onSuccess {
+            if (it != null) {
+                _uiState.update { state -> state.copy(currentLocation = it, locationNotFound = false) }
+            } else {
+                _uiState.update { state -> state.copy(locationNotFound = true) }
+            }
+        }
+        .onFailure {
+            handleError(it)
+        }
+    }
+
     private fun handleError(error: Throwable) {
-        _uiState.value =
-            _uiState.value.copy(
+        _uiState.update { state ->
+            state.copy(
                 isLoading = false,
                 errorMessage = UiMessage(error.message ?: error.javaClass.name)
             )
+        }
     }
 
     companion object {

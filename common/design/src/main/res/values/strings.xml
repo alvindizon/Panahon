@@ -8,4 +8,6 @@
     <string name="settings">Settings</string>
     <string name="generic_error_msg">An error has occurred, please try again</string>
     <string name="Refresh">Refresh</string>
+    <string name="location_not_available_msg">Sorry, we can\'t locate you. Check your location settings or restart the app.</string>
+    <string name="ok">OK</string>
 </resources>

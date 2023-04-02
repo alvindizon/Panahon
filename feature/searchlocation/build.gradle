@@ -60,6 +60,7 @@ dependencies {
     implementation project(":common:core")
     implementation project(":common:navigation")
     implementation project(":common:core-android")
+    implementation project(":common:location")
     implementation project(":data:db")
     implementation project(":data:api")
     implementation platform(deps.androidX.compose.bom)
