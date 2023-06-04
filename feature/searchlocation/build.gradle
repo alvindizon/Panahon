@@ -53,6 +53,7 @@ android {
             }
         }
     }
+    namespace 'com.alvindizon.panahon.searchlocation'
 }
 
 dependencies {

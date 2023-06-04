@@ -33,6 +33,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion versions.composeCompilerVersion
     }
+    namespace 'com.alvindizon.panahon.design'
 }
 
 dependencies {
