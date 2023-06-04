@@ -46,6 +46,7 @@ android {
             }
         }
     }
+    namespace 'com.alvindizon.core.navigation'
 }
 
 dependencies {

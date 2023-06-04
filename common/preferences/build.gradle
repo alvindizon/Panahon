@@ -44,6 +44,7 @@ android {
             }
         }
     }
+    namespace 'com.alvindizon.panahon.common.preferences'
 }
 
 dependencies {
