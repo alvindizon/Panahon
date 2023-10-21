@@ -12,20 +12,20 @@ import kotlinx.coroutines.flow.Flow
 interface LocationDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(location: Location)
+    fun insert(location: Location)
 
     @Query("SELECT * FROM savedLocations ORDER BY ROWID DESC")
     fun fetchLocations() : Flow<List<Location>>
 
     @Query("DELETE FROM savedLocations WHERE name = :name")
-    suspend fun delete(name: String)
+    fun delete(name: String)
 
     @Query("SELECT * FROM savedLocations WHERE isHomeLocation")
-    suspend fun getHomeLocation(): Location?
+    fun getHomeLocation(): Location?
 
     @Update(entity = Location::class)
-    suspend fun update(location: Location)
+    fun update(location: Location)
 
     @Query("SELECT * FROM savedLocations ORDER BY ROWID DESC LIMIT 1")
-    suspend fun getFirstLocation(): Location?
+    fun getFirstLocation(): Location?
 }

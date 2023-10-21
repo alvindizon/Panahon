@@ -8,7 +8,7 @@ import com.alvindizon.core.navigation.NavigationDestination
 import com.alvindizon.panahon.searchlocation.model.SearchResult
 import com.alvindizon.panahon.searchlocation.model.CurrentLocation
 import com.alvindizon.panahon.searchlocation.ui.SearchScreen
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.composable
 
 object SearchNavigation : NavigationDestination {
     override val route: String = "search_route"
