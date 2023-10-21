@@ -12,7 +12,6 @@ android {
         targetSdk buildVersions.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
         buildConfigField "String", "OPENWEATHER_KEY", "\"" + getAccessKey('OPENWEATHER_KEY') + "\""
     }
 
