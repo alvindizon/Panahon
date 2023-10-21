@@ -7,7 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
 import com.alvindizon.core.navigation.NavigationDestination
 import com.alvindizon.features.settings.ui.SettingsScreen
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.composable
 
 object SettingsNavigation : NavigationDestination {
     override val route: String = "settings_route"

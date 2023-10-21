@@ -6,7 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.alvindizon.core.navigation.NavigationDestination
 import com.alvindizon.panahon.details.ui.DetailsScreen
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.composable
 
 object DetailsNavigation : NavigationDestination {
     const val locationArg = "location"

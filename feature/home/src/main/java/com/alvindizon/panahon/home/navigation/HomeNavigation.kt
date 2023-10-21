@@ -2,7 +2,7 @@ package com.alvindizon.panahon.home.navigation
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.alvindizon.core.navigation.NavigationDestination
 import com.alvindizon.panahon.home.model.CurrentLocation

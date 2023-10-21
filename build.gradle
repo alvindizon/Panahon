@@ -19,7 +19,7 @@ allprojects {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions {
             allWarningsAsErrors = true
-            jvmTarget = "1.8" // this needs to be set if you want your decompiled Java code at Java 8
+            jvmTarget = "17" // this needs to be set if you want your decompiled Java code at Java 17
             freeCompilerArgs += ["-Xjvm-default=all"]
         }
     }

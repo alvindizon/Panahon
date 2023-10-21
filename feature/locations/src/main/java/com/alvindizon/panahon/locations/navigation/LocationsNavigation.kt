@@ -8,7 +8,7 @@ import androidx.navigation.compose.navigation
 import com.alvindizon.core.navigation.NavigationDestination
 import com.alvindizon.panahon.locations.model.LocationForecast
 import com.alvindizon.panahon.locations.ui.LocationsScreen
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.composable
 
 object LocationsNavigation : NavigationDestination {
     override val route: String = "locations_route"
