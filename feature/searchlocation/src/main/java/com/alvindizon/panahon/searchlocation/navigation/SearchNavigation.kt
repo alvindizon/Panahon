@@ -1,14 +1,12 @@
 package com.alvindizon.panahon.searchlocation.navigation
 
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
-import com.alvindizon.core.navigation.NavigationDestination
-import com.alvindizon.panahon.searchlocation.model.SearchResult
-import com.alvindizon.panahon.searchlocation.model.CurrentLocation
-import com.alvindizon.panahon.searchlocation.ui.SearchScreen
 import androidx.navigation.compose.composable
+import com.alvindizon.core.navigation.NavigationDestination
+import com.alvindizon.panahon.searchlocation.model.CurrentLocation
+import com.alvindizon.panahon.searchlocation.model.SearchResult
+import com.alvindizon.panahon.searchlocation.ui.SearchScreen
 
 object SearchNavigation : NavigationDestination {
     override val route: String = "search_route"
@@ -20,10 +18,7 @@ fun NavGraphBuilder.searchGraph(
     onSearchResultClicked: (SearchResult) -> Unit,
     onLocationFound: (CurrentLocation) -> Unit
 ) {
-    composable(route = SearchNavigation.route,
-        enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) },
-        exitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) }
-    ) {
+    composable(route = SearchNavigation.route) {
         SearchScreen(
             viewModel = hiltViewModel(),
             onUpButtonClicked = onUpButtonClicked,

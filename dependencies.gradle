@@ -119,12 +119,6 @@ deps.playServicesLocation = "com.google.android.gms:play-services-location:$vers
 
 deps.timber = "com.jakewharton.timber:timber:$versions.timber"
 
-def accompanist=[:]
-    accompanist.navigationAnimation = "com.google.accompanist:accompanist-navigation-animation:$versions.accompanist"
-    accompanist.pager = "com.google.accompanist:accompanist-pager:$versions.accompanist"
-    accompanist.pagerIndicators = "com.google.accompanist:accompanist-pager-indicators:$versions.accompanist"
-deps.accompanist = accompanist
-
 ext.deps = deps
 
 

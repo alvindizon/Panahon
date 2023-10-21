@@ -1,14 +1,12 @@
 package com.alvindizon.panahon.locations.navigation
 
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.alvindizon.core.navigation.NavigationDestination
 import com.alvindizon.panahon.locations.model.LocationForecast
 import com.alvindizon.panahon.locations.ui.LocationsScreen
-import androidx.navigation.compose.composable
 
 object LocationsNavigation : NavigationDestination {
     override val route: String = "locations_route"
@@ -26,11 +24,7 @@ fun NavGraphBuilder.locationsGraph(
         route = LocationsNavigation.route,
         startDestination = LocationsNavigation.destination
     ) {
-        composable(
-            route = LocationsNavigation.destination,
-            enterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) },
-            exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) }
-        ) {
+        composable(route = LocationsNavigation.destination) {
             LocationsScreen(
                 viewModel = hiltViewModel(),
                 onLocationClick = onLocationClick,
