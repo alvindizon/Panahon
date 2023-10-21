@@ -18,7 +18,7 @@ import com.alvindizon.panahon.locations.navigation.LocationsNavigation
 import com.alvindizon.panahon.locations.navigation.locationsGraph
 import com.alvindizon.panahon.searchlocation.navigation.SearchNavigation
 import com.alvindizon.panahon.searchlocation.navigation.searchGraph
-import com.google.accompanist.navigation.animation.AnimatedNavHost
+import androidx.navigation.compose.NavHost
 
 @Composable
 fun PanahonNavHost(
@@ -30,7 +30,7 @@ fun PanahonNavHost(
     popBackStack: () -> Unit,
 ) {
     Box(modifier = modifier) {
-        AnimatedNavHost(navController = navController, startDestination = startDestination) {
+        NavHost(navController = navController, startDestination = startDestination) {
             homeGraph(
                 onLocationFound = {
                     navController.navigate(

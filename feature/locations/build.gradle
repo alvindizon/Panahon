@@ -96,7 +96,4 @@ dependencies {
 
     // Coil
     implementation deps.coilCompose
-
-    // Accompanist
-    implementation deps.accompanist.navigationAnimation
 }
