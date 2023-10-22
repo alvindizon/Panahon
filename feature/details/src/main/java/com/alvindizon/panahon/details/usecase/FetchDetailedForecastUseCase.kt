@@ -75,7 +75,7 @@ class FetchDetailedForecastUseCase @Inject constructor(private val repo: Details
         HourlyForecast(
             time = time?.toLong()?.convertTimestampToString(DateTimeUtils.HOURLY_PATTERN, timezone)
                 ?.lowercase(),
-            temperature = temperature?.toTemperatureString(tempUnit),
+            temperature = temperature?.celsiusToOthers(tempUnit),
             icon = icon,
             pop = "${pop?.times(100)?.roundToInt() ?: 0}%"
         )
