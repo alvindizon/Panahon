@@ -8,8 +8,10 @@ import com.alvindizon.panahon.db.model.Location
 import com.alvindizon.panahon.location.LocationManager
 import com.alvindizon.panahon.searchlocation.model.CurrentLocation
 import com.alvindizon.panahon.searchlocation.model.SearchResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,7 +23,7 @@ class SearchLocationViewRepositoryImpl @Inject constructor(
 ) : SearchLocationViewRepository {
 
     override suspend fun saveLocationToDatabase(name: String, latitude: String, longitude: String) =
-        dao.insert(Location(name, latitude, longitude, false))
+        withContext(Dispatchers.IO) { dao.insert(Location(name, latitude, longitude, false)) }
 
     override suspend fun searchForLocation(query: String): Flow<List<SearchResult>> =
         flowOf(api.getCities(query, RESULT_LIMIT, BuildConfig.OPENWEATHER_KEY).toSearchResults())

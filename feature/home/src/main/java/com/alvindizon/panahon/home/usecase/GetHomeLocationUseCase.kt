@@ -2,6 +2,8 @@ package com.alvindizon.panahon.home.usecase
 
 import com.alvindizon.panahon.home.data.HomeRepository
 import com.alvindizon.panahon.home.model.CurrentLocation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,6 +16,6 @@ import javax.inject.Singleton
 class GetHomeLocationUseCase @Inject constructor(private val repo: HomeRepository){
 
     suspend fun execute(): CurrentLocation? {
-        return repo.getHomeLocation() ?: repo.getFirstLocation()
+        return withContext(Dispatchers.IO) { repo.getHomeLocation() ?: repo.getFirstLocation() }
     }
 }

@@ -9,8 +9,11 @@ import com.alvindizon.panahon.db.model.Location
 import com.alvindizon.panahon.locations.model.LocationForecast
 import com.alvindizon.panahon.locations.model.RawSimpleForecast
 import com.alvindizon.panahon.locations.model.SavedLocation
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,10 +34,10 @@ class LocationsViewRepositoryImpl @Inject constructor(
     override fun fetchTemperatureUnit(): Flow<Temperature> = preferencesManager.getTemperatureUnit()
 
     override fun fetchSavedLocations(): Flow<List<SavedLocation>> =
-        dao.fetchLocations().map { list -> list.map { it.toSavedLocation() } }
+        dao.fetchLocations().map { list -> list.map { it.toSavedLocation() } }.flowOn(Dispatchers.IO)
 
     override suspend fun deleteLocation(locationForecast: LocationForecast) =
-        dao.delete(locationForecast.name)
+        withContext(Dispatchers.IO) { dao.delete(locationForecast.name) }
 
     private fun OneCallResponse.toRawSimpleForecast(locationName: String) =
         RawSimpleForecast(
