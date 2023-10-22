@@ -3,8 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
     id 'kotlin-parcelize'
-    id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -15,7 +13,6 @@ android {
         targetSdk buildVersions.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -24,21 +21,6 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        compose true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion versions.composeCompilerVersion
-    }
-    testOptions {
-        unitTests.all {
-            useJUnitPlatform()
-            // Show test results.
-            testLogging {
-                events "passed", "skipped", "failed"
-            }
-        }
-    }
     namespace 'com.alvindizon.core.navigation'
 }
 
@@ -46,19 +28,6 @@ dependencies {
     implementation project(":common:core")
     implementation project(":common:core-android")
 
-    // Coroutines
-    implementation deps.coroutines.core
-    implementation deps.coroutines.android
-
-    // Testing
-    testImplementation deps.junit
-    testImplementation deps.androidX.test.core
-    testImplementation deps.mockk
-    testImplementation deps.coroutines.test
-
-    // Dagger Hilt
-    implementation deps.dagger.hiltAndroid
-    kapt deps.dagger.hiltCompiler
-    kapt deps.androidX.hiltCompiler
-    implementation deps.androidX.hiltNavigationCompose
+    api deps.androidX.hiltNavigationCompose
+    api deps.androidX.navigation
 }
