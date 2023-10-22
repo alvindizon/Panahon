@@ -467,7 +467,7 @@ fun AdditionalDetailsPager(
     val pagerState = rememberPagerState { 2 }
 
     Column(modifier = modifier.fillMaxSize()) {
-        HorizontalPager(modifier = Modifier.weight(1f), state = pagerState) { page ->
+        HorizontalPager(state = pagerState) { page ->
             when (page) {
                 0 -> {
                     AdditionalDetailsCard(
@@ -488,9 +488,7 @@ fun AdditionalDetailsPager(
             }
         }
         Row(
-            Modifier
-                .height(8.dp)
-                .fillMaxWidth(),
+            Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
             repeat(2) { iteration ->
@@ -500,7 +498,7 @@ fun AdditionalDetailsPager(
                         .padding(2.dp)
                         .clip(CircleShape)
                         .background(color)
-                        .size(20.dp)
+                        .size(8.dp)
                 )
             }
         }
