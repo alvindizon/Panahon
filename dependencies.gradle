@@ -5,7 +5,7 @@
 ext.deps = [:]
 def versions = [:]
     versions.composeCompilerVersion = "1.5.3"
-    versions.appCompatVersion = "1.7.2"
+    versions.appCompatVersion = "1.8.0"
     versions.coroutinesVersion = "1.6.4"
     versions.espressoVersion = "3.5.1"
     versions.gradleVersion = "8.1.2"
