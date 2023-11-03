@@ -29,15 +29,15 @@ android {
 }
 
 dependencies {
-    implementation platform(deps.androidX.compose.bom)
-    implementation deps.androidX.compose.runtime
-    implementation deps.androidX.compose.ui
-    implementation deps.androidX.compose.foundationLayout
-    implementation deps.androidX.compose.material
-    implementation deps.androidX.compose.materialIconsExtended
-    implementation deps.androidX.compose.foundation
-    implementation deps.androidX.compose.animation
-    implementation deps.androidX.compose.uiTooling
-    implementation deps.androidX.compose.runtimeLivedata
+    api platform(deps.androidX.compose.bom)
+    api deps.androidX.compose.runtime
+    api deps.androidX.compose.ui
+    api deps.androidX.compose.foundationLayout
+    api deps.androidX.compose.material
+    api deps.androidX.compose.materialIconsExtended
+    api deps.androidX.compose.foundation
+    api deps.androidX.compose.animation
+    api deps.androidX.compose.uiTooling
+    api deps.androidX.compose.runtimeLivedata
     implementation deps.timber
 }
