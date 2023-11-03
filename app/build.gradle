@@ -73,17 +73,6 @@ dependencies {
     implementation project(":feature:details")
     implementation project(":feature:home")
     implementation project(":feature:settings")
-    // Compose
-    implementation platform(deps.androidX.compose.bom)
-    implementation deps.androidX.compose.runtime
-    implementation deps.androidX.compose.ui
-    implementation deps.androidX.compose.foundationLayout
-    implementation deps.androidX.compose.material
-    implementation deps.androidX.compose.materialIconsExtended
-    implementation deps.androidX.compose.foundation
-    implementation deps.androidX.compose.animation
-    implementation deps.androidX.compose.uiTooling
-    implementation deps.androidX.compose.runtimeLivedata
 
     // Compose navigation
     implementation deps.androidX.navigation
