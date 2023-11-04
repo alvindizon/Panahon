@@ -1,0 +1,68 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileSdk buildVersions.compileSdkVersion
+
+    defaultConfig {
+        minSdk buildVersions.minSdkVersion
+        targetSdk buildVersions.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs += [
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=kotlinx.coroutines.FlowPreview",
+
+        ]
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion versions.composeCompilerVersion
+    }
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+            // Show test results.
+            testLogging {
+                events "passed", "skipped", "failed"
+            }
+        }
+    }
+    namespace 'com.alvindizon.panahon.data.location'
+}
+
+dependencies {
+    implementation project(":common:core")
+    implementation project(":common:core-android")
+    implementation project(":common:location")
+    implementation project(":data:db")
+
+    // Coroutines
+    implementation deps.coroutines.core
+    implementation deps.coroutines.android
+
+    // Testing
+    testImplementation deps.junit
+    testImplementation deps.androidX.test.core
+    testImplementation deps.mockk
+    testImplementation deps.coroutines.test
+
+    // Dagger Hilt
+    implementation deps.dagger.hiltAndroid
+    kapt deps.dagger.hiltCompiler
+}
