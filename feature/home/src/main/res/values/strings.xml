@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home_share_location_btn">"Share my location"</string>
-    <string name="home_location_rationale_msg">Sorry, the app requires location permissions in order fetch the weather forecast in your area.</string>
-    <string name="home_location_rationale_msg2">Alternatively, you can try searching for your location via Search.</string>
-    <string name="home_snackbar_msg">Allow location access</string>
-    <string name="home_snackbar_btn_txt">Open Settings</string>
+
 </resources>
