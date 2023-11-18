@@ -1,5 +1,8 @@
 package com.alvindizon.panahon.details.ui
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -27,6 +29,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
@@ -38,20 +41,26 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alvindizon.panahon.design.components.DataUnavailableScreen
+import com.alvindizon.panahon.design.components.LocationRationaleScreen2
 import com.alvindizon.panahon.design.theme.Hot
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.design.theme.Snow
@@ -67,22 +76,25 @@ import com.alvindizon.panahon.details.viewmodel.DetailsScreenViewModel
 @Composable
 fun DetailsScreen(
     viewModel: DetailsScreenViewModel,
-    location: String,
     onSettingsIconClick: () -> Unit,
-    onNavigationIconClick: () -> Unit
+    onNavigationIconClick: () -> Unit,
+    onSnackbarButtonClick: () -> Unit,
+    onSearchLinkClick: () -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val state = viewModel.uiState.collectAsState().value
+    val scaffoldState = rememberScaffoldState()
     state.errorMessage?.let { message ->
         LaunchedEffect(message) {
             snackbarHostState.showSnackbar(message.message)
         }
     }
     Scaffold(
+        scaffoldState = scaffoldState,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(text = location) },
+                title = { Text(text = state.detailedForecast?.locationName.orEmpty()) },
                 navigationIcon = {
                     IconButton(onClick = onNavigationIconClick) {
                         Icon(
@@ -92,7 +104,7 @@ fun DetailsScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = viewModel::fetchData) {
+                    IconButton(onClick = viewModel::onInitialLoad) {
                         Icon(
                             imageVector = Icons.Filled.Refresh,
                             contentDescription = stringResource(id = com.alvindizon.panahon.design.R.string.Refresh)
@@ -110,8 +122,12 @@ fun DetailsScreen(
     ) { paddingValues ->
         DetailedForecastScreen(
             state = state,
+            scaffoldState = scaffoldState,
             paddingValues = paddingValues,
-            onRefresh = viewModel::fetchData
+            onRefresh = viewModel::onInitialLoad,
+            onSnackbarButtonClick = onSnackbarButtonClick,
+            onSearchLinkClick = onSearchLinkClick,
+            onLocationPermissionGranted = viewModel::onFetchCurrentLocation
         )
     }
 }
@@ -119,26 +135,57 @@ fun DetailsScreen(
 @Composable
 internal fun DetailedForecastScreen(
     state: DetailsScreenUiState,
+    scaffoldState: ScaffoldState,
     paddingValues: PaddingValues,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onSnackbarButtonClick: () -> Unit,
+    onSearchLinkClick: () -> Unit,
+    onLocationPermissionGranted: () -> Unit
 ) {
     val refreshState = rememberPullRefreshState(
-        refreshing = state.isLoading,
+        refreshing = state.isLoading ?: false,
         onRefresh = onRefresh,
+    )
+    var showSnackbar by remember { mutableStateOf(false) }
+    val permissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            if (permissions.containsValue(false)) {
+                showSnackbar = true
+            } else {
+                onLocationPermissionGranted()
+            }
+        }
+
+    val permissions = arrayOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION
     )
     Box(
         modifier = Modifier
             .pullRefresh(refreshState)
             .fillMaxSize() // fillMaxSize so that pull refresh indicator won't be aligned at top start
     ) {
-        if (state.detailedForecast != null) {
-            DetailedForecastScreen(
-                modifier = Modifier.padding(paddingValues),
-                detailedForecast = state.detailedForecast
-            )
+        when {
+            state.detailedForecast != null -> {
+                DetailedForecastScreen(
+                    modifier = Modifier.padding(paddingValues),
+                    detailedForecast = state.detailedForecast
+                )
+            }
+
+            state.showRationale == true -> {
+                LocationRationaleScreen2(
+                    scaffoldState = scaffoldState,
+                    showSnackbar = showSnackbar,
+                    onSnackbarDismissed = { showSnackbar = false },
+                    onEnableLocationButtonClick = { permissionLauncher.launch(permissions) },
+                    onSnackbarButtonClick = onSnackbarButtonClick ,
+                    onSearchLinkClick = onSearchLinkClick
+                )
+            }
         }
         PullRefreshIndicator(
-            refreshing = state.isLoading,
+            refreshing = state.isLoading ?: false,
             state = refreshState,
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -477,6 +524,7 @@ fun AdditionalDetailsPager(
                         text4 = minimumTemp
                     )
                 }
+
                 1 -> {
                     AdditionalDetailsCard(
                         text1 = windSpeed,
@@ -492,7 +540,8 @@ fun AdditionalDetailsPager(
             horizontalArrangement = Arrangement.Center
         ) {
             repeat(2) { iteration ->
-                val color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+                val color =
+                    if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
                 Box(
                     modifier = Modifier
                         .padding(2.dp)

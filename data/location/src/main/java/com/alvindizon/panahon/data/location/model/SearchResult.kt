@@ -1,4 +1,4 @@
-package com.alvindizon.panahon.searchlocation.model
+package com.alvindizon.panahon.data.location.model
 
 data class SearchResult(
     val locationName: String,

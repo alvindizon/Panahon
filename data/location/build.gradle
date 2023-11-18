@@ -28,9 +28,6 @@ android {
 
         ]
     }
-    buildFeatures {
-        compose true
-    }
     composeOptions {
         kotlinCompilerExtensionVersion versions.composeCompilerVersion
     }
@@ -51,6 +48,7 @@ dependencies {
     implementation project(":common:core-android")
     implementation project(":common:location")
     implementation project(":data:db")
+    implementation project(":data:api")
 
     // Coroutines
     implementation deps.coroutines.core

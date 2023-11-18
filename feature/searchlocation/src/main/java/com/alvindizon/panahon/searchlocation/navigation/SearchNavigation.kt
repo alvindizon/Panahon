@@ -11,8 +11,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.alvindizon.core.navigation.NavigationDestination
-import com.alvindizon.panahon.searchlocation.model.CurrentLocation
-import com.alvindizon.panahon.searchlocation.model.SearchResult
+import com.alvindizon.panahon.data.location.model.CurrentLocation
+import com.alvindizon.panahon.data.location.model.SearchResult
 import com.alvindizon.panahon.searchlocation.ui.SearchScreen
 
 object SearchNavigation : NavigationDestination {

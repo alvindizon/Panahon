@@ -1,7 +1,7 @@
 package com.alvindizon.panahon.data.location.di
 
-import com.alvindizon.panahon.data.location.HomeRepository
-import com.alvindizon.panahon.data.location.HomeRepositoryImpl
+import com.alvindizon.panahon.data.location.LocationRepository
+import com.alvindizon.panahon.data.location.LocationRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,5 +12,5 @@ import dagger.hilt.components.SingletonComponent
 abstract class LocationDataModule {
 
     @Binds
-    abstract fun bindHomeRepo(repo: HomeRepositoryImpl): HomeRepository
+    abstract fun bindHomeRepo(repo: LocationRepositoryImpl): LocationRepository
 }

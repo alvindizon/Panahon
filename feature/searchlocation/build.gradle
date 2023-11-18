@@ -56,6 +56,7 @@ dependencies {
     implementation project(":common:location")
     implementation project(":data:db")
     implementation project(":data:api")
+    implementation project(":data:location")
 
     // Coroutines
     implementation deps.coroutines.core

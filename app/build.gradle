@@ -63,6 +63,7 @@ dependencies {
     implementation project(":data:networking")
     implementation project(":data:api")
     implementation project(":data:db")
+    implementation project(":data:location")
     implementation project(":common:design")
     implementation project(":common:core")
     implementation project(":common:core-android")
