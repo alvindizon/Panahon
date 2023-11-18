@@ -116,6 +116,79 @@ fun NoDataScreen(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun LocationRationaleScreen2(
+    modifier: Modifier = Modifier,
+    scaffoldState: ScaffoldState,
+    showSnackbar: Boolean,
+    onSnackbarDismissed: () -> Unit,
+    onEnableLocationButtonClick: () -> Unit,
+    onSnackbarButtonClick: () -> Unit,
+    onSearchLinkClick: () -> Unit,
+) {
+    val snackbarMsg = stringResource(R.string.home_snackbar_msg)
+    val snackbarBtnMsg = stringResource(R.string.home_snackbar_btn_txt)
+    val annotatedLinkString: AnnotatedString = buildAnnotatedString {
+        val message = stringResource(R.string.home_location_rationale_msg2)
+        val withLink = stringResource(id = R.string.search)
+        val startIndex = message.indexOf(withLink)
+        val endIndex = startIndex + withLink.length
+        append(message)
+        addStyle(
+            style = SpanStyle(
+                textDecoration = TextDecoration.Underline,
+                color = MaterialTheme.colors.secondary
+            ),
+            start = startIndex,
+            end = endIndex
+        )
+        addStringAnnotation("", "", startIndex, endIndex)
+    }
+    if (showSnackbar) {
+        LaunchedEffect(scaffoldState.snackbarHostState) {
+            val result = scaffoldState.snackbarHostState.showSnackbar(
+                message = snackbarMsg,
+                actionLabel = snackbarBtnMsg
+            )
+            when (result) {
+                SnackbarResult.Dismissed -> onSnackbarDismissed()
+                SnackbarResult.ActionPerformed -> {
+                    onSnackbarDismissed()
+                    onSnackbarButtonClick()
+                }
+            }
+        }
+    }
+    Column(
+        modifier = modifier
+            .padding(8.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            textAlign = TextAlign.Center,
+            text = stringResource(id = R.string.home_location_rationale_msg),
+            style = MaterialTheme.typography.subtitle2,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ClickableText(
+            text = annotatedLinkString,
+            onClick = { onSearchLinkClick() },
+            style = MaterialTheme.typography.subtitle2.merge(
+                TextStyle(textAlign = TextAlign.Center)
+            )
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = { onEnableLocationButtonClick() }) {
+            Text(
+                text = stringResource(id = R.string.home_share_location_btn),
+                style = MaterialTheme.typography.subtitle2
+            )
+        }
+    }
+}
+
 
 @Composable
 fun LocationRationaleScreen(

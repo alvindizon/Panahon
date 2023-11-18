@@ -61,12 +61,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alvindizon.panahon.data.location.model.CurrentLocation
+import com.alvindizon.panahon.data.location.model.SearchResult
 import com.alvindizon.panahon.design.components.LoadingScreen
 import com.alvindizon.panahon.design.theme.PanahonTheme
 import com.alvindizon.panahon.design.utils.toFlagEmoji
 import com.alvindizon.panahon.searchlocation.R
-import com.alvindizon.panahon.searchlocation.model.CurrentLocation
-import com.alvindizon.panahon.searchlocation.model.SearchResult
 import com.alvindizon.panahon.searchlocation.viewmodel.SearchLocationUiState
 import com.alvindizon.panahon.searchlocation.viewmodel.SearchLocationViewModel
 
@@ -98,7 +98,7 @@ fun SearchScreen(
                 searchQuery = searchQuery,
                 onUpButtonClicked = onUpButtonClicked,
                 onClearClicked = viewModel::clearQuery,
-                onSearchQueryChanged = viewModel::searchForLocations
+                onSearchQueryChanged = viewModel::onSearchQueryChanged
             )
         }
     ) { paddingValues ->
@@ -107,14 +107,14 @@ fun SearchScreen(
             state = state,
             showAlertDialog = showAlertDialog,
             onSearchResultClicked = {
-                viewModel.saveResultToDb(it)
+                viewModel.onSearchResultClick(it)
                 onSearchResultClicked(it)
             },
             onFetchLocationClick = {
                 // this is necessary so that subsequent clicks would still trigger display of dialog if
                 // precise location is still not enabled
                 showAlertDialog = !showAlertDialog
-                viewModel.checkIfPreciseLocationEnabled()
+                viewModel.onFetchLocationClick()
             },
             onLocationFound = { onLocationFound(it) },
             onDismiss = { showAlertDialog = !showAlertDialog }

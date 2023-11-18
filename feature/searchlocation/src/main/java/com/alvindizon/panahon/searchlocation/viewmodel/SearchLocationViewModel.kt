@@ -1,14 +1,14 @@
 package com.alvindizon.panahon.searchlocation.viewmodel
 
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvindizon.panahon.core.android.utils.getStateFlow
+import com.alvindizon.panahon.data.location.LocationRepository
+import com.alvindizon.panahon.data.location.model.CurrentLocation
+import com.alvindizon.panahon.data.location.model.SearchResult
 import com.alvindizon.panahon.design.message.UiMessage
-import com.alvindizon.panahon.searchlocation.data.SearchLocationViewRepository
-import com.alvindizon.panahon.searchlocation.model.CurrentLocation
-import com.alvindizon.panahon.searchlocation.model.SearchResult
+import com.alvindizon.panahon.searchlocation.usecase.SaveLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +36,8 @@ data class SearchLocationUiState(
 
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
-    private val repository: SearchLocationViewRepository,
+    private val locationRepository: LocationRepository,
+    private val saveLocationUseCase: SaveLocationUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -49,7 +50,7 @@ class SearchLocationViewModel @Inject constructor(
         handleError(exception)
     }
 
-    fun searchForLocations(query: String) {
+    fun onSearchQueryChanged(query: String) {
         searchQuery.value = query
         viewModelScope.launch(coroutineExceptionHandler) {
             runCatching {
@@ -57,7 +58,7 @@ class SearchLocationViewModel @Inject constructor(
                     .filter { it.isNotEmpty() }
                     .flatMapLatest {
                         _uiState.value = SearchLocationUiState(isLoading = true)
-                        repository.searchForLocation(it)
+                        locationRepository.searchForLocation(it)
                     }
             }.onSuccess {
                 it.collectLatest { results ->
@@ -79,42 +80,27 @@ class SearchLocationViewModel @Inject constructor(
         searchQuery.value = ""
     }
 
-    fun saveResultToDb(result: SearchResult) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun onSearchResultClick(result: SearchResult) = viewModelScope.launch(coroutineExceptionHandler) {
         runCatching {
-            repository.saveLocationToDatabase(result.locationName, result.lat, result.lon)
-        }.onFailure { handleError(it) }
+            saveLocationUseCase(result.locationName, result.lat, result.lon)
+        }.onFailure {
+            handleError(it)
+        }
     }
 
     /**
-     * Checks if precise location is enabled. If enabled, current location is fetched and saved to DB.
-     * If disabled, a dialog informing users that precise location setting needs to be enabled is shown.
+     * Gets the current location.
      */
-    fun checkIfPreciseLocationEnabled() = viewModelScope.launch(coroutineExceptionHandler) {
-        runCatching {
-            repository.isPreciseLocationEnabled()
-        }.onSuccess {
-            if (it) {
-                _uiState.update { state -> state.copy(locationSettingsNotEnabled = false) }
-                fetchCurrentLocation()
-            } else {
-                _uiState.update { state -> state.copy(locationSettingsNotEnabled = true) }
+    fun onFetchLocationClick() = viewModelScope.launch(coroutineExceptionHandler) {
+        val result = locationRepository.getCurrentLocation()
+        when {
+            result?.isLocationEnabled == true && result.currentLocation != null -> {
+                _uiState.update { state -> state.copy(currentLocation = result.currentLocation, locationNotFound = false, locationSettingsNotEnabled = false) }
             }
-        }.onFailure { handleError(it) }
-    }
-
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun fetchCurrentLocation() = viewModelScope.launch(coroutineExceptionHandler) {
-        runCatching {
-            repository.fetchCurrentLocation()
-        }.onSuccess {
-            if (it != null) {
-                _uiState.update { state -> state.copy(currentLocation = it, locationNotFound = false) }
-            } else {
+            result?.isLocationEnabled == true && result.currentLocation == null ->
                 _uiState.update { state -> state.copy(locationNotFound = true) }
-            }
-        }
-        .onFailure {
-            handleError(it)
+            result?.isLocationEnabled == false ->
+                _uiState.update { state -> state.copy(locationSettingsNotEnabled = true) }
         }
     }
 

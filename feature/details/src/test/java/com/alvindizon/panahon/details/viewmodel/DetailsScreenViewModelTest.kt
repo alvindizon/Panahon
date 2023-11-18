@@ -24,7 +24,7 @@ class DetailsScreenViewModelTest {
     private val savedStateHandle: SavedStateHandle = mockk()
 
     private val viewModel: DetailsScreenViewModel by lazy {
-        DetailsScreenViewModel(fetchDetailedForecastUseCase, savedStateHandle)
+        DetailsScreenViewModel(fetchDetailedForecastUseCase, mockk(), mockk(), mockk(), mockk(), savedStateHandle)
     }
 
     @BeforeEach

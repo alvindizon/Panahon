@@ -24,7 +24,6 @@ fun PanahonApp(
                 modifier = Modifier.padding(padding),
                 navController = appState.navController,
                 context = activity,
-                finishActivity = { activity.finish() },
                 popBackStack = { appState.onBackClick() }
             )
         }
