@@ -4,7 +4,7 @@
  **/
 ext.deps = [:]
 def versions = [:]
-    versions.composeCompilerVersion = "1.5.3"
+    versions.composeCompilerVersion = "1.5.8"
     versions.activity = "1.8.0"
     versions.coroutinesVersion = "1.7.3"
     versions.espressoVersion = "3.5.1"
