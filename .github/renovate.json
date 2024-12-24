@@ -5,4 +5,5 @@
     "group:all"
   ],
   "schedule": ["every sunday"]
+  "enabled": false
 }
