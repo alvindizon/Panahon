@@ -4,5 +4,6 @@
     "config:base",
     "group:all"
   ],
-  "schedule": ["every sunday"]
+  "schedule": ["every sunday"],
+  "enabled": false
 }
